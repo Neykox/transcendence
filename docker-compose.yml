@@ -1,0 +1,86 @@
+version: "3.9"
+
+networks:
+  transcendence:
+
+services:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    env_file:
+      - .env
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - backend
+    restart: unless-stopped
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    env_file:
+      - .env
+    depends_on:
+      - mariadb
+    volumes:
+      - wp:/var/www/html
+    networks:
+      - frontend
+      - backend
+    restart: unless-stopped
+
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    volumes:
+      - wp:/var/www/html
+    networks:
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  wp: 
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/aleroy/data/wordpress
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/aleroy/data/mariadb
+
+
+
+
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+    networks:
+      - transcendence
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    networks:
+      - transcendence
+
+volumes:
+  db:
+    driver: local
