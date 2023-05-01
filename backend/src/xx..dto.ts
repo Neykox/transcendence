@@ -1,0 +1,1 @@
+// classes representant les objets de transfert de données DTO

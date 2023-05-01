@@ -11,5 +11,6 @@ RUN yarn install
 RUN mkdir dist
 RUN chown node:node dist
 
-
 CMD ["yarn", "start"]
+
+

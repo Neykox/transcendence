@@ -3,8 +3,10 @@ CREATE USER $POSTGRES_USER WITH PASSWORD '$POSTGRES_PASSWORD';
 
 ALTER DATABASE $POSTGRES_DB OWNER TO $POSTGRES_USER;
 
+-- Connexion à la base de données
 \connect $POSTGRES_DB
 
+-- Création de la table "channel"
 CREATE TABLE channel (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -13,6 +15,7 @@ CREATE TABLE channel (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Création de la table "user"
 CREATE TABLE user (
     id SERIAL PRIMARY KEY,
     pseudo VARCHAR(255) NOT NULL,
