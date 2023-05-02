@@ -1,18 +1,18 @@
 version: "3.8"
 
 services:
+
   db_postgres:
     build:
       context: ./postgres_db
-      dockerfile: Dockerfile
-    ports:
-      - "5432:5432"
+    restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     networks:
       - backend_network
+
   backend:
     build:
       context: ./backend
@@ -22,8 +22,8 @@ services:
     depends_on:
       - db_postgres
     environment:
-      POSTGRES_HOST: db_postgres
-      POSTGRES_PORT: 5432
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
@@ -42,6 +42,7 @@ services:
 
   adminer:
     image: adminer
+    restart: always
     ports:
       - "8080:8080"
     depends_on:

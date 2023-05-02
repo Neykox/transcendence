@@ -1,7 +1,8 @@
--- Connexion à la base de données
-\connect $POSTGRES_DB
+#!/bin/bash
+set -e
 
--- Création de la table "channel"
+psql -U "$POSTGRES_USER" "$POSTGRES_DB" <<EOF
+
 CREATE TABLE channel (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -10,8 +11,7 @@ CREATE TABLE channel (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Création de la table "user"
-CREATE TABLE user (
+CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
     pseudo VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -19,3 +19,4 @@ CREATE TABLE user (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+EOF
