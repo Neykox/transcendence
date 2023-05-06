@@ -14,7 +14,4 @@ COPY . .
 VOLUME [ "/usr/src/app/frontend/src" ]
 VOLUME [ "/usr/src/app/frontend/shared"]
 
-
-RUN yarn run build
-
 CMD ["yarn", "start"]
