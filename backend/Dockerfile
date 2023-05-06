@@ -8,13 +8,15 @@ COPY nest-cli.json ./
 
 RUN yarn install
 
+RUN yarn global add ts-node
+
 RUN mkdir dist
 RUN chown node:node dist
 
 VOLUME [ "/usr/src/app/src" ]
 VOLUME [ "/usr/src/app/shared" ]
 
-CMD ["yarn", "start"]
+CMD ["yarn","dev"]
 
 
 

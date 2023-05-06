@@ -7,7 +7,8 @@
     "start": "node dist/main.js",
     "dev": "nodemon src/main.ts",
     "build": "tsc",
-    "prestart": "yarn build"
+    "prestart": "yarn build",
+    "start:dev": "nodemon src/main.ts"
   },
   "keywords": [],
   "author": "marion, tanguy, anthony, curtis",
