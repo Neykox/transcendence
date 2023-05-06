@@ -1,26 +1,15 @@
 all : up
 
 up :
-	docker-compose -f ./srcs/docker-compose.yml up
+	docker-compose up --build
 
 down :
-	docker-compose -f ./srcs/docker-compose.yml down
-
-clean: down
-	-docker volume rm $$(sudo docker volume ls -q)
-	sudo rm -rf /home/aleroy/data/mariadb/*
-	sudo rm -rf /home/aleroy/data/wordpress/*
+	docker-compose down
 
 prune: down
-	docker system prune -fa
+#ajouter les commandes
 
-stop:
-	sudo service nginx stop
-	sudo service mysql stop
+re : #clean
+#	docker-compose -f ./srcs/docker-compose.yml up --build
 
-fclean: clean prune
-
-re : clean
-	docker-compose -f ./srcs/docker-compose.yml up --build
-
-.PHONY: all up down clean prune stop re
+.PHONY: all up down clean prune re

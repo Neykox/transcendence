@@ -1,86 +1,68 @@
-version: "3.9"
-
-networks:
-  transcendence:
-
-# services:
-#   mariadb:
-#     container_name: mariadb
-#     build: ./requirements/mariadb
-#     env_file:
-#       - .env
-#     volumes:
-#       - db:/var/lib/mysql
-#     networks:
-#       - backend
-#     restart: unless-stopped
-
-#   wordpress:
-#     container_name: wordpress
-#     build: ./requirements/wordpress
-#     env_file:
-#       - .env
-#     depends_on:
-#       - mariadb
-#     volumes:
-#       - wp:/var/www/html
-#     networks:
-#       - frontend
-#       - backend
-#     restart: unless-stopped
-
-#   nginx:
-#     container_name: nginx
-#     build: ./requirements/nginx
-#     ports:
-#       - "443:443"
-#     depends_on:
-#       - wordpress
-#     volumes:
-#       - wp:/var/www/html
-#     networks:
-#       - frontend
-#     restart: unless-stopped
-
-# volumes:
-#   wp: 
-#     driver: local
-#     driver_opts:
-#       o: bind
-#       type: none
-#       device: /home/aleroy/data/wordpress
-#   db:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       o: bind
-#       device: /home/aleroy/data/mariadb
-
-
-
+version: "3.8"
 
 services:
-  db:
-    image: postgres:14.1-alpine
+
+  db_postgres:
+    build:
+      context: ./postgres_db
     restart: always
-    env_file:
-      - .env
     environment:
-      - POSTGRES_USER=$POSTGRES_USER
-      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-    ports:
-      - '5432:5432'
-    volumes: 
-      - db:/var/lib/postgresql/data
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     networks:
-      - transcendence
+      - backend_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db_postgres
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - backend_network
+      - frontend_network
+    volumes:
+      - ./backend/src:/usr/src/app/src
+      - ./shared:/usr/src/app/shared
 
   frontend:
-    container_name: frontend
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
     networks:
-      - transcendence
+      - frontend_network
 
-volumes:
-  db:
-    driver: local
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db_postgres
+    environment:
+      - ADMINER_DRIVER=pgsql
+      - ADMINER_SERVER=postgres
+      - ADMINER_USERNAME=${POSTGRES_USER}
+      - ADMINER_DB=${POSTGRES_DB}
+    networks:
+      - backend_network
+      - frontend_network
+    volumes:
+      - ./frontend/src:/usr/src/app/frontend/src
+      - ./frontend/public:/usr/src/app/frontend/public
+      - ./shared:/usr/src/app/shared
+
+networks:
+  backend_network:
+  frontend_network:
