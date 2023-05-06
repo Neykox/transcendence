@@ -30,6 +30,9 @@ services:
     networks:
       - backend_network
       - frontend_network
+    volumes:
+      - ./backend/src:/usr/src/app/src
+      - ./shared:/usr/src/app/shared
 
   frontend:
     build:
@@ -55,6 +58,10 @@ services:
     networks:
       - backend_network
       - frontend_network
+    volumes:
+      - ./frontend/src:/usr/src/app/frontend/src
+      - ./frontend/public:/usr/src/app/frontend/public
+      - ./shared:/usr/src/app/shared
 
 networks:
   backend_network:
