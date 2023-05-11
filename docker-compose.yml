@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+
+  db_postgres:
+    build:
+      context: ./postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - backend_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db_postgres
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - backend_network
+      - frontend_network
+    volumes:
+      - ./backend/src:/usr/src/app/src
+      - ./shared:/usr/src/app/shared
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend_network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db_postgres
+    environment:
+      - ADMINER_DRIVER=pgsql
+      - ADMINER_SERVER=postgres
+      - ADMINER_USERNAME=${POSTGRES_USER}
+      - ADMINER_DB=${POSTGRES_DB}
+    networks:
+      - backend_network
+      - frontend_network
+    volumes:
+      - ./frontend/src:/usr/src/app/frontend/src
+      - ./frontend/public:/usr/src/app/frontend/public
+      - ./shared:/usr/src/app/shared
+
+networks:
+  backend_network:
+  frontend_network:

@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Sigmar&display=swap');
+
+.login {
+	font-family: 'Sigmar', cursive;
+
+	canvas {
+		background: rgb(33, 33, 33);
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: -1;
+	}
+
+
+	.loginPage {
+		height: 100vh;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		gap: 30px;
+
+		.title {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 15px;
+
+			svg {
+				width: 10%;
+			}
+
+			h1 {
+				letter-spacing: 2px;
+				margin: 0;
+				background: linear-gradient(to right bottom, #ae75e3, #6d0fcb);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				font-size: 3em;
+			}
+		}
+
+		.login42 {
+			color: black;
+			font-size: 1.5em;
+			text-decoration: none;
+			background: white;
+			padding: 5px 35px;
+			border-radius: 10px;
+			transition: font-size 0.3s ease;
+		}
+
+		.login42:hover {
+			font-size: 2em;
+		}
+	}
+}

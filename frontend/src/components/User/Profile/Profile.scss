@@ -1,0 +1,30 @@
+.profile {
+	background: rgb(255, 253, 253);
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+	font-family: 'Roboto', sans-serif;
+	height: 100vh;
+
+	padding-top: 20px;
+	margin: 0 80px;
+	width: calc(100% - 80px);
+
+	color: black;
+
+	h1 {
+		margin: 0;
+	}
+
+
+	.grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: 1fr;
+		grid-gap: 40px;
+		padding: 0px 40px;
+		height: 450px;
+		max-height: 450px;
+
+	}
+}
