@@ -1,0 +1,58 @@
+.friendList {
+	width: 25%;
+	min-width: 270px;
+	max-width: 450px;
+	height: 100vh;
+	overflow: hidden;
+	box-shadow: rgba(169, 169, 169, 0.52) 0px 5px 15px;
+	text-transform: capitalize;
+	font-size: small;
+
+	a {
+		text-decoration: none;
+		color: black;
+	}
+
+	.selected {
+		background: #bfbfbf;
+	}
+
+	.friend {
+		box-shadow: rgba(169, 169, 169, 0.52) 0px 5px 15px;
+		border-radius: 10px;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		width: 85%;
+		height: 60px;
+		margin: auto;
+		padding-left: 20px;
+		margin-bottom: 10px;
+		margin-top: 10px;
+		cursor: pointer;
+		transition: all 0.15s ease-in-out;
+
+		&:hover {
+			background: #d2d2d2;
+		}
+
+		img {
+			width: 40px;
+		}
+
+		.online {
+			margin-left: auto;
+			margin-right: 30px;
+			border: 5px solid rgba(19, 169, 19, 0.7);
+			border-radius: 50%;
+		}
+
+		.offline {
+			margin-left: auto;
+			margin-right: 30px;
+			border: 5px solid rgba(255, 0, 0, 0.7);
+			border-radius: 50%;
+		}
+	}
+
+}
