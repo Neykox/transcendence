@@ -1,6 +1,6 @@
 FROM node:latest
 
-WORKDIR /app/usr/src/frontend
+WORKDIR /usr/src/app/frontend
 
 COPY package*.json ./
 
@@ -13,5 +13,6 @@ COPY . .
 
 VOLUME [ "/usr/src/app/frontend/src" ]
 VOLUME [ "/usr/src/app/frontend/shared"]
+VOLUME [ "/usr/src/app/frontend/public"]
 
-CMD ["yarn", "start"]
+CMD ["yarn", "start:dev", "--watch"]
