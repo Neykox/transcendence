@@ -10,8 +10,18 @@ export class TwoFaController {
 		return this.twoFaService.enable_two_fa();
 	}
 
-	@Post('use_two_fa')
-	use_two_fa() {
-		return this.twoFaService.use_two_fa();
+	@Post('disable_two_fa')
+	disable_two_fa() {
+		return this.twoFaService.disable_two_fa();
+	}
+
+	@Post('generate_two_fa')
+	generate_two_fa() {
+		return this.twoFaService.generate_two_fa();
+	}
+
+	@Post('verify_two_fa')
+	verify_two_fa() {
+		return this.twoFaService.verify_two_fa();
 	}
 }

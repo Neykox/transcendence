@@ -3,10 +3,18 @@ import { Injectable } from '@nestjs/common';
 @Injectable({})
 export class TwoFaService {
 	enable_two_fa() {
-		return { message: 'wassup' };
+		return { message: 'enabled' };
 	}
 
-	use_two_fa() {
-		return { message: 'bye bye' };
+	disable_two_fa() {
+		return { message: 'dissed' };
+	}
+
+	generate_two_fa() {
+		return { message: 'qrcode generated' };
+	}
+
+	verify_two_fa() {
+		return { message: 'qrcode verified' };
 	}
 }
