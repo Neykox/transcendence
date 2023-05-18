@@ -43,10 +43,7 @@ export class TwoFaService {
  
     await this.usersService.setTwoFaSecret(secret, user.id);
  
-    return {
-      secret,
-      otpauthUrl
-    }
+    return { otpauthUrl }
   }
 
   public async pipeQrCodeStream(stream: Response, otpauthUrl: string) {

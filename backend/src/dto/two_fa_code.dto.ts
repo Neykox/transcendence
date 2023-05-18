@@ -1,3 +1,3 @@
-export interface TwoFaCodeDto {
+export class TwoFaCodeDto {
 	TwoFaCode: string
 }

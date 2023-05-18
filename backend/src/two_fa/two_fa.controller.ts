@@ -23,12 +23,12 @@ export class TwoFaController {
 	@Get('generate_qrcode')
 	// @UseGuards(JwtAuthenticationGuard)
 	// async register(@Res() response: Response, @Req() request: RequestWithUser) {
-	async register(@Res() response: Response) {
-		const { otpauthUrl } = await this.twoFaService.generate_2Fa_Secret(await this.usersService.findOne(1));
+	async register() {
+		const  otpauthUrl  = await this.twoFaService.generate_2Fa_Secret(await this.usersService.findOne(1));
 
-		console.log(otpauthUrl);
-
-		return this.twoFaService.pipeQrCodeStream(response, otpauthUrl);
+		// console.log(otpauthUrl);
+		return otpauthUrl;
+		// return this.twoFaService.pipeQrCodeStream(response, otpauthUrl);
 	}
 
 	@Post('turn-on')

@@ -1,14 +1,17 @@
 import {React, useState} from 'react'
 import {Link} from 'react-router-dom'
+import {QRCodeCanvas} from 'qrcode.react';
 
 function Page2(){
 
-    const [enabled, setenabled] = useState('disabled');
+    const [enabled, setenabled] = useState("disabled");
+    const [text, setText] = useState("");
+    const [qrcode, setqrcode] = useState("")
 
     const handleClick = async () => {
     	const response = await fetch('http://localhost:5000/two_fa/generate_qrcode');
         const data = await response.json();
-        console.log(data);
+        setqrcode(data.otpauthUrl);
         setenabled('generated');
     };
 
@@ -16,7 +19,7 @@ function Page2(){
     	const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ TwoFaCode: '734331' })
+        body: JSON.stringify({ TwoFaCode: text })
 		};
 
         const response = await fetch('http://localhost:5000/two_fa/turn-on', requestOptions);
@@ -54,6 +57,9 @@ function Page2(){
 		      </button>
 		    </div>
 		    <div>2fa status: {enabled}</div>
+		    {enabled === "generated" && <QRCodeCanvas value={qrcode} />}
+		    <br/>
+		    <input value={text} onChange={(e) => setText(e.target.value)}/>
 		</>
 	)
 }
