@@ -42,6 +42,10 @@ services:
       - "3000:3000"
     networks:
       - frontend_network
+    volumes:
+      - ./frontend/src:/usr/src/app/frontend/src
+      - ./frontend/public:/usr/src/app/frontend/public
+      - ./shared:/usr/src/app/shared
 
   adminer:
     image: adminer

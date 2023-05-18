@@ -5,6 +5,8 @@ import { TwoFaModule } from './two_fa/two_fa.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+// import { AppController } from './app.controller';
+// import { AppService } from './app.service';
 
 @Module({
     imports: [
@@ -22,5 +24,7 @@ import { User } from './entities/user.entity';
         UsersModule,
         AuthModule,
         TwoFaModule],
+    // controllers: [AppController],
+    // providers: [AppService],
 })
 export class AppModule {}

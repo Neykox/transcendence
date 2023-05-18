@@ -1,0 +1,63 @@
+.header {
+	background: white;
+	box-shadow: rgba(169, 169, 169, 0.52) 0px 5px 15px;
+	border-radius: 10px;
+	width: 80%;
+	margin: auto;
+	// margin-top: 20px;
+	margin-bottom: 50px;
+	display: flex;
+	justify-content: space-between;
+
+	.left {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 40%;
+	}
+
+	.right {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		text-align: center;
+		gap: 10px;
+		width: 40%;
+
+		.bar-container {
+			width: 60%;
+			height: 30px;
+			background-color: gray;
+			position: relative;
+			border-radius: 10px;
+		}
+
+		.bar {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			color: white;
+		}
+
+		.win-bar {
+			background: rgba(19, 169, 19, 0.7);
+			border-radius: 10px 0 0 10px;
+		}
+
+		.loss-bar {
+			background: rgba(255, 0, 0, 0.7);
+			border-radius: 0 10px 10px 0;
+		}
+
+		.label {
+			font-size: 18px;
+			font-weight: bold;
+			text-align: center;
+		}
+
+	}
+}

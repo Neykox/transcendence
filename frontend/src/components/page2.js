@@ -3,32 +3,37 @@ import {Link} from 'react-router-dom'
 
 function Page2(){
 
-    const [enabled, setenabled] = useState(0);
+    const [enabled, setenabled] = useState('disabled');
 
     const handleClick = async () => {
-    	const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: 'React POST Request Example' })
-		};
-
-        const response = await fetch('http://localhost:5000/users:1', requestOptions);
+    	const response = await fetch('http://localhost:5000/two_fa/generate_qrcode');
         const data = await response.json();
         console.log(data);
-        setenabled(1);
+        setenabled('generated');
     };
 
     const handleClick2 = async () => {
     	const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ TwoFaCode: '734331' })
+		};
+
+        const response = await fetch('http://localhost:5000/two_fa/turn-on', requestOptions);
+        const data = await response.json();
+        console.log(data);
+        setenabled('enabled');
+    };
+
+    const handleClick3 = async () => {
+    	const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: 'React POST Request Example' })
 		};
 
-        const response = await fetch('http://localhost:5000/users:1', requestOptions);
-        const data = await response.json();
-        console.log(data);
-        setenabled(0);
+        await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
+        setenabled('disabled');
     };
 
 	return (
@@ -39,13 +44,16 @@ function Page2(){
 
 			<div>
 		      <button type="button" onClick={handleClick}>
-		        enable
+		        generate qrcode
 		      </button>
 		      <button type="button" onClick={handleClick2}>
+		        enable
+		      </button>
+		      <button type="button" onClick={handleClick3}>
 		        disable
 		      </button>
 		    </div>
-		    <div>2fa status: {enabled ? 'Enabled' : 'Disabled'}</div>
+		    <div>2fa status: {enabled}</div>
 		</>
 	)
 }
