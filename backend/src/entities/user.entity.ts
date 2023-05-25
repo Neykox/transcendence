@@ -25,4 +25,7 @@ export class User {
 
   @Column({ nullable: true })
   public twoFaSecret?: string;
+
+  @Column({ default: false})
+  isFullyAuth: boolean;
 }
