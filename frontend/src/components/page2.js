@@ -19,6 +19,7 @@ function Page2(){
     	const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ TwoFaCode: text , UserId: 1})
 		};
 
@@ -31,7 +32,8 @@ function Page2(){
     const handleClick3 = async () => {
     	const requestOptions = {
         method: 'POST',
-        headers: { "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYSIsImlhdCI6MTY4NTAyNjUxNCwiZXhwIjoxNjg1MDI2NTc0fQ.UXUZA1gdjeN3jMuJFEznn3ZuzcTVPvKU3ri8Ss7S68M" },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ title: 'React POST Request Example' })
 		};
 
@@ -39,6 +41,19 @@ function Page2(){
         const data = await response.json();
         console.log({data});
         setenabled('disabled');
+    };
+
+    const handleClick4 = async () => {
+    	const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title: 'React POST Request Example' })
+		};
+
+        const response = await fetch('http://localhost:5000/two_fa/logout', requestOptions);
+        const data = await response.json();
+        console.log({data});
     };
 
 	return (
@@ -56,6 +71,9 @@ function Page2(){
 		      </button>
 		      <button type="button" onClick={handleClick3}>
 		        disable
+		      </button>
+		      <button type="button" onClick={handleClick4}>
+		        clear cookie
 		      </button>
 		    </div>
 		    <div>2fa status: {enabled}</div>

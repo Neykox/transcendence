@@ -44,7 +44,7 @@ export class UsersService {
   }
 
   async turnOffTwoFa(userId: number) {
-    return this.usersRepository.update(userId, {
+    this.usersRepository.update(userId, {
       is2FaActive: false,
       // twoFaSecret: null,
       // token: null

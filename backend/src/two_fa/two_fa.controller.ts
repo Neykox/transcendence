@@ -58,6 +58,7 @@ export class TwoFaController {
 		console.log(request.user['id']);
 		// await this.usersService.turnOffTwoFa((await this.usersService.findOne(1)).id);
 		await this.usersService.turnOffTwoFa(request.user['id']);
+		return {msg: "turned oof"}
 	}
 
 	// @Post('turn-off')
@@ -83,6 +84,7 @@ export class TwoFaController {
 	// }
 
 	@Post('logout')
+	@UseGuards(JwtGuard)
 	async logout(@Res({passthrough: true}) response: Response)
 	{
 		response.clearCookie('my_cooky');
