@@ -11,15 +11,17 @@ import {
   UnauthorizedException,
   HttpCode,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { TwoFaService } from './two_fa.service';
 import { UsersService } from '../users/users.service';
 import { TwoFaCodeDto } from '../dto/two_fa_code.dto';
+import { UserIdDto } from '../dto/user_id.dto';
 import { JwtGuard } from '../guard/jwt.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('two_fa')
 export class TwoFaController {
-	constructor(private twoFaService: TwoFaService, private readonly usersService: UsersService) {}
+	constructor(private twoFaService: TwoFaService, private usersService: UsersService, private jwtService: JwtService) {}
 
 	@Get('generate_qrcode')
 	// @UseGuards(JwtGuard)
@@ -35,21 +37,55 @@ export class TwoFaController {
 	@Post('turn-on')
 	@HttpCode(200)
 	// @UseGuards(JwtGuard)
-	async turnOnTwoFactorAuthentication(@Body() { TwoFaCode } : TwoFaCodeDto)
+	async turnOnTwoFactorAuthentication(@Body() { TwoFaCode } : TwoFaCodeDto, @Body() { UserId } : UserIdDto, @Res({passthrough: true}) response: Response)
 	{
 		console.log({TwoFaCode});
-		const isCodeValid = this.twoFaService.isTwoFactorAuthenticationCodeValid(TwoFaCode, await this.usersService.findOne(1));
+		console.log({UserId});
+		const isCodeValid = this.twoFaService.isTwoFactorAuthenticationCodeValid(TwoFaCode, await this.usersService.findOne(UserId));
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
-		return (await this.usersService.turnOnTwoFa((await this.usersService.findOne(1)).id));
+		const jwt = await this.usersService.turnOnTwoFa((await this.usersService.findOne(UserId)).id);
+		response.cookie('my_cooky', jwt, {httpOnly: true});
+		return {msg: "cooky sent?"};
 	}
 
 	@Post('turn-off')
 	@HttpCode(200)
 	@UseGuards(JwtGuard)
-	async turnOffTwoFactorAuthentication()
+	async turnOffTwoFactorAuthentication(@Req() request: Request)
 	{
-		await this.usersService.turnOffTwoFa((await this.usersService.findOne(1)).id);
+		console.log(request.user['id']);
+		// await this.usersService.turnOffTwoFa((await this.usersService.findOne(1)).id);
+		await this.usersService.turnOffTwoFa(request.user['id']);
+	}
+
+	// @Post('turn-off')
+	// @HttpCode(200)
+	// // @UseGuards(JwtGuard)
+	// async turnOffTwoFactorAuthentication(@Req() request: Request)
+	// {
+	// 	try {
+	// 		const cookie = request.cookies['my_cooky'];
+
+	// 		if (!cookie)
+	// 			throw UnauthorizedException;
+
+	// 		const payload = await this.jwtService.verifyAsync(cookie.token, {secret: 'secret'});
+
+	// 		if (!payload)
+	// 			throw UnauthorizedException;
+	// 		// return payload;
+	// 		await this.usersService.turnOffTwoFa(payload.id);
+	// 	} catch (e) {
+	// 		throw new UnauthorizedException;
+	// 	}
+	// }
+
+	@Post('logout')
+	async logout(@Res({passthrough: true}) response: Response)
+	{
+		response.clearCookie('my_cooky');
+		return {msg: 'cookies cleared?'}
 	}
 }

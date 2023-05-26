@@ -24,8 +24,8 @@ export class User {
   is2FaActive: boolean;
 
   @Column({ nullable: true })
-  public twoFaSecret?: string;
+  twoFaSecret?: string;
 
-  @Column({ default: false})
-  isFullyAuth: boolean;
+  @Column({ nullable: true})
+  token?: string;
 }

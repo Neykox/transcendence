@@ -16,7 +16,7 @@ export class AuthService {
 		}
 		if (user.is2FaActive === false)
 		{
-			const payload = { sub: user.id, username: user.pseudo };
+			const payload = { id: user.id, username: user.pseudo };
 			return { access_token: await this.jwtService.signAsync(payload/*, { secret: await this.configService.get('JWT_SECRET'), expiresIn: '60s'}*/) };
 		}
 		return { message: 'need to valide two fa' };

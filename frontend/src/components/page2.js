@@ -19,7 +19,7 @@ function Page2(){
     	const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ TwoFaCode: text })
+        body: JSON.stringify({ TwoFaCode: text , UserId: 1})
 		};
 
         const response = await fetch('http://localhost:5000/two_fa/turn-on', requestOptions);
@@ -31,11 +31,13 @@ function Page2(){
     const handleClick3 = async () => {
     	const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiYSIsImlhdCI6MTY4NTAyNjUxNCwiZXhwIjoxNjg1MDI2NTc0fQ.UXUZA1gdjeN3jMuJFEznn3ZuzcTVPvKU3ri8Ss7S68M" },
         body: JSON.stringify({ title: 'React POST Request Example' })
 		};
 
-        await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
+        const response = await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
+        const data = await response.json();
+        console.log({data});
         setenabled('disabled');
     };
 

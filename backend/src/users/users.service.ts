@@ -31,17 +31,23 @@ export class UsersService {
   async turnOnTwoFa(userId: number) {
     this.usersRepository.update(userId, { is2FaActive: true });
     const user = await this.findOne(userId);
-    const payload = { sub: user.id, username: user.pseudo };
+    const payload = { id: user.id, username: user.pseudo };
     console.log(payload);
     console.log({jwtSecret: await this.configService.get<string>('JWT_SECRET')})
     console.log({host: await this.configService.get<string>('POSTGRES_HOST')})
-    return { access_token: await this.jwtService.signAsync(payload, { secret: 'secret'/*await this.configService.get('JWT_SECRET')*/, expiresIn: '60s'}) };
+    const token = await this.jwtService.signAsync(payload, { secret: 'secret'/*await this.configService.get('JWT_SECRET')*/, expiresIn: '120s'})
+    console.log(token);
+    // return { access_token: await this.jwtService.signAsync(payload, { secret: 'secret'/*await this.configService.get('JWT_SECRET')*/, expiresIn: '60s'}) };
+    this.usersRepository.update(userId, {token: token});
+    // return `Authentication=${token}; HttpOnly; Path=/; Max-Age=60s`;
+    return {token}
   }
 
   async turnOffTwoFa(userId: number) {
-    // setTwoFaSecret(userId, NULL);
     return this.usersRepository.update(userId, {
-      is2FaActive: false
+      is2FaActive: false,
+      // twoFaSecret: null,
+      // token: null
     });
   }
 

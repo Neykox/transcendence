@@ -13,29 +13,24 @@ import { ConfigService } from '@nestjs/config'
 export class JwtGuard implements CanActivate {
   constructor(private jwtService: JwtService, private configService: ConfigService) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean>
+  {
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+    const token = request.cookies['my_cooky']
+
     if (!token) {
       throw new BadRequestException('yoken doesnt exist');
-      // throw new UnauthorizedException();
     }
-    try {
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: this.configService.get('JWT_SECRET')
-        }
-      );
-      console.log(this.configService.get('JWT_SECRET'))
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
-      request['user'] = payload;
-    } catch {
-      // throw new UnauthorizedException();
+    const payload = await this.jwtService.verifyAsync(token.token, {secret: 'secret'/*this.configService.get('JWT_SECRET')*/});
 
+    if (!payload)
       throw new BadRequestException('token verification failled');
-    }
+    // console.log({guard_jwtSecret: await this.configService.get<string>('JWT_SECRET')})
+
+
+    // 💡 We're assigning the payload to the request object here
+    // so that we can access it in our route handlers
+    request['user'] = payload;
     return true;
   }
 
