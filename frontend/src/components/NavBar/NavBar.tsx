@@ -3,6 +3,7 @@ import homePageImg from '../../asset/images/home-page.png';
 import messageImg from '../../asset/images/message.png';
 import userImg from '../../asset/images/user.png';
 import crowdImg from '../../asset/images/crowd.png';
+import settings from '../../asset/images/settings.png';
 import { Link } from 'react-router-dom';
 
 function NavBar() {
@@ -27,6 +28,11 @@ function NavBar() {
 			<div>
 				<Link to={"/message"}>
 					<img src={crowdImg} alt="" />
+				</Link>
+			</div>
+			<div>
+				<Link to={"/settings"}>
+					<img src={settings} alt="" />
 				</Link>
 			</div>
 		</nav>

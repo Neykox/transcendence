@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Login from './components/Login/Login';
 import Profile from './components/User/Profile/Profile';
 import Message from './components/User/Message/Message';
+import Settings from './components/User/Settings/Settings';
 import Chat from './components/User/Message/Chat/Chat';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path='/message' element={<Message />}>
           <Route path="/message/:id" element={<Chat />} />
         </Route>
+        <Route path='/settings' element={<Settings />}></Route>
       </Routes>
     </div>
   );
