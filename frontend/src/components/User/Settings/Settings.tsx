@@ -1,5 +1,9 @@
 import React, { useState, ChangeEvent } from 'react';
 import './Settings.scss';
+import Toggle from 'react-toggle';
+import 'react-toggle/style.css';
+
+
 
 const Settings = () => {
   const [username, setUsername] = useState('');
@@ -71,22 +75,17 @@ const Settings = () => {
         )}
   
         <div>
-          <label htmlFor="darkMode">Activer le dark mode : </label>
-          <input
-            type="range"
-            id="darkMode"
-            min="0"
-            max="1"
-            step="1"
-            value={darkMode ? 1 : 0}
-            onChange={handleDarkModeToggle}
-          />
-        </div>
+         <label htmlFor="darkMode">Activer le dark mode : </label>
+        <Toggle
+        id="darkMode"
+        checked={darkMode}
+        onChange={handleDarkModeToggle}
+      />
+        </div>    
   
         <div>
           <label htmlFor="sound">Activer le son : </label>
-          <input
-            type="checkbox"
+          <Toggle
             id="sound"
             checked={soundEnabled}
             onChange={handleSoundToggle}
@@ -106,7 +105,7 @@ const Settings = () => {
         {profilePhoto && (
           <div>
             <h3>Photo de profil actuelle : </h3>
-            <img src={profilePhoto} alt="Profile" />
+            <img src={profilePhoto} alt="Profile" /> 
           </div>
         )}
   

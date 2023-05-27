@@ -4,7 +4,10 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "react",
+      "react-dom",
+      "react-toggle"
     ],
     "allowJs": true,
     "skipLibCheck": true,
