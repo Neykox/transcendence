@@ -46,33 +46,29 @@ const Settings = () => {
       <h1>Paramètres du compte</h1>
   
       <div className="settinglist">
-        <div>
-          <label htmlFor="username">Modifier son pseudo : </label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={handleUsernameChange}
-          />
-          <button onClick={handleModalOpen}>Modifier</button>
-        </div>
   
-        {isModalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <h2>Modifier le pseudo</h2>
-              <input
-                type="text"
-                value={username}
-                onChange={handleUsernameChange}
-              />
-              <div className="modal-buttons">
-                <button onClick={handleModalSave}>Enregistrer</button>
-                <button onClick={handleModalClose}>Annuler</button>
-              </div>
+      <div>
+      <label htmlFor="username">Modifier son pseudo: </label>
+      <button onClick={handleModalOpen}>Modifier</button>
+
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Modifier le pseudo</h2>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={handleUsernameChange}
+            />
+            <div className="modal-buttons">
+              <button onClick={handleModalSave}>Enregistrer</button>
+              <button onClick={handleModalClose}>Annuler</button>
             </div>
           </div>
-        )}
+        </div>
+      )}
+    </div>
   
         <div>
          <label htmlFor="darkMode">Activer le dark mode : </label>

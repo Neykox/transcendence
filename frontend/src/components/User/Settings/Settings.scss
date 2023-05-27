@@ -23,6 +23,23 @@ label {
     font-weight: bold;
 }
 
+button {
+    font-family: "Roboto", sans-serif;
+    border-radius: 5px;
+    padding: 10px 20px;
+    background-color: #888787;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #a5a1a1;
+  }
+  
+  button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
 
 .modal {
     position: fixed;
