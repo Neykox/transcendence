@@ -7,6 +7,9 @@ import NavBar from '../../NavBar/NavBar';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-modal';
+import userImg from '../../../asset/images/user.png'; // a supprimer juste pour tester
+import crowdImg from '../../../asset/images/crowd.png'; // a supprimer juste pour tester
+import settings from '../../../asset/images/settings.png'; // a supprimer juste pour tester
 
 const Settings = () => {
   const [username, setUsername] = useState(user.username);
@@ -16,7 +19,7 @@ const Settings = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModal2Open, setIsModal2Open] = useState(false);
   const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
-  const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState(null);
+  const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState("");
 
 
   /*
@@ -50,7 +53,6 @@ const Settings = () => {
   /*
   evenements de changement de son
   */
-
 
   const handleSoundToggle = () => {
     setSoundEnabled(!soundEnabled);
@@ -146,9 +148,9 @@ const Settings = () => {
         />
               {profilePhoto && (
         <div>
-          <h3>Ancienne photo de profil :</h3>
+          <h3>Ancienne photo de profil : </h3>
           <img src={user.avatar} alt="Avatar" />
-          <h3>Nouvelle photo de profil :</h3>
+          <h3>Nouvelle photo de profil : </h3>
           <img src={profilePhoto} alt="Avatar" />
           <button onClick={handleSave}>Enregistrer</button>
         </div>
@@ -158,10 +160,10 @@ const Settings = () => {
 
       <Modal isOpen={isDefaultModalOpen}>
         <h2>Choisir un avatar par défaut</h2>
-        <div>
-          <img src="/image1.jpg" alt="Avatar1" onClick={() => setSelectedDefaultAvatar("/image1.jpg")} />
-          <img src="/image2.jpg" alt="Avatar2" onClick={() => setSelectedDefaultAvatar("/image2.jpg")} />
-          <img src="/image3.jpg" alt="Avatar3" onClick={() => setSelectedDefaultAvatar("/image3.jpg")} />
+        <div>   
+          <img src={userImg} alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => userImg)} /> 
+          <img src={crowdImg} alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => crowdImg)} />
+          <img src={settings} alt="Avatar3" onClick={() => setSelectedDefaultAvatar(() => settings)} />
         </div>
         {selectedDefaultAvatar && (
           <button onClick={handleSave}>Enregistrer</button>
