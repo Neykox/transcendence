@@ -1,11 +1,18 @@
 import React, { useRef, useEffect } from 'react';
 import userImg from '../../../../asset/images/user.png';
 import './PlayerInfo.scss';
+import {userInfo} from '../../../../model/userInfo'; 
 
 interface PlayerInfoProps {
 	wins: number;
 	loses: number;
 }
+
+export let user: userInfo = {
+	id: "12345",
+	avatar: userImg,
+	username: "Thamon",
+  };
 
 function PlayerInfo({ wins, loses }: PlayerInfoProps) {
 	const winBarRef = useRef<HTMLDivElement>(null);
@@ -39,9 +46,9 @@ function PlayerInfo({ wins, loses }: PlayerInfoProps) {
 	return (
 		<div className="header">
 			<div className="left">
-				<img src={userImg} alt="Avatar" />
+				<img {...{ src: user.avatar, alt: 'Avatar' }} />	
 				<div className="name">
-					<h1>Thamon</h1>
+					<h1>{user.username}</h1>
 					<h2>Tanguy HAMON</h2>
 				</div>
 			</div>

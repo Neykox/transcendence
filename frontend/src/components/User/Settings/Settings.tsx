@@ -2,15 +2,20 @@ import React, { useState, ChangeEvent } from 'react';
 import './Settings.scss';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
-
-
+import { user } from '../Profile/PlayerInfo/PlayerInfo';
+import NavBar from '../../NavBar/NavBar';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Modal from 'react-modal';
 
 const Settings = () => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(user.username);
   const [darkMode, setDarkMode] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModal2Open, setIsModal2Open] = useState(false);
+  const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
 
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -19,6 +24,7 @@ const Settings = () => {
   const handleDarkModeToggle = () => {
     setDarkMode(!darkMode);
   };
+  
   const handleModalOpen = () => {
     setIsModalOpen(true);
   };
@@ -28,7 +34,7 @@ const Settings = () => {
   };
 
   const handleModalSave = () => {
-    // Effectuer ici les opérations nécessaires pour enregistrer le nouveau pseudo
+    user.username = username; 
     setIsModalOpen(false);
   };
 
@@ -37,16 +43,25 @@ const Settings = () => {
   };
 
   const handleProfilePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0)
-    setProfilePhoto(URL.createObjectURL(event.target.files[0]));
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      const newAvatarUrl = URL.createObjectURL(file);
+      setProfilePhoto(newAvatarUrl);
+    }
   };
 
+  const handleSave = () => {
+    user.avatar = profilePhoto;
+    toast.success('Photo de profil enregistrée avec succès');
+  };
+  
+
   return (
+
+     
     <div>
-      <h1>Paramètres du compte</h1>
-  
+     <NavBar />
       <div className="settinglist">
-  
       <div>
       <label htmlFor="username">Modifier son pseudo: </label>
       <button onClick={handleModalOpen}>Modifier</button>
@@ -87,25 +102,48 @@ const Settings = () => {
             onChange={handleSoundToggle}
           />
         </div>
-  
+   
+
+
+      <div>
+        <label htmlFor="profilePhoto">Modifier sa photo de profil : </label>
+
+        <button onClick={() => setIsModal2Open(true)}>Avatar perso</button>
+        <button onClick={() => setIsDefaultModalOpen(true)}>Avatar par défaut</button>
+      </div>
+
+
+
+      <Modal isOpen={isModal2Open}>
+        <h2>Choisir une photo de profil</h2>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleProfilePhotoChange}
+        />
+              {profilePhoto && (
         <div>
-          <label htmlFor="profilePhoto">Modifier sa photo de profil : </label>
-          <input
-            type="file"
-            id="profilePhoto"
-            accept="image/*"
-            onChange={handleProfilePhotoChange}
-          />
+          <h3>Ancienne photo de profil :</h3>
+          <img src={user.avatar} alt="Avatar" />
+          <h3>Nouvelle photo de profil :</h3>
+          <img src={profilePhoto} alt="Avatar" />
+          <button onClick={handleSave}>Enregistrer</button>
         </div>
+      )}
+        <button onClick={() => setIsModal2Open(false)}>Fermer</button>
+      </Modal>
+
+      <Modal isOpen={isDefaultModalOpen}>
+        <h2>Choisir un avatar par défaut</h2>
+        <div>
+          <img src="chemin/vers/image1.jpg" alt="Avatar 1" />
+          <img src="chemin/vers/image2.jpg" alt="Avatar 2" />
+          <img src="chemin/vers/image3.jpg" alt="Avatar 3" />
+        </div>
+        <button onClick={() => setIsDefaultModalOpen(false)}>Fermer</button>
+      </Modal>
   
-        {profilePhoto && (
-          <div>
-            <h3>Photo de profil actuelle : </h3>
-            <img src={profilePhoto} alt="Profile" /> 
-          </div>
-        )}
-  
-        <button>Enregistrer</button>
+
       </div>
     </div>
   );
