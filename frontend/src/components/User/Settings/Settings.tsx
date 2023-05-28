@@ -16,15 +16,16 @@ const Settings = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModal2Open, setIsModal2Open] = useState(false);
   const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
+  const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState(null);
 
+
+  /*
+  evenements de changement de nom d'utilisateur
+  */
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
   };
 
-  const handleDarkModeToggle = () => {
-    setDarkMode(!darkMode);
-  };
-  
   const handleModalOpen = () => {
     setIsModalOpen(true);
   };
@@ -38,9 +39,26 @@ const Settings = () => {
     setIsModalOpen(false);
   };
 
+  /*
+  evenements de changement de mode 
+  */
+
+  const handleDarkModeToggle = () => {
+    setDarkMode(!darkMode);
+  };
+
+  /*
+  evenements de changement de son
+  */
+
+
   const handleSoundToggle = () => {
     setSoundEnabled(!soundEnabled);
   };
+
+  /*
+  evenements de changement de photo de profil
+  */ 
 
   const handleProfilePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -51,8 +69,13 @@ const Settings = () => {
   };
 
   const handleSave = () => {
-    user.avatar = profilePhoto;
-    toast.success('Photo de profil enregistrée avec succès');
+    if (profilePhoto) {
+      user.avatar = profilePhoto;
+      toast.success('Photo de profil enregistrée avec succès');
+    } else if (selectedDefaultAvatar) {
+      user.avatar = selectedDefaultAvatar;
+      toast.success('Avatar par défaut enregistré avec succès');
+    }
   };
   
 
@@ -136,10 +159,13 @@ const Settings = () => {
       <Modal isOpen={isDefaultModalOpen}>
         <h2>Choisir un avatar par défaut</h2>
         <div>
-          <img src="chemin/vers/image1.jpg" alt="Avatar 1" />
-          <img src="chemin/vers/image2.jpg" alt="Avatar 2" />
-          <img src="chemin/vers/image3.jpg" alt="Avatar 3" />
+          <img src="/image1.jpg" alt="Avatar1" onClick={() => setSelectedDefaultAvatar("/image1.jpg")} />
+          <img src="/image2.jpg" alt="Avatar2" onClick={() => setSelectedDefaultAvatar("/image2.jpg")} />
+          <img src="/image3.jpg" alt="Avatar3" onClick={() => setSelectedDefaultAvatar("/image3.jpg")} />
         </div>
+        {selectedDefaultAvatar && (
+          <button onClick={handleSave}>Enregistrer</button>
+        )}
         <button onClick={() => setIsDefaultModalOpen(false)}>Fermer</button>
       </Modal>
   
