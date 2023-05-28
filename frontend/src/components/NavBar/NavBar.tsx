@@ -30,7 +30,7 @@ function NavBar() {
 					<img src={crowdImg} alt="" />
 				</Link>
 			</div>
-			<div>
+			<div className="set">
 				<Link to={"/settings"}>
 					<img src={settings} alt="" />
 				</Link>
