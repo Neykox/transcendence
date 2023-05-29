@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { UsersService } from './users/users.service';
 import { UsersController } from './users/users.controller';
+import { ChannelsModule } from './channels/channels.module';
+import { Channel } from './channels/entities/channel.entity';
 
 @Module({
     imports: [
@@ -16,11 +18,12 @@ import { UsersController } from './users/users.controller';
             username: 'utilisateur',
             password: 'motdepasse',
             database: 'basededonnee',
-            entities: [User],
+            entities: [User, Channel],
             synchronize: true,
         }),
         TypeOrmModule.forFeature([User]),
         UsersModule,
+        ChannelsModule,
     ],
     controllers: [AppController, UsersController],
     providers: [AppService, UsersService],
