@@ -8,7 +8,7 @@ export class Channel {
     @Column()
     owner: number;
 
-    @Column()
+    @Column({ unique: true })
     name: string;
 
     @Column()

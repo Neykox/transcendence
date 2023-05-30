@@ -17,7 +17,7 @@ CREATE TYPE channel_type_enum AS ENUM ('public', 'private', 'protected');
 CREATE TABLE channel (
   id SERIAL PRIMARY KEY,
   owner INTEGER NOT NULL,
-  name VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL UNIQUE,
   type channel_type_enum NOT NULL,
   password VARCHAR(255)
 );

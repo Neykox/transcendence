@@ -4,7 +4,7 @@ import { UpdateChannelDto } from './dto/update-channel.dto';
 import * as argon from 'argon2';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from './entities/channel.entity';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository, TypeORMError } from 'typeorm';
 
 @Injectable()
 export class ChannelsService {
@@ -13,18 +13,33 @@ export class ChannelsService {
     private channelRepository: Repository<Channel>,
     ) {}
 
-  async create(createChannelDto: CreateChannelDto) {
-    // check if channel is protected which means we should encrypt the password
+  async create(createChannelDto: CreateChannelDto): Promise<Channel> {
+    // create the new channel
+    const channel = new Channel();
+    channel.owner = createChannelDto.owner;
+    channel.name = createChannelDto.name;
+    channel.type = createChannelDto.type;
     if (createChannelDto.type === 'protected') {
-      const hash = argon.hash(createChannelDto.password);
+      const hash = await argon.hash(createChannelDto.password);
+      channel.password = hash;
     }
 
     // save the channel in the database
-    const channel = new Channel();
-    channel.owner = // HERE
+    try {
+      const createdChannel = await this.channelRepository.save(channel);
+  
+      delete(createdChannel.password);
 
-    // return the saved channel (only the dto atm)
-    return createChannelDto;
+      return (createdChannel);
+    }
+    catch(error) {
+      if (error instanceof QueryFailedError) {
+       console.log('ceci est un test'); //HERE codes d'erreur
+      }
+      else {
+        console.log('test');
+      }
+    }
   }
 
   findAll() {
