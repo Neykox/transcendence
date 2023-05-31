@@ -22,6 +22,11 @@ export class UsersService {
     return this.usersRepository.findOneBy({ id });
   }
 
+  async findOneByLogin(login: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({ login });
+  }
+
+
   async setTwoFaSecret(secret: string, userId: number) {
     return this.usersRepository.update(userId, {
       twoFaSecret: secret
