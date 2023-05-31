@@ -29,6 +29,16 @@ function Page1(){
         console.log(data);
     };
 
+    const handleClick3 = async () => {
+    	 fetch('http://localhost:5000/signin', {
+            method: 'GET',
+            headers: {'Authorization': 'token'}
+        });
+        const response = await fetch('https://api.intra.42.fr/v2/me');
+        const data = await response.json();
+        console.log(data);
+    };
+
 	return (
 		<>
 			<div>page 1</div>
@@ -40,10 +50,13 @@ function Page1(){
 		
 		    <div>
 		      <button type="button" onClick={handleClick}>
-		        Hi
+		        login
 		      </button>
 		      <button type="button" onClick={handleClick2}>
-		        Bye
+		        get token
+		      </button>
+		      <button type="button" onClick={handleClick3}>
+		        get user info
 		      </button>
 		    </div>
 		</>
