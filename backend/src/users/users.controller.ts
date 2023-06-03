@@ -22,32 +22,10 @@ export class UsersController {
 		}
 	}
 
-// 	@Get(':id')
-  // async findOne(@Param('id') id: number): Promise<User> {
-  //   const user = await this.usersService.findOne(id);
-  //   if (!user) {
-  //     throw new NotFoundException('User does not exist!');
-  //   } else {
-  //     return user;
-  //   }
-  // }
-
 	@Post('create')
 	async create(@Body() { Login, Image } : UserCreationDto)
 	{
 		return await this.usersService.create({"pseudo": Login, "login": Login, "image": Image})
 	}
 
-	// @Post('create')
-	// async create(@Body() user: User)
-	// {
-	// 	console.log("create user = ",user);
-	// 	return await this.usersService.create({"pseudo": user.login, "login": user.login, "image": user.image})
-	// }
-
-	// @Post()
-	// async create(@Body() user: User): Promise<User>
-	// {
-	// 	return this.usersService.create(user);
-	// }
 }

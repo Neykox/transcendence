@@ -27,9 +27,9 @@ function Page2(){
 		body: JSON.stringify({ TwoFaCode: text })
 		};
 
-		const response = await fetch('http://localhost:5000/two_fa/turn-on', requestOptions);
-		const data = await response.json();
-		console.log(data);
+		await fetch('http://localhost:5000/two_fa/turn-on', requestOptions);
+		// const data = await response.json();
+		// console.log(data);
 		setenabled('enabled');
 	};
 
@@ -41,9 +41,9 @@ function Page2(){
 		body: JSON.stringify({ title: 'React POST Request Example' })
 		};
 
-		const response = await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
-		const data = await response.json();
-		console.log({data});
+		await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
+		// const data = await response.json();
+		// console.log({data});
 		setenabled('disabled');
 	};
 
@@ -55,45 +55,10 @@ function Page2(){
 		body: JSON.stringify({ title: 'React POST Request Example' })
 		};
 
-		const response = await fetch('http://localhost:5000/auth/clear_cookie', requestOptions);
-		const data = await response.json();
-		console.log({data});
+		await fetch('http://localhost:5000/auth/clear_cookie', requestOptions);
+		// const data = await response.json();
+		// console.log({data});
 	};
-
-	// const get_qrcode = async () =>
-	// {
-	// 	const response = await fetch('http://localhost:5000/two_fa/generate_qrcode');
-	// 	const data = await response.json();
-	// 	setqrcode(data.otpauthUrl);
-	// 	setenabled('generated');
-	// };
-
-	// useEffect(() => {
-	// 	const test = async () =>
-	// 	{
-	// 		if (code)
-	// 		{
-	// 			await get_access_token();
-	// 			await get_user_info();
-	// 			await get_user();
-	// 			if (user === null)
-	// 			{
-	// 				await create_user();
-	// 				// await get_cookie();
-	// 				setDirection("/profile");
-	// 			}
-	// 			else if (user && user.is2FaActive)
-	// 				setDirection("/page2");
-	// 			else
-	// 			{
-	// 				// await get_cookie();
-	// 				setDirection("/profile");
-	// 			}
-	// 			setRedirect(true);
-	// 		}
-	// 	}
-	// 	test();
-	// });
 
 	return (
 		<>

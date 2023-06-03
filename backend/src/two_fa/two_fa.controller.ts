@@ -25,21 +25,17 @@ export class TwoFaController {
 
 	@Get('generate_qrcode')
 	@UseGuards(JwtGuard)
-	// async register(@Res() response: Response, @Req() request: RequestWithUser) {
 	async register(@Req() request: Request) {
 		const  otpauthUrl  = await this.twoFaService.generate_2Fa_Secret(await this.usersService.findOne(request.user['id']));
 
-		// console.log(otpauthUrl);
 		return otpauthUrl;
-		// return this.twoFaService.pipeQrCodeStream(response, otpauthUrl);
 	}
 
 	@Post('turn-on')
 	@HttpCode(200)
-	@UseGuards(JwtGuard)//should be able to get user info thanks to cookie
+	@UseGuards(JwtGuard)
 	async turnOnTwoFactorAuthentication(@Body() { TwoFaCode } : TwoFaCodeDto, @Res({passthrough: true}) response: Response, @Req() request: Request)
 	{
-		console.log({TwoFaCode});
 		const user = await this.usersService.findOne(request.user['id']);
 		const isCodeValid = this.twoFaService.isTwoFactorAuthenticationCodeValid(TwoFaCode, user);
 		if (!isCodeValid) {
@@ -55,39 +51,9 @@ export class TwoFaController {
 	@UseGuards(JwtGuard)
 	async turnOffTwoFactorAuthentication(@Req() request: Request)
 	{
-		console.log("turn-off user = ", request.user);
-		// await this.usersService.turnOffTwoFa((await this.usersService.findOne(1)).id);
-		await this.usersService.turnOffTwoFa(request.user['id']);
+
+		const user = await this.usersService.findOne(request.user['id']);
+		await this.usersService.turnOffTwoFa(user);
 		return {msg: "turned oof"}
 	}
-
-	// @Post('turn-off')
-	// @HttpCode(200)
-	// // @UseGuards(JwtGuard)
-	// async turnOffTwoFactorAuthentication(@Req() request: Request)
-	// {
-	// 	try {
-	// 		const cookie = request.cookies['my_cooky'];
-
-	// 		if (!cookie)
-	// 			throw UnauthorizedException;
-
-	// 		const payload = await this.jwtService.verifyAsync(cookie.token, {secret: 'secret'});
-
-	// 		if (!payload)
-	// 			throw UnauthorizedException;
-	// 		// return payload;
-	// 		await this.usersService.turnOffTwoFa(payload.id);
-	// 	} catch (e) {
-	// 		throw new UnauthorizedException;
-	// 	}
-	// }
-
-	// @Post('logout')
-	// @UseGuards(JwtGuard)
-	// async logout(@Res({passthrough: true}) response: Response)
-	// {
-	// 	response.clearCookie('my_cooky');
-	// 	return {msg: 'cookies cleared?'}
-	// }
 }

@@ -65,10 +65,7 @@ function Page1(){
 		if (response.status === 404)
 			user = null;
 		else
-		{
 			user = await response.json();
-			console.log("existing user = ", user);
-		}
 	};
 
 	const create_user = async () =>
@@ -83,7 +80,6 @@ function Page1(){
 		};
 		const response = await fetch('http://localhost:5000/users/create', requestOptions);
 		user = await response.json();
-		console.log("create return = ", user);
 	};
 
 	const get_cookie = async () => {
@@ -95,9 +91,8 @@ function Page1(){
 				'User': user,
 			})
 		};
-		const response = await fetch('http://localhost:5000/auth/create_cookie', requestOptions);
-		const data = await response.json();
-		console.log("return of cookei = ", data)
+		await fetch('http://localhost:5000/auth/create_cookie', requestOptions);
+		// const data = await response.json();
 	};
 
 	useEffect(() => {
@@ -121,9 +116,6 @@ function Page1(){
 					await get_cookie();
 					setDirection("/profile");
 				}
-				
-					await get_cookie();
-				setDirection("/page2");
 				setRedirect(true);
 			}
 		}
