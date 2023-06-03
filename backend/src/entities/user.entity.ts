@@ -26,8 +26,8 @@ export class User {
   @Column({ nullable: true })
   twoFaSecret?: string;
 
-  @Column({ nullable: true})
-  token?: string;
+  // @Column({ nullable: true})
+  // token?: string;
 
   @Column({ nullable: true})
   image?: string;

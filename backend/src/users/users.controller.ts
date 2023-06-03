@@ -35,8 +35,6 @@ export class UsersController {
 	@Post('create')
 	async create(@Body() { Login, Image } : UserCreationDto)
 	{
-		console.log({Login});
-		console.log({Image});
 		return await this.usersService.create({"pseudo": Login, "login": Login, "image": Image})
 	}
 

@@ -24,10 +24,10 @@ export class TwoFaController {
 	constructor(private twoFaService: TwoFaService, private usersService: UsersService, private jwtService: JwtService) {}
 
 	@Get('generate_qrcode')
-	// @UseGuards(JwtGuard)
+	@UseGuards(JwtGuard)
 	// async register(@Res() response: Response, @Req() request: RequestWithUser) {
-	async register() {
-		const  otpauthUrl  = await this.twoFaService.generate_2Fa_Secret(await this.usersService.findOne(1));
+	async register(@Req() request: Request) {
+		const  otpauthUrl  = await this.twoFaService.generate_2Fa_Secret(await this.usersService.findOne(request.user['id']));
 
 		// console.log(otpauthUrl);
 		return otpauthUrl;
@@ -36,16 +36,16 @@ export class TwoFaController {
 
 	@Post('turn-on')
 	@HttpCode(200)
-	// @UseGuards(JwtGuard)
-	async turnOnTwoFactorAuthentication(@Body() { TwoFaCode } : TwoFaCodeDto, @Body() { UserId } : UserIdDto, @Res({passthrough: true}) response: Response)
+	@UseGuards(JwtGuard)//should be able to get user info thanks to cookie
+	async turnOnTwoFactorAuthentication(@Body() { TwoFaCode } : TwoFaCodeDto, @Res({passthrough: true}) response: Response, @Req() request: Request)
 	{
 		console.log({TwoFaCode});
-		console.log({UserId});
-		const isCodeValid = this.twoFaService.isTwoFactorAuthenticationCodeValid(TwoFaCode, await this.usersService.findOne(UserId));
+		const user = await this.usersService.findOne(request.user['id']);
+		const isCodeValid = this.twoFaService.isTwoFactorAuthenticationCodeValid(TwoFaCode, user);
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
-		const jwt = await this.usersService.turnOnTwoFa((await this.usersService.findOne(UserId)).id);
+		const jwt = await this.usersService.turnOnTwoFa(user);
 		response.cookie('my_cooky', jwt, {httpOnly: true});
 		return {msg: "cooky sent?"};
 	}
@@ -55,7 +55,7 @@ export class TwoFaController {
 	@UseGuards(JwtGuard)
 	async turnOffTwoFactorAuthentication(@Req() request: Request)
 	{
-		console.log(request.user['id']);
+		console.log("turn-off user = ", request.user);
 		// await this.usersService.turnOffTwoFa((await this.usersService.findOne(1)).id);
 		await this.usersService.turnOffTwoFa(request.user['id']);
 		return {msg: "turned oof"}
@@ -83,11 +83,11 @@ export class TwoFaController {
 	// 	}
 	// }
 
-	@Post('logout')
-	@UseGuards(JwtGuard)
-	async logout(@Res({passthrough: true}) response: Response)
-	{
-		response.clearCookie('my_cooky');
-		return {msg: 'cookies cleared?'}
-	}
+	// @Post('logout')
+	// @UseGuards(JwtGuard)
+	// async logout(@Res({passthrough: true}) response: Response)
+	// {
+	// 	response.clearCookie('my_cooky');
+	// 	return {msg: 'cookies cleared?'}
+	// }
 }

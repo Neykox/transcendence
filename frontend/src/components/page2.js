@@ -9,7 +9,11 @@ function Page2(){
 	const [qrcode, setqrcode] = useState("")
 
 	const handleClick = async () => {
-		const response = await fetch('http://localhost:5000/two_fa/generate_qrcode');
+		const requestOptions = {
+		method: 'Get',
+		credentials: 'include',
+		};
+		const response = await fetch('http://localhost:5000/two_fa/generate_qrcode', requestOptions);
 		const data = await response.json();
 		setqrcode(data.otpauthUrl);
 		setenabled('generated');
@@ -20,7 +24,7 @@ function Page2(){
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		credentials: 'include',
-		body: JSON.stringify({ TwoFaCode: text , UserId: 1})
+		body: JSON.stringify({ TwoFaCode: text })
 		};
 
 		const response = await fetch('http://localhost:5000/two_fa/turn-on', requestOptions);
@@ -51,7 +55,7 @@ function Page2(){
 		body: JSON.stringify({ title: 'React POST Request Example' })
 		};
 
-		const response = await fetch('http://localhost:5000/two_fa/logout', requestOptions);
+		const response = await fetch('http://localhost:5000/auth/clear_cookie', requestOptions);
 		const data = await response.json();
 		console.log({data});
 	};

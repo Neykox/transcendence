@@ -38,17 +38,18 @@ export class TwoFaService {
   public async generate_2Fa_Secret(user: User) {
     const secret = authenticator.generateSecret();
     const appName = "ft_graduate"
+    console.log("gen qrcode user = ", user)
  
-    const otpauthUrl = authenticator.keyuri(user.pseudo, appName, secret);
+    const otpauthUrl = authenticator.keyuri(user.login, appName, secret);
  
     await this.usersService.setTwoFaSecret(secret, user.id);
  
     return { otpauthUrl }
   }
 
-  public async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
-    return toFileStream(stream, otpauthUrl);
-  }
+  // public async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
+  //   return toFileStream(stream, otpauthUrl);
+  // }
 
   public isTwoFactorAuthenticationCodeValid(twoFactorAuthenticationCode: string, user: User) {
     return authenticator.verify({
