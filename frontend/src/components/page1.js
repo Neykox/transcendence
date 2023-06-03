@@ -17,11 +17,13 @@ function Page1(){
 	// };
 
 	const [redirect, setRedirect] = useState(false);
+	const [direction, setDirection] = useState("");
 
 	const search = useLocation().search; //if search=NULL need to try to login
 	const code = new URLSearchParams(search).get('code'); //if code=NULL access was denied
 	let access_token;
 	let user_info;
+	let user;
 
 	// const handleClick = () => {
 	// 	window.location.href = 'https://api.intra.42.fr/oauth/authorize?client_id=' + process.env.REACT_APP_UID42 + '&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fpage1&response_type=code';
@@ -46,7 +48,6 @@ function Page1(){
 		};
 		const response = await fetch('https://api.intra.42.fr/oauth/token', requestOptions);
 		const data = await response.json();
-		console.log(data.access_token);
 		access_token = data.access_token;
 	};
 
@@ -57,13 +58,29 @@ function Page1(){
 		};
 		const response = await fetch('https://api.intra.42.fr/v2/me', requestOptions);
 		user_info = await response.json();
-		console.log(user_info);
 	};
 
 	const get_user = async () => {
-		const response = await fetch('http://localhost:5000/users:' + user_info.login);
-		const user = await response.json();
-		console.log(user);
+		const response = await fetch('http://localhost:5000/users/' + user_info.login);
+		if (response.status === 404)
+			user = null;
+		else
+			user = await response.json();
+	};
+
+	const create_user = async () =>
+	{
+		const requestOptions = {
+			method: 'Post',
+			headers: {'Content-Type': 'application/json'},
+			body:JSON.stringify({
+				'Login': user_info.login,
+				'Image': user_info.image.link,
+			})
+		};
+		const response = await fetch('http://localhost:5000/users/create', requestOptions);
+		const data = await response.json();
+		console.log("create return = ", data);
 	};
 
 	useEffect(() => {
@@ -74,6 +91,19 @@ function Page1(){
 				await get_access_token();
 				await get_user_info();
 				await get_user();
+				if (user === null)
+				{
+					await create_user();
+					// await get_cookie();
+					setDirection("/profile");
+				}
+				else if (user && user.is2FaActive)
+					setDirection("/page2");
+				else
+				{
+					// await get_cookie();
+					setDirection("/profile");
+				}
 				setRedirect(true);
 			}
 		}
@@ -81,7 +111,7 @@ function Page1(){
 	});
 
 	if (redirect){
-		navigate("/profile");
+		navigate(direction);
 	}
 
 	return (

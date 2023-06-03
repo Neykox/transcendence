@@ -4,57 +4,92 @@ import {QRCodeCanvas} from 'qrcode.react';
 
 function Page2(){
 
-    const [enabled, setenabled] = useState("disabled");
-    const [text, setText] = useState("");
-    const [qrcode, setqrcode] = useState("")
+	const [enabled, setenabled] = useState("disabled");
+	const [text, setText] = useState("");
+	const [qrcode, setqrcode] = useState("")
 
-    const handleClick = async () => {
-    	const response = await fetch('http://localhost:5000/two_fa/generate_qrcode');
-        const data = await response.json();
-        setqrcode(data.otpauthUrl);
-        setenabled('generated');
-    };
+	const handleClick = async () => {
+		const response = await fetch('http://localhost:5000/two_fa/generate_qrcode');
+		const data = await response.json();
+		setqrcode(data.otpauthUrl);
+		setenabled('generated');
+	};
 
-    const handleClick2 = async () => {
-    	const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ TwoFaCode: text , UserId: 1})
+	const handleClick2 = async () => {
+		const requestOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+		body: JSON.stringify({ TwoFaCode: text , UserId: 1})
 		};
 
-        const response = await fetch('http://localhost:5000/two_fa/turn-on', requestOptions);
-        const data = await response.json();
-        console.log(data);
-        setenabled('enabled');
-    };
+		const response = await fetch('http://localhost:5000/two_fa/turn-on', requestOptions);
+		const data = await response.json();
+		console.log(data);
+		setenabled('enabled');
+	};
 
-    const handleClick3 = async () => {
-    	const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ title: 'React POST Request Example' })
+	const handleClick3 = async () => {
+		const requestOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+		body: JSON.stringify({ title: 'React POST Request Example' })
 		};
 
-        const response = await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
-        const data = await response.json();
-        console.log({data});
-        setenabled('disabled');
-    };
+		const response = await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
+		const data = await response.json();
+		console.log({data});
+		setenabled('disabled');
+	};
 
-    const handleClick4 = async () => {
-    	const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ title: 'React POST Request Example' })
+	const handleClick4 = async () => {
+		const requestOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+		body: JSON.stringify({ title: 'React POST Request Example' })
 		};
 
-        const response = await fetch('http://localhost:5000/two_fa/logout', requestOptions);
-        const data = await response.json();
-        console.log({data});
-    };
+		const response = await fetch('http://localhost:5000/two_fa/logout', requestOptions);
+		const data = await response.json();
+		console.log({data});
+	};
+
+	// const get_qrcode = async () =>
+	// {
+	// 	const response = await fetch('http://localhost:5000/two_fa/generate_qrcode');
+	// 	const data = await response.json();
+	// 	setqrcode(data.otpauthUrl);
+	// 	setenabled('generated');
+	// };
+
+	// useEffect(() => {
+	// 	const test = async () =>
+	// 	{
+	// 		if (code)
+	// 		{
+	// 			await get_access_token();
+	// 			await get_user_info();
+	// 			await get_user();
+	// 			if (user === null)
+	// 			{
+	// 				await create_user();
+	// 				// await get_cookie();
+	// 				setDirection("/profile");
+	// 			}
+	// 			else if (user && user.is2FaActive)
+	// 				setDirection("/page2");
+	// 			else
+	// 			{
+	// 				// await get_cookie();
+	// 				setDirection("/profile");
+	// 			}
+	// 			setRedirect(true);
+	// 		}
+	// 	}
+	// 	test();
+	// });
 
 	return (
 		<>
@@ -63,23 +98,23 @@ function Page2(){
 			<Link to='/page1'>Page 1</Link>
 
 			<div>
-		      <button type="button" onClick={handleClick}>
-		        generate qrcode
-		      </button>
-		      <button type="button" onClick={handleClick2}>
-		        enable
-		      </button>
-		      <button type="button" onClick={handleClick3}>
-		        disable
-		      </button>
-		      <button type="button" onClick={handleClick4}>
-		        clear cookie
-		      </button>
-		    </div>
-		    <div>2fa status: {enabled}</div>
-		    {enabled === "generated" && <QRCodeCanvas value={qrcode} />}
-		    <br/>
-		    <input value={text} onChange={(e) => setText(e.target.value)}/>
+			  <button type="button" onClick={handleClick}>
+				generate qrcode
+			  </button>
+			  <button type="button" onClick={handleClick2}>
+				enable
+			  </button>
+			  <button type="button" onClick={handleClick3}>
+				disable
+			  </button>
+			  <button type="button" onClick={handleClick4}>
+				clear cookie
+			  </button>
+			</div>
+			<div>2fa status: {enabled}</div>
+			{enabled === "generated" && <QRCodeCanvas value={qrcode} />}
+			<br/>
+			<input value={text} onChange={(e) => setText(e.target.value)}/>
 		</>
 	)
 }
