@@ -5,10 +5,10 @@ import { useState, useEffect } from 'react';
 import PlayerInfo from './PlayerInfo/PlayerInfo';
 import FriendList from './FriendList/FriendList';
 
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 
 // Se connecter au canal de websocket
-const socket = io('http://localhost:5000/users');
+// const socket = io('http://localhost:5000/users');
 
 function randomName() {
 	const maleNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew", "Donald", "Anthony", "Mark", "Paul", "Steven", "George", "Kenneth"];
@@ -50,25 +50,25 @@ function Profile() {
 
 
 	// Écouter les événements de mise à jour
-	socket.on('update', data => {
-		// Mettre à jour l'état de l'application avec les nouvelles données
-		const fetchUsers = async (): Promise<Friends[]> => {
-			const dataa = data.json();
-			const friendsData: Friends[] = dataa.map((user: any) => ({
-				id: user.id,
-				pseudo: user.pseudo,
-				status: user.status,
-			}));
-			return friendsData;
-		};
+	// socket.on('update', data => {
+	// 	// Mettre à jour l'état de l'application avec les nouvelles données
+	// 	const fetchUsers = async (): Promise<Friends[]> => {
+	// 		const dataa = data.json();
+	// 		const friendsData: Friends[] = dataa.map((user: any) => ({
+	// 			id: user.id,
+	// 			pseudo: user.pseudo,
+	// 			status: user.status,
+	// 		}));
+	// 		return friendsData;
+	// 	};
 
-		const getUsers = async () => {
-			const fetchedUsers = await fetchUsers();
-			setFriends(fetchedUsers);
-		};
+	// 	const getUsers = async () => {
+	// 		const fetchedUsers = await fetchUsers();
+	// 		setFriends(fetchedUsers);
+	// 	};
 
-		getUsers();
-	});
+	// 	getUsers();
+	// });
 
 	useEffect(() => {
 		const fetchUsers = async (): Promise<Friends[]> => {

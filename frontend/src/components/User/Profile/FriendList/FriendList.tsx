@@ -13,17 +13,12 @@ export default function FriendList({ friends, onClick }: HistoryProps) {
 		<div className="friends">
 			<h1>Friends list</h1>
 			<div className="allFriends">
-				{/* <div className="friendsList">
-					<img src={userImg} alt="Avatar" />
-					<h2>Jean</h2>
-					<div className="online"></div>
-				</div> */}
 				{friends.map((friend: {
 					id: number; pseudo: string; status: string;
 				}) => (
 					<div className="friendsList" key={friend.id}>
 						<img src={userImg} alt="Avatar" />
-						<h2>{friend.pseudo}</h2>
+						<h2>{friend.pseudo.length > 10 ? `${friend.pseudo.slice(0, 10)}.` : friend.pseudo}</h2>
 						<div className={`${friend.status}`}></div>
 						<div className="message">
 							<div className="svg">
@@ -39,7 +34,6 @@ export default function FriendList({ friends, onClick }: HistoryProps) {
 						</div>
 					</div>
 				))}
-
 			</div>
 			<button onClick={onClick}>Add</button>
 		</div>
