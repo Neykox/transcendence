@@ -7,9 +7,17 @@ import NavBar from '../../NavBar/NavBar';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Modal from 'react-modal';
-import userImg from '../../../asset/images/user.png'; // a supprimer juste pour tester
-import crowdImg from '../../../asset/images/crowd.png'; // a supprimer juste pour tester
-import settings from '../../../asset/images/settings.png'; // a supprimer juste pour tester
+import test from '../../../asset/images/test.jpg'; // a supprimer juste pour tester
+import arcencielfille from '../../../asset/images/arcencielfille.jpg';
+import arcencielgarcon from '../../../asset/images/arcencielgarcon.jpg';
+import chat from '../../../asset/images/chat.jpg';
+import fille from '../../../asset/images/fille.jpg';
+import lunette from '../../../asset/images/lunette.jpg';
+import lunette2 from '../../../asset/images/lunette2.jpg';
+import lunettesoleil from '../../../asset/images/lunettesoleil.jpg';
+import peinture from '../../../asset/images/peinture.jpg';
+import smiley from '../../../asset/images/smiley.jpg';
+import vert from '../../../asset/images/vert.jpg';
 
 const Settings = () => {
   const [username, setUsername] = useState(user.username);
@@ -20,6 +28,7 @@ const Settings = () => {
   const [isModal2Open, setIsModal2Open] = useState(false);
   const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
   const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState("");
+  const [doubleAuthEnabled, setDoubleAuthEnabled] = useState(false);
 
 
   /*
@@ -56,6 +65,14 @@ const Settings = () => {
 
   const handleSoundToggle = () => {
     setSoundEnabled(!soundEnabled);
+  };
+
+  /* 
+  evenements de changement de double authentification
+  */
+
+  const doubleAuthhandleSoundToggle = () => {
+    setDoubleAuthEnabled(!doubleAuthEnabled);
   };
 
   /*
@@ -127,6 +144,15 @@ const Settings = () => {
             onChange={handleSoundToggle}
           />
         </div>
+
+        <div>
+          <label htmlFor="2fa">Activer l'authentification à deux facteurs : </label>
+          <Toggle
+            id="2fa"
+            checked={doubleAuthEnabled}
+            onChange={doubleAuthhandleSoundToggle}
+          />
+        </div>
    
 
 
@@ -149,9 +175,9 @@ const Settings = () => {
               {profilePhoto && (
         <div>
           <h3>Ancienne photo de profil : </h3>
-          <img src={user.avatar} alt="Avatar" />
+          <img className="imglist" src={user.avatar} alt="Avatar" />
           <h3>Nouvelle photo de profil : </h3>
-          <img src={profilePhoto} alt="Avatar" />
+          <img className="imglist" src={profilePhoto} alt="Avatar" />
           <button onClick={handleSave}>Enregistrer</button>
         </div>
       )}
@@ -161,9 +187,18 @@ const Settings = () => {
       <Modal isOpen={isDefaultModalOpen}>
         <h2>Choisir un avatar par défaut</h2>
         <div>   
-          <img src={userImg} alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => userImg)} /> 
-          <img src={crowdImg} alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => crowdImg)} />
-          <img src={settings} alt="Avatar3" onClick={() => setSelectedDefaultAvatar(() => settings)} />
+          {/* ajouter la photo 42 */}
+          <img className="imglist" src={test}  alt="Avatar4" onClick={() => setSelectedDefaultAvatar(() => test)} />
+          <img className="imglist" src={arcencielfille}  alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => arcencielfille)} />
+          <img className="imglist" src={chat}  alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => chat)} />
+          <img className="imglist" src={fille}  alt="Avatar3" onClick={() => setSelectedDefaultAvatar(() => fille)} />
+          <img className="imglist" src={lunette2}  alt="Avatar5" onClick={() => setSelectedDefaultAvatar(() => lunette2)} />
+          <img className="imglist" src={lunette}  alt="Avatar6" onClick={() => setSelectedDefaultAvatar(() => lunette)} />
+          <img className="imglist" src={lunettesoleil} alt="Avatar7" onClick={() => setSelectedDefaultAvatar(() => lunettesoleil)} />
+          <img className="imglist" src={peinture}  alt="Avatar8" onClick={() => setSelectedDefaultAvatar(() => peinture)} />
+          <img className="imglist" src={smiley}  alt="Avatar9" onClick={() => setSelectedDefaultAvatar(() => smiley)} />
+          <img className="imglist" src={vert}  alt="Avatar10" onClick={() => setSelectedDefaultAvatar(() => vert)} />
+          <img className="imglist" src={arcencielgarcon}  alt="Avatar11" onClick={() => setSelectedDefaultAvatar(() => arcencielgarcon)} />
         </div>
         {selectedDefaultAvatar && (
           <button onClick={handleSave}>Enregistrer</button>

@@ -27,6 +27,14 @@ label {
       }
 }
 
+.imglist {
+  width: 200px;
+  height: 200px;
+  margin-right: 10px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 button {
     font-family: "Roboto", sans-serif;
     border-radius: 5px;
