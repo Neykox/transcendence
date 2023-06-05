@@ -5,13 +5,13 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  pseudo: string;
+  @Column({ nullable: true })
+  pseudo?: string;
 
-  @Column()
-  password: string;
+  @Column({ unique: true })
+  login: string;
 
-  @Column()
+  @Column({ default: "offline" })
   status: string;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
@@ -19,4 +19,16 @@ export class User {
 
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  @Column({ default: false })
+  is2FaActive: boolean;
+
+  @Column({ nullable: true })
+  twoFaSecret?: string;
+
+  // @Column({ nullable: true})
+  // token?: string;
+
+  @Column({ nullable: true})
+  image?: string;
 }
