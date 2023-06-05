@@ -75,7 +75,7 @@ function Page1(){
 			headers: {'Content-Type': 'application/json'},
 			body:JSON.stringify({
 				'Login': user_info.login,
-				'Image': user_info.image.link,
+				'Image': 'image'/*user_info.image.link*/,
 			})
 		};
 		const response = await fetch('http://localhost:5000/users/create', requestOptions);
