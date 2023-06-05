@@ -16,6 +16,14 @@
 		width: 40%;
 	}
 
+	.left img {
+		width: 200px;
+		height: 200px; /* Optionnel, si vous souhaitez également spécifier la hauteur */
+		border-radius: 50%;
+		object-fit: cover;
+	  }
+
+
 	.right {
 		display: flex;
 		justify-content: center;
