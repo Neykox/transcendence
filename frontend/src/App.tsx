@@ -4,6 +4,8 @@ import Login from './components/Login/Login';
 import Profile from './components/User/Profile/Profile';
 import Message from './components/User/Message/Message';
 import Chat from './components/User/Message/Chat/Chat';
+import Page1 from './components/page1';
+import Page2 from './components/page2';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path='/message' element={<Message />}>
           <Route path="/message/:id" element={<Chat />} />
         </Route>
+        <Route path='/page1' element={<Page1 />}></Route>
+        <Route path='/page2' element={<Page2 />}></Route>
       </Routes>
     </div>
   );
