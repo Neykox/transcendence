@@ -5,13 +5,15 @@ import Profile from './components/User/Profile/Profile';
 import Message from './components/User/Message/Message';
 import Settings from './components/User/Settings/Settings';
 import Chat from './components/User/Message/Chat/Chat';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Page1 from './components/page1';
 import Page2 from './components/page2';
+import { UserProvider } from './model/userContext';
 
 function App() {
   return (
+  <UserProvider>
     <div className="App">
       {/* <h1>Home</h1> */}
       <ToastContainer />
@@ -26,6 +28,7 @@ function App() {
         <Route path='/page2' element={<Page2 />}></Route>
       </Routes>
     </div>
+    </UserProvider>
   );
 }
 

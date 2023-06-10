@@ -1,22 +1,18 @@
-import React, { useRef, useEffect } from 'react';
-import userImg from '../../../../asset/images/user.png';
+import React, { useRef, useEffect, useContext } from 'react';
+//import userImg from '../../../../asset/images/user.png';
 import './PlayerInfo.scss';
-import {userInfo} from '../../../../model/userInfo'; 
+//import {userInfo} from '../../../../model/userInfo'; 
+import UserContext from '../../../../model/userContext';
 
 interface PlayerInfoProps {
 	wins: number;
 	loses: number;
 }
 
-export let user: userInfo = {
-	id: "12345",
-	avatar: userImg,
-	username: "Thamon",
-  };
-
-function PlayerInfo({ wins, loses }: PlayerInfoProps) {
+function PlayerInfo({ wins, loses}: PlayerInfoProps) {
 	const winBarRef = useRef<HTMLDivElement>(null);
 	const lossBarRef = useRef<HTMLDivElement>(null);
+	const { user } = useContext(UserContext);
 
 	//   Le useEffect est un Hook de React qui permet d'effectuer une action à 
 	// 	chaque fois que le composant auquel il est rattaché est affiché à l'écran ou mis à jour
@@ -46,10 +42,10 @@ function PlayerInfo({ wins, loses }: PlayerInfoProps) {
 	return (
 		<div className="header">
 			<div className="left">
-				<img {...{ src: user.avatar, alt: 'Avatar' }} />	
+				<img {...{ src: user.image, alt: 'Avatar' }} />	
 				<div className="name">
-					<h1>{user.username}</h1>
-					<h2>Tanguy HAMON</h2>
+					<h1>{user.pseudo}</h1>
+					<h2>{user.first_name} {user.last_name}</h2>
 				</div>
 			</div>
 			<div className="right">

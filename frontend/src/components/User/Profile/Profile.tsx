@@ -24,6 +24,7 @@ function Profile() {
 	// Set les wins et loses avec la db;
 	const [wins, setWins] = useState(5);
 	const [loses, setLoses] = useState(0);
+	//const { user } = useContext(UserContext);
 
 	interface Match {
 		id: number;
@@ -136,7 +137,7 @@ function Profile() {
 		<div>
 			<NavBar />
 			<div className="profile">
-				<PlayerInfo wins={wins} loses={loses} />
+				<PlayerInfo wins={wins} loses={loses}/>
 				<div className="grid">
 					<History matchs={matchs} onClick={matchList} />
 					<FriendList friends={friends} onClick={friendsList} />
