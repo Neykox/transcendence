@@ -8,12 +8,22 @@
 	margin-bottom: 50px;
 	display: flex;
 	justify-content: space-between;
+	font-size: clamp(11px, 1.3vw, 22px);
 
 	.left {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		width: 40%;
+
+
+		h2 {
+			margin: 0px;
+		}
+
+		img {
+			width: 40%;
+		}
 	}
 
 	.left img {
@@ -35,7 +45,8 @@
 
 		.bar-container {
 			width: 60%;
-			height: 30px;
+			height: 30%;
+			max-height: 30px;
 			background-color: gray;
 			position: relative;
 			border-radius: 10px;
@@ -62,10 +73,54 @@
 		}
 
 		.label {
-			font-size: 18px;
+			font-size: clamp(14px, 1.3vw, 22px);
 			font-weight: bold;
 			text-align: center;
 		}
 
+	}
+}
+
+@media (max-width: 900px) {
+	.header {
+		font-size: clamp(8px, 1.3vw, 22px);
+		justify-content:center;
+		gap: 10%;
+		margin-bottom: 40px;
+
+		h2 {
+			font-size: clamp(7px, 1.3vw, 22px);
+		}
+	
+		.left {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			// gap: 10px;
+			width: 40%;
+
+			h2 {
+				margin: 0px;
+			}
+	
+			img {
+				width: 40%;
+			}
+		}
+	
+		.right {
+			gap: 2px;
+	
+			.bar-container {
+				height: 25%;
+			}
+	
+			.label {
+				font-size: clamp(8px, 1.3vw, 22px);
+				font-weight: bold;
+				text-align: center;
+			}
+	
+		}
 	}
 }
