@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:20.2.0
 
 WORKDIR /usr/src/app/frontend
 

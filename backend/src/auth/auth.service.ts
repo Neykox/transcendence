@@ -9,6 +9,6 @@ export class AuthService {
 
 	async create_cookie(user: User) {
 		const payload = { id: user.id, username: user.login };
-		return await this.jwtService.signAsync(payload, { secret: 'secret'/*await this.configService.get('JWT_SECRET')*/, expiresIn: '120s'});
+		return await this.jwtService.signAsync(payload, { secret: 'secret'/*await this.configService.get('JWT_SECRET')*/, expiresIn: '10h'/*'120s'*/});
 	}
 }
