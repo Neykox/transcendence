@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { channelTypesDto } from "../dto";
 
 @Entity()
 export class Channel {
@@ -11,8 +12,12 @@ export class Channel {
     @Column({ unique: true })
     name: string;
 
-    @Column()
-    type: string;
+    @Column({
+        type: 'enum',
+        enum: channelTypesDto,
+        default: channelTypesDto.PUBLIC,
+    })
+    type: channelTypesDto;
 
     @Column({ nullable: true })
     password: string;

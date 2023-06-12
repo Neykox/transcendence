@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import * as argon from 'argon2';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from './entities/channel.entity';
 import { QueryFailedError, Repository, TypeORMError } from 'typeorm';
+import { DatabaseError } from 'pg-protocol';
 
 @Injectable()
 export class ChannelsService {
@@ -20,8 +21,11 @@ export class ChannelsService {
     channel.name = createChannelDto.name;
     channel.type = createChannelDto.type;
     if (createChannelDto.type === 'protected') {
-      const hash = await argon.hash(createChannelDto.password);
-      channel.password = hash;
+      if (createChannelDto.password) {
+        channel.password = await argon.hash(createChannelDto.password);
+      } else {
+        channel.password = await argon.hash(''); // channel is protected but no password given
+      }
     }
 
     // save the channel in the database
@@ -34,16 +38,22 @@ export class ChannelsService {
     }
     catch(error) {
       if (error instanceof QueryFailedError) {
-       console.log('ceci est un test'); //HERE codes d'erreur
+        const err = error.driverError as DatabaseError;
+
+        // channel name already taken
+        if (err.code === '23505') {
+          throw new ForbiddenException('Credentials taken');
+        }
       }
-      else {
-        console.log('test');
-      }
+      throw error;
     }
   }
 
-  findAll() {
-    return `This action returns all channels`;
+  async findAll(): Promise<Channel[]> {
+    return await this.channelRepository
+      .createQueryBuilder('chan')
+      .select(['chan.name', 'chan.owner', 'chan.type'])
+      .getMany(); //HERE
   }
 
   findOne(id: number) {
