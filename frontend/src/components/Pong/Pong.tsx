@@ -5,37 +5,27 @@ const Pong = props => {
 
 	const canvasRef = useRef(null);
 
-	let up: boolean = false;
-	let down: boolean = false;
-	let reset: boolean = false;
+	let up: boolean = useRef(false);
+	let down: boolean = useRef(false);
+	let reset: boolean = useRef(false);
 
 	const handleKeyDown = event => {
 		if (event.keyCode === 38)//up
 		{
-			up = true;
-			down = false;
+			up.current = true;
+			down.current = false;
 			// p1.y -= p1.dy
 		}
 		if (event.keyCode === 40)//down
 		{
-			up = false;
-			down = true;
+			up.current = false;
+			down.current = true;
 			// p1.y += p1.dy
 		}
 	};
 
-	// const resetGame = () => {
-	// 	ball.x = canvas.width / 2;
-	// 	ball.y = 1 + Math.random() * canvas.height;
-	// 	ball.dx = 7;
-	// 	ball.dy = 7;
-	// 	p1.score = 0;
-	// 	p2.score = 0;
-	// 	ball.color = 'white';
-	// };
-
 	const resetGame = () => {
-		reset = true;
+		reset.current = true;
 	}
 
 	useEffect(() => {
@@ -111,7 +101,7 @@ const Pong = props => {
 
 
 		function animate() {
-			if (reset)
+			if (reset.current)
 			{
 				ball.x = canvas.width / 2;
 				ball.y = 1 + Math.random() * canvas.height;
@@ -120,7 +110,7 @@ const Pong = props => {
 				p1.score = 0;
 				p2.score = 0;
 				ball.color = 'white';
-				reset = false;
+				reset.current = false;
 			}
 			window.requestAnimationFrame(animate);
 			draw_background();
@@ -134,15 +124,15 @@ const Pong = props => {
 			ball.y += ball.dy;
 
 			//player movement
-			if (up)
+			if (up.current)
 			{
 				p1.y -= p1.dy;
-				up = false
+				up.current = false
 			}
-			if (down)
+			if (down.current)
 			{
 				p1.y += p1.dy
-				down = false;
+				down.current = false;
 			}
 
 
