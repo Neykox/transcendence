@@ -7,7 +7,7 @@ const Pong = props => {
 
 	let up: boolean = useRef(false);
 	let down: boolean = useRef(false);
-	let reset: boolean = useRef(false);
+	let reset: boolean = useRef(true);
 
 	const handleKeyDown = event => {
 		if (event.keyCode === 38)//up
@@ -40,7 +40,26 @@ const Pong = props => {
 			w: number;
 			d: number;
 			score: number;
+			color: string;
 		}
+
+		// let p1: Paddle = {
+		// 	x: 50,
+		// 	y: 200,
+		// 	dy: 10,
+		// 	w: 10,
+		// 	h: 200,
+		// 	score: 0
+		// }
+
+		// let p2: Paddle = {
+		// 	x: 1150,
+		// 	y: 200,
+		// 	dy: 0,
+		// 	w: 10,
+		// 	h: 200,
+		// 	score: 0
+		// }
 
 		let p1: Paddle = {
 			x: 50,
@@ -48,7 +67,8 @@ const Pong = props => {
 			dy: 10,
 			w: 10,
 			h: 200,
-			score: 0
+			score: 0,
+			color: 'blue',
 		}
 
 		let p2: Paddle = {
@@ -57,8 +77,10 @@ const Pong = props => {
 			dy: 0,
 			w: 10,
 			h: 200,
-			score: 0
+			score: 0,
+			color: 'red',
 		}
+
 
 		type Ball = {
 			x: number;
@@ -72,10 +94,6 @@ const Pong = props => {
 		}
 
 		let ball: Ball = {
-			x: canvas.width / 2,
-			y: canvas.height / 2,
-			dx: 7,
-			dy: 7,
 			radius: 15,
 			color: 'white'
 		}
@@ -94,7 +112,7 @@ const Pong = props => {
 		}
 
 		const draw_paddle = (paddle: Paddle) => {
-			ctx.fillStyle = 'white';
+			ctx.fillStyle = paddle.color;
 			ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
 		}
 
@@ -104,9 +122,9 @@ const Pong = props => {
 			if (reset.current)
 			{
 				ball.x = canvas.width / 2;
-				ball.y = 1 + Math.random() * canvas.height;
-				ball.dx = 7;
-				ball.dy = 7;
+				ball.y = canvas.height / 2;
+				ball.dx = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
+				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
 				p1.score = 0;
 				p2.score = 0;
 				ball.color = 'white';
@@ -162,8 +180,8 @@ const Pong = props => {
 			// 	ball.dx = -ball.dx;
 			// }
 			if (
-				ball.x < p1.x + p1.w &&
-				ball.x + ball.radius > p1.x &&
+				ball.x - ball.radius < p1.x + p1.w &&
+				ball.x > p1.x &&
 				ball.y < p1.y + p1.h &&
 				ball.radius + ball.y > p1.y
 			)
@@ -178,6 +196,7 @@ const Pong = props => {
 
 			//write score
 			ctx.font = "48px serif";
+			ctx.fillStyle = 'white';
 			ctx.fillText(p1.score + ":" + p2.score, canvas.width / 2, 40)
 
 			if (p1.score === 2 || p2.score === 2)
