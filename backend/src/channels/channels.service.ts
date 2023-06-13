@@ -52,16 +52,55 @@ export class ChannelsService {
   async findAll(): Promise<Channel[]> {
     return await this.channelRepository
       .createQueryBuilder('chan')
-      .select(['chan.name', 'chan.owner', 'chan.type'])
-      .getMany(); //HERE
+      .select(['chan.id', 'chan.name', 'chan.owner', 'chan.type'])
+      .getMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} channel`;
+  async findOne(id: number) {
+    // must add if not found try/catch
+    const chan = await this.channelRepository.findOneBy({
+      id,
+    });
+
+    delete(chan.password);
+    return chan;
   }
 
-  update(id: number, updateChannelDto: UpdateChannelDto) {
-    return `This action updates a #${id} channel`;
+  async update(id: number, updateChannelDto: UpdateChannelDto) {
+    try {
+      const chan = await this.channelRepository.findOneBy({
+        id,
+      });
+
+      if (!chan) {
+        throw new ForbiddenException(`Channel with id #${id} doesn't exist`); // good but should be 404 error instead of 403
+      } else {
+        const update = {
+          ...chan, ...updateChannelDto,
+        }
+        if (update.type === 'protected') { // if type is protected (require a password)
+          if (updateChannelDto.password) {
+            update.password = await argon.hash(updateChannelDto.password);
+          } else if (!updateChannelDto.password && !update.password) {
+            update.password = await argon.hash(''); // channel is protected but no password given
+          }
+        } else {
+          update.password = null;
+        }
+        return await this.channelRepository.save(update);
+      }
+    }
+    catch(error) {
+      if (error instanceof QueryFailedError) {
+        const err = error.driverError as DatabaseError;
+
+        // channel name already taken
+        if (err.code === '23505') {
+          throw new ForbiddenException('Credentials taken');
+        }
+      }
+      throw error;
+    }
   }
 
   remove(id: number) {
