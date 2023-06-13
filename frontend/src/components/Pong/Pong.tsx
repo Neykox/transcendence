@@ -155,12 +155,26 @@ const Pong = props => {
 			}
 
 			//ball colliding with paddles, not feeling to good may need revision
-			if ((ball.x + ball.radius <= p1.x + p1.w && ball.x + ball.radius >= p1.x) && (ball.y + ball.radius <= p1.y + p1.h && ball.y + ball.radius >= p1.y)) {
+			// if ((ball.x + ball.radius <= p1.x + p1.w && ball.x + ball.radius >= p1.x) && (ball.y + ball.radius <= p1.y + p1.h && ball.y + ball.radius >= p1.y)) {
+			// 	ball.dx = -ball.dx;
+			// }
+			// if ((ball.x + ball.radius <= p2.x + p2.w && ball.x + ball.radius >= p2.x) && (ball.y + ball.radius <= p2.y + p2.h && ball.y + ball.radius >= p2.y)) {
+			// 	ball.dx = -ball.dx;
+			// }
+			if (
+				ball.x < p1.x + p1.w &&
+				ball.x + ball.radius > p1.x &&
+				ball.y < p1.y + p1.h &&
+				ball.radius + ball.y > p1.y
+			)
 				ball.dx = -ball.dx;
-			}
-			if ((ball.x + ball.radius <= p2.x + p2.w && ball.x + ball.radius >= p2.x) && (ball.y + ball.radius <= p2.y + p2.h && ball.y + ball.radius >= p2.y)) {
+			if (
+				ball.x < p2.x + p2.w &&
+				ball.x + ball.radius > p2.x &&
+				ball.y < p2.y + p2.h &&
+				ball.radius + ball.y > p2.y
+			)
 				ball.dx = -ball.dx;
-			}
 
 			//write score
 			ctx.font = "48px serif";
