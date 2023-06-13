@@ -105,27 +105,39 @@ export default function Page1() {
         const user_info = await get_user_info(access_token);
         const user = await get_user(user_info.login);
 
+
         if (user === null) {
+          // localStorage.removeItem("user");
           await create_user(user_info.login, user_info.image);
           await get_cookie(user);
+          const newUser = await get_user(user_info.login);
+          userContext.setUser(user_info);
+          userContext.setUser(prevUser => ({ ...prevUser, image: user_info.image.link }));
+          userContext.setUser(prevUser => ({ ...prevUser, pseudo: user_info.login }));
+          
+          // Conversion de l'objet en chaîne JSON
+          const userJSON = JSON.stringify(newUser);
+
+          // Stockage de la chaîne JSON dans le localStorage avec la clé "user"
+          localStorage.setItem("user", userJSON);
           setDirection("/profile");
         } else if (user && user.is2FaActive) {
           setDirection("/page2");
         } else {
           await get_cookie(user);
+          const userJSON = JSON.stringify(user);
+          localStorage.setItem("user", userJSON);
+          userContext.setUser(JSON.parse(userJSON));
           setDirection("/profile");
         }
 
-        userContext.setUser(user_info); 
-        userContext.setUser(prevUser => ({ ...prevUser, image: user_info.image.link }));
-        userContext.setUser(prevUser => ({ ...prevUser, pseudo: user_info.login }));
+
 
         setRedirect(true);
       }
     };
-
     test();
-  }, [code, userContext, get_access_token, get_user_info, get_user, create_user, get_cookie]);
+  }, []);
 
   useEffect(() => {
     if (redirect) {

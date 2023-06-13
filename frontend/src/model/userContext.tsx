@@ -1,6 +1,5 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { UserInfo, initialUser } from './userInfo';
-//import { UserInfo, UserContextProps } from './userInfo';
 
 interface UserContextProps {
   user: UserInfo;
@@ -15,12 +14,22 @@ export const UserContext = createContext<UserContextProps>({
 export const UserProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<UserInfo>(initialUser);
 
+  useEffect(() => {
+    const userFromLocalStorage = localStorage.getItem('user');
+
+    if (userFromLocalStorage) {
+      const parsedUser = JSON.parse(userFromLocalStorage);
+      setUser(parsedUser);
+    }
+  }, []);
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );
 };
+
 
 //export default UserContext;
 
