@@ -140,13 +140,13 @@ function Pong() {
 				toile.rx = toile.x / toile.oldx;
 				toile.ry = toile.y / toile.oldy;
 
-				p1.x *= toile.rx;
-				p1.y *= toile.ry;
+				p1.x = canvas.width * 0.1;
+				p1.y = canvas.height / 3;
 				p1.w = canvas.width / 80;
 				p1.h = canvas.height / 3;
 
-				p2.x *= toile.rx;
-				p2.y *= toile.ry;
+				p2.x = canvas.width * 0.9;
+				p2.y = canvas.height / 3;
 				p2.w = canvas.width / 80;
 				p2.h = canvas.height / 3;
 
