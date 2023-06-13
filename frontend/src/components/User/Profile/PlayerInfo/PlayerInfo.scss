@@ -23,15 +23,16 @@
 
 		img {
 			width: 40%;
+			border-radius: 50%;
 		}
 	}
 
-	.left img {
-		width: 200px;
-		height: 200px; /* Optionnel, si vous souhaitez également spécifier la hauteur */
-		border-radius: 50%;
-		object-fit: cover;
-	  }
+//	.left img {
+//		width: 200px;
+//		height: 200px; /* Optionnel, si vous souhaitez également spécifier la hauteur */
+//		border-radius: 50%;
+//		object-fit: cover;
+//	  }
 
 
 	.right {
