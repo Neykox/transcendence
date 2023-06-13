@@ -29,6 +29,36 @@ function Pong() {
 		reset.current = true;
 	}
 
+	type Toile = {
+		x: number;
+		y: number;
+		oldx: number;
+		oldy: number;
+		rx: number;
+		ry: number;
+	}
+
+	type Paddle = {
+		x: number;
+		y: number;
+		dy: number;
+		w: number;
+		h: number;
+		score: number;
+		color: string;
+	}
+
+	type Ball = {
+		x: number;
+		y: number;
+		dx: number;
+		dy: number;
+		radius: number;
+		color: string;
+		w: number;
+		h: number;
+	}
+
 	useEffect(() => {
 
 		const canvas = canvasRef.current!;
@@ -39,6 +69,13 @@ function Pong() {
 		if (!ctx)
 			return;
 
+		let toile: Toile = {
+			x: canvas.width,
+			y: canvas.height,
+			oldx: canvas.width,
+			oldy: canvas.height,
+		}
+
 		function resizeCanvas() {
 			canvas.width = window.innerWidth;
 			canvas.height = window.innerHeight;
@@ -48,16 +85,6 @@ function Pong() {
 		resizeCanvas();
 	
 		window.addEventListener('resize', resizeCanvas);
-
-		type Paddle = {
-			x: number;
-			y: number;
-			dy: number;
-			w: number;
-			h: number;
-			score: number;
-			color: string;
-		}
 	
 		let p1: Paddle = {
 			x: canvas.width * 0.1,
@@ -77,17 +104,6 @@ function Pong() {
 			h: canvas.height / 3,
 			score: 0,
 			color: 'red',
-		}
-	
-		type Ball = {
-			x: number;
-			y: number;
-			dx: number;
-			dy: number;
-			radius: number;
-			color: string;
-			w: number;
-			h: number;
 		}
 	
 		let ball: Ball = {
@@ -117,18 +133,25 @@ function Pong() {
 
 			if (resize.current)
 			{
-				p1.x = canvas.width * 0.1;
-				p1.y = canvas.height / 3;
+				toile.oldx = toile.x;
+				toile.oldy = toile.y;
+				toile.x = canvas.width;
+				toile.y = canvas.height;
+				toile.rx = toile.x / toile.oldx;
+				toile.ry = toile.y / toile.oldy;
+
+				p1.x *= toile.rx;
+				p1.y *= toile.ry;
 				p1.w = canvas.width / 80;
 				p1.h = canvas.height / 3;
 
-				p2.x = canvas.width * 0.9;
-				p2.y = canvas.height / 3;
+				p2.x *= toile.rx;
+				p2.y *= toile.ry;
 				p2.w = canvas.width / 80;
 				p2.h = canvas.height / 3;
 
-				ball.x = canvas.width / 2;
-				ball.y = canvas.height / 2;
+				ball.x *= toile.rx;
+				ball.y *= toile.ry;
 				ball.radius = 3 + canvas.height / 40;
 
 				resize.current = false;
