@@ -1,13 +1,14 @@
 import { React, useRef, useEffect } from 'react'
 import './Pong.scss';
 
-const Pong = props => {
+function Pong() {
 
-	const canvasRef = useRef(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	let up: boolean = useRef(false);
 	let down: boolean = useRef(false);
 	let reset: boolean = useRef(true);
+	let resize: boolean = useRef(false);
 
 	const handleKeyDown = event => {
 		if (event.keyCode === 38)//up
@@ -30,58 +31,54 @@ const Pong = props => {
 
 	useEffect(() => {
 
-		const canvas = canvasRef.current;
-		const ctx = canvas.getContext('2d');
+		const canvas = canvasRef.current!;
+		if (!canvas)
+			return;
+
+		const ctx = canvas.getContext('2d')!;
+		if (!ctx)
+			return;
+
+		function resizeCanvas() {
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			resize.current = true;
+		}
+	
+		resizeCanvas();
+	
+		window.addEventListener('resize', resizeCanvas);
 
 		type Paddle = {
 			x: number;
 			y: number;
 			dy: number;
 			w: number;
-			d: number;
+			h: number;
 			score: number;
 			color: string;
 		}
-
-		// let p1: Paddle = {
-		// 	x: 50,
-		// 	y: 200,
-		// 	dy: 10,
-		// 	w: 10,
-		// 	h: 200,
-		// 	score: 0
-		// }
-
-		// let p2: Paddle = {
-		// 	x: 1150,
-		// 	y: 200,
-		// 	dy: 0,
-		// 	w: 10,
-		// 	h: 200,
-		// 	score: 0
-		// }
-
+	
 		let p1: Paddle = {
-			x: 50,
-			y: 200,
+			x: canvas.width * 0.1,
+			y: canvas.height / 3,
 			dy: 10,
-			w: 10,
-			h: 200,
+			w: canvas.width / 80,
+			h: canvas.height / 3,
 			score: 0,
 			color: 'blue',
 		}
-
+	
 		let p2: Paddle = {
-			x: 1150,
-			y: 200,
+			x: canvas.width * 0.9,
+			y: canvas.height / 3,
 			dy: 0,
-			w: 10,
-			h: 200,
+			w: canvas.width / 80,
+			h: canvas.height / 3,
 			score: 0,
 			color: 'red',
 		}
-
-
+	
 		type Ball = {
 			x: number;
 			y: number;
@@ -92,17 +89,17 @@ const Pong = props => {
 			w: number;
 			h: number;
 		}
-
+	
 		let ball: Ball = {
-			radius: 15,
+			radius: 3 + canvas.height / 40,
 			color: 'white'
 		}
-
+	
 		const draw_background = () => {
 			ctx.fillStyle = '#000000';
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 		}
-
+	
 		const draw_ball = () => {
 			ctx.beginPath();
 			ctx.fillStyle = ball.color;
@@ -110,15 +107,33 @@ const Pong = props => {
 			ctx.fill();
 			ctx.closePath();
 		}
-
+	
 		const draw_paddle = (paddle: Paddle) => {
 			ctx.fillStyle = paddle.color;
 			ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
 		}
 
-
-
 		function animate() {
+
+			if (resize.current)
+			{
+				p1.x = canvas.width * 0.1;
+				p1.y = canvas.height / 3;
+				p1.w = canvas.width / 80;
+				p1.h = canvas.height / 3;
+
+				p2.x = canvas.width * 0.9;
+				p2.y = canvas.height / 3;
+				p2.w = canvas.width / 80;
+				p2.h = canvas.height / 3;
+
+				ball.x = canvas.width / 2;
+				ball.y = canvas.height / 2;
+				ball.radius = 3 + canvas.height / 40;
+
+				resize.current = false;
+			}
+
 			if (reset.current)
 			{
 				ball.x = canvas.width / 2;
@@ -161,14 +176,16 @@ const Pong = props => {
 
 			if (ball.x + ball.radius > canvas.width) {
 				ball.x = canvas.width / 2;
-				ball.y = 1 + Math.random() * canvas.height;;
+				ball.y = canvas.height / 2;
 				ball.dx = -ball.dx;
+				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
 				p1.score += 1;
 			}
 			if (ball.x - ball.radius < 0) {
 				ball.x = canvas.width / 2;
-				ball.y = 1 + Math.random() * canvas.height;
+				ball.y = canvas.height / 2;
 				ball.dx = -ball.dx;
+				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
 				p2.score += 1;
 			}
 
@@ -209,12 +226,14 @@ const Pong = props => {
 		}
 
 		animate();
-	}, [up, down, reset])
+
+		return () => window.removeEventListener('resize', resizeCanvas);
+	}, [up, down, reset, resize])
   
 	return (
 		<>
 			<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
-				<canvas ref={canvasRef} width="1200" height="500" {...props}/>
+				<canvas ref={canvasRef}></canvas>
 				<button onClick={resetGame}> reset game </button>
 			</div>
 		</>
