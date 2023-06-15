@@ -1,7 +1,15 @@
 import { React, useRef, useEffect } from 'react'
 import './Pong.scss';
 
+import io from "socket.io-client";
+
+const socket = io.connect("http://localhost:5000");
+
 function Pong() {
+
+	const sendMessage = () => {
+	socket.emit("message", { "message": "aaaaaa"});
+	};
 
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -15,6 +23,7 @@ function Pong() {
 		{
 			up.current = true;
 			down.current = false;
+			sendMessage();
 			// p1.y -= p1.dy
 		}
 		if (event.keyCode === 40)//down
@@ -197,6 +206,7 @@ function Pong() {
 				ball.dy = -ball.dy;
 			}
 
+			//reset ball / increment score
 			if (ball.x + ball.radius > canvas.width) {
 				ball.x = canvas.width / 2;
 				ball.y = canvas.height / 2;
@@ -239,6 +249,7 @@ function Pong() {
 			ctx.fillStyle = 'white';
 			ctx.fillText(p1.score + ":" + p2.score, canvas.width / 2, 40)
 
+			//write end screen / stop game
 			if (p1.score === 2 || p2.score === 2)
 			{
 				ball.dx = 0;

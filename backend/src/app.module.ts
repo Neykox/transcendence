@@ -10,6 +10,8 @@ import { User } from './entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 
+import { SocketModule } from './socket/socket.module'
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({
@@ -33,7 +35,8 @@ import { ConfigService } from '@nestjs/config';
 		TypeOrmModule.forFeature([User]),
 		UsersModule,
 		AuthModule,
-		TwoFaModule],
+		TwoFaModule,
+		SocketModule],
 	// controllers: [AppController],
 	// providers: [AppService],
 })
