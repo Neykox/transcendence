@@ -1,69 +1,17 @@
-// import { Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { JwtService } from '@nestjs/jwt';
-// import { User } from '../entities/user.entity';
-// import { ConfigService } from '@nestjs/config';
-// import { AuthService } from '../auth/auth.service';
-
-// @Injectable()
-// export class UsersService {
-//   constructor(
-// 	@InjectRepository(User)
-// 	private usersRepository: Repository<User>,
-// 	private authService: AuthService
-//   ) {}
-
-//   async findAll(): Promise<User[]> {
-// 	return this.usersRepository.find();
-//   }
-
-//   findOne(id: number): Promise<User | null> {
-// 	return this.usersRepository.findOneBy({ id });
-//   }
-
-//   async findOneByLogin(login: string): Promise<User> {
-// 	return this.usersRepository.findOneBy({ login });
-//   }
-
-
-//   async setTwoFaSecret(secret: string, userId: number) {
-// 	return this.usersRepository.update(userId, {
-// 	  twoFaSecret: secret
-// 	});
-//   }
-
-//   async turnOnTwoFa(user: User) {
-// 	this.usersRepository.update(user.id, { is2FaActive: true });
-// 	// console.log({jwtSecret: await this.configService.get<string>('JWT_SECRET')})
-// 	// console.log({host: await this.configService.get<string>('POSTGRES_HOST')})
-// 	const token = await this.authService.create_cookie(user);
-// 	return token
-//   }
-
-//   async turnOffTwoFa(user: User) {
-// 	this.usersRepository.update(user.id, {
-// 	  is2FaActive: false,
-// 	  twoFaSecret: null,
-// 	});
-//   }
-
-//   async create(user: Partial<User>): Promise<User>
-//   {
-// 	const newuser = this.usersRepository.create(user);
-// 	return this.usersRepository.save(newuser);
-//   }
-// }
-
-
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody, ConnectedSocket } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io';
+import { PlayerDto } from '../dto/player.dto'
+
+
+import { Room, User } from '../../interfaces/game.interface'
 
 @WebSocketGateway({
 	cors: {
 		origin: '*',
 		},
-	// path: '/pong'
+		// path: '/pong',
+		pingInterval: 2000,
+		pingTimeout: 5000,
 })
 
 export class SocketService {
@@ -75,7 +23,7 @@ export class SocketService {
 		console.log('client connected: ', client.id);
 	}
 
-	handleDisconnection(client: Socket){
+	handleDisconnect(client: Socket){
 		console.log('client disconnected: ', client.id);
 	}
 
@@ -83,5 +31,13 @@ export class SocketService {
 	handleEvent(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
 		// this.server.emit('message', client.id, data);
 		console.log(data);
+	}
+
+	@SubscribeMessage('updatePlayers')
+	playerMove(@MessageBody() player: PlayerDto, @ConnectedSocket() client: Socket) {
+		// this.server.emit('message', client.id, data);
+		// console.log(player);
+		player.y += player.dy * player.dir;
+		client.emit('playerMoved', player);
 	}
 }

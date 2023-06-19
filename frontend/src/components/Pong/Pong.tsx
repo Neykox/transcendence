@@ -1,5 +1,4 @@
 import { React, useRef, useEffect } from 'react'
-import './Pong.scss';
 
 import io from "socket.io-client";
 
@@ -8,7 +7,13 @@ const socket = io.connect("http://localhost:5000");
 function Pong() {
 
 	const sendMessage = () => {
-	socket.emit("message", { "message": "aaaaaa"});
+		// console.log(p1);
+	socket.emit("updatePlayers", p1);
+
+	socket.on('playerMoved', (data) => {
+		// console.log(data);
+		p1 = data;
+	} )
 	};
 
 	const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,16 +26,19 @@ function Pong() {
 	const handleKeyDown = event => {
 		if (event.keyCode === 38)//up
 		{
-			up.current = true;
-			down.current = false;
+			// up.current = true;
+			// down.current = false;
+			p1.dir = -1;
 			sendMessage();
 			// p1.y -= p1.dy
 		}
 		if (event.keyCode === 40)//down
 		{
-			up.current = false;
-			down.current = true;
+			// up.current = false;
+			// down.current = true;
 			// p1.y += p1.dy
+			p1.dir = 1;
+			sendMessage();
 		}
 	};
 
@@ -51,6 +59,7 @@ function Pong() {
 		x: number;
 		y: number;
 		dy: number;
+		dir: number;
 		w: number;
 		h: number;
 		score: number;
@@ -67,6 +76,16 @@ function Pong() {
 		w: number;
 		h: number;
 	}
+
+	let p1: Paddle = {
+			// x: canvas.width * 0.1,
+			// y: canvas.height / 3,
+			// dy: 10,
+			// w: canvas.width / 80,
+			// h: canvas.height / 3,
+			// score: 0,
+			// color: 'blue',
+		}
 
 	useEffect(() => {
 
@@ -95,7 +114,7 @@ function Pong() {
 	
 		window.addEventListener('resize', resizeCanvas);
 	
-		let p1: Paddle = {
+		p1 = {
 			x: canvas.width * 0.1,
 			y: canvas.height / 3,
 			dy: 10,
@@ -268,7 +287,7 @@ function Pong() {
 		<>
 			<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
 				<canvas ref={canvasRef}></canvas>
-				<button onClick={resetGame}> reset game </button>
+				{/*<button onClick={resetGame}> reset game </button>*/}
 			</div>
 		</>
 	)
