@@ -10,6 +10,18 @@
 // 	users: User[]
 // }
 
+export interface Paddle {
+	x: number;
+	y: number;
+	dy: number;
+	dir: number;
+	w: number;
+	h: number;
+	score: number;
+	color: string;
+	pseudo: string;
+}
+
 export interface User {
 	userId: string
 	userName: string
@@ -17,7 +29,7 @@ export interface User {
 }
 
 export interface Room {
-	name: string
-	p1: User
-	p2: User
+	host: string
+	p1: Paddle
+	p2: Paddle
 }

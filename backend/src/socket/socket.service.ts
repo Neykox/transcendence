@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { PlayerDto } from '../dto/player.dto'
 
 
-import { Room, User } from '../../interfaces/game.interface'
+import { User, Room } from '../interfaces/game.interface'
 
 @WebSocketGateway({
 	cors: {
@@ -39,5 +39,6 @@ export class SocketService {
 		// console.log(player);
 		player.y += player.dy * player.dir;
 		client.emit('playerMoved', player);
+		// this.server.to(player.room).emit('playerMoved', player)
 	}
-}
+} 

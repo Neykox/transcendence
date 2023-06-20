@@ -6,5 +6,6 @@ export class PlayerDto {
 	w: number;
 	h: number;
 	score: number;
-	color: string
+	color: string;
+	room: string;
 }

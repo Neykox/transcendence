@@ -1,4 +1,5 @@
 import { React, useRef, useEffect } from 'react'
+import gif from '../../asset/images/search.gif';
 
 import io from "socket.io-client";
 
@@ -24,6 +25,7 @@ function Pong() {
 	let resize: boolean = useRef(false);
 
 	const handleKeyDown = event => {
+		event.preventDefault();
 		if (event.keyCode === 38)//up
 		{
 			// up.current = true;
@@ -64,6 +66,7 @@ function Pong() {
 		h: number;
 		score: number;
 		color: string;
+		login: string;
 	}
 
 	type Ball = {
@@ -289,6 +292,9 @@ function Pong() {
 				<canvas ref={canvasRef}></canvas>
 				{/*<button onClick={resetGame}> reset game </button>*/}
 			</div>
+			{/*<div>
+				<img src={gif} alt="searching for opponents..." />
+			</div>*/}
 		</>
 	)
 }
