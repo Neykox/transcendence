@@ -9,7 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Page1 from './components/page1';
 import Page2 from './components/page2';
-import Pong from './components/Pong/Pong';
+import Game from './components/Pong/Game';
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
         <Route path='/settings' element={<Settings />}></Route>
         <Route path='/page1' element={<Page1 />}></Route>
         <Route path='/page2' element={<Page2 />}></Route>
-        <Route path='/pong' element={<Pong />}></Route>
+        <Route path='/game' element={<Game />}></Route>
       </Routes>
     </div>
   );

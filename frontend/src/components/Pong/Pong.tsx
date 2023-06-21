@@ -1,11 +1,12 @@
 import { React, useRef, useEffect } from 'react'
-import gif from '../../asset/images/search.gif';
+// import gif from '../../asset/images/search.gif';
+import { Ball, Paddle } from '../../shared/interfaces/game.interface'
 
-import io from "socket.io-client";
+// import io from "socket.io-client";
 
-const socket = io.connect("http://localhost:5000");
+// const socket = io.connect("http://localhost:5000");
 
-function Pong() {
+function Pong({socket}) {
 
 	const sendMessage = () => {
 		// console.log(p1);
@@ -17,10 +18,10 @@ function Pong() {
 	} )
 	};
 
-	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const canvasRef = useRef<HTMLCanvasElement>(null); 
 
-	let up: boolean = useRef(false);
-	let down: boolean = useRef(false);
+	// let up: boolean = useRef(false);
+	// let down: boolean = useRef(false);
 	let reset: boolean = useRef(true);
 	let resize: boolean = useRef(false);
 
@@ -44,9 +45,9 @@ function Pong() {
 		}
 	};
 
-	const resetGame = () => {
-		reset.current = true;
-	}
+	// const resetGame = () => {
+	// 	reset.current = true;
+	// }
 
 	type Toile = {
 		x: number;
@@ -57,28 +58,28 @@ function Pong() {
 		ry: number;
 	}
 
-	type Paddle = {
-		x: number;
-		y: number;
-		dy: number;
-		dir: number;
-		w: number;
-		h: number;
-		score: number;
-		color: string;
-		login: string;
-	}
+	// type Paddle = {
+	// 	x: number;
+	// 	y: number;
+	// 	dy: number;
+	// 	dir: number;
+	// 	w: number;
+	// 	h: number;
+	// 	score: number;
+	// 	color: string;
+	// 	login: string;
+	// }
 
-	type Ball = {
-		x: number;
-		y: number;
-		dx: number;
-		dy: number;
-		radius: number;
-		color: string;
-		w: number;
-		h: number;
-	}
+	// type Ball = {
+	// 	x: number;
+	// 	y: number;
+	// 	dx: number;
+	// 	dy: number;
+	// 	radius: number;
+	// 	color: string;
+	// 	w: number;
+	// 	h: number;
+	// }
 
 	let p1: Paddle = {
 			// x: canvas.width * 0.1,
@@ -211,16 +212,16 @@ function Pong() {
 			ball.y += ball.dy;
 
 			//player movement
-			if (up.current)
-			{
-				p1.y -= p1.dy;
-				up.current = false
-			}
-			if (down.current)
-			{
-				p1.y += p1.dy
-				down.current = false;
-			}
+			// if (up.current)
+			// {
+			// 	p1.y -= p1.dy;
+			// 	up.current = false
+			// }
+			// if (down.current)
+			// {
+			// 	p1.y += p1.dy
+			// 	down.current = false;
+			// }
 
 
 			//ball colliding with wall
@@ -266,6 +267,11 @@ function Pong() {
 			)
 				ball.dx = -ball.dx;
 
+			// rect1.x < rect2.x + rect2.w &&
+			// rect1.x + rect1.w > rect2.x &&
+			// rect1.y < rect2.y + rect2.h &&
+			// rect1.h + rect1.y > rect2.y
+
 			//write score
 			ctx.font = "48px serif";
 			ctx.fillStyle = 'white';
@@ -284,7 +290,7 @@ function Pong() {
 		animate();
 
 		return () => window.removeEventListener('resize', resizeCanvas);
-	}, [up, down, reset, resize])
+	}, [reset, resize])
   
 	return (
 		<>
@@ -292,9 +298,6 @@ function Pong() {
 				<canvas ref={canvasRef}></canvas>
 				{/*<button onClick={resetGame}> reset game </button>*/}
 			</div>
-			{/*<div>
-				<img src={gif} alt="searching for opponents..." />
-			</div>*/}
 		</>
 	)
 }

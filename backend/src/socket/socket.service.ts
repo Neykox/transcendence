@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { PlayerDto } from '../dto/player.dto'
 
 
-import { User, Room } from '../interfaces/game.interface'
+import { User, Room } from '../../shared/interfaces/game.interface'
 
 @WebSocketGateway({
 	cors: {

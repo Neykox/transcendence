@@ -22,6 +22,17 @@ export interface Paddle {
 	pseudo: string;
 }
 
+export interface Ball {
+	x: number;
+	y: number;
+	dx: number;
+	dy: number;
+	radius: number;
+	color: string;
+	w: number;
+	h: number;
+}
+
 export interface User {
 	userId: string
 	userName: string
@@ -29,7 +40,8 @@ export interface User {
 }
 
 export interface Room {
-	host: string
+	id: string
+	reserved: boolean
 	p1: Paddle
 	p2: Paddle
 }
