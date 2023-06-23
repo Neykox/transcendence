@@ -155,8 +155,7 @@ const Settings = () => {
     //  toast.success('Avatar par défaut enregistré avec succès');
     //}
   };
-  
-
+  var image42:string = localStorage.getItem('42image') as string;
   return (
 
      
@@ -246,7 +245,9 @@ const Settings = () => {
       <Modal isOpen={isDefaultModalOpen}>
         <h2>Choisir un avatar par défaut</h2>
         <div>   
-          {/* ajouter la photo 42 */}
+          {image42 !== 'null' && ( 
+            <img className="imglist" src={image42} alt="Avatar" onClick={() => setSelectedDefaultAvatar(() => image42)} />
+          )}
           <img className="imglist" src={test}  alt="Avatar4" onClick={() => setSelectedDefaultAvatar(() => test)} />
           <img className="imglist" src={arcencielfille}  alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => arcencielfille)} />
           <img className="imglist" src={chat}  alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => chat)} />
