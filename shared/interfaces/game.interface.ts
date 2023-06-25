@@ -19,7 +19,7 @@ export interface Paddle {
 	h: number;
 	score: number;
 	color: string;
-	pseudo: string;
+	room: string;
 }
 
 export interface Ball {

@@ -7,7 +7,7 @@ import { socket } from '../Socket/socketInit';
 
 // const socket = io.connect("http://localhost:5000");
 
-function Pong() {
+function Pong({paddle}) {
 
 	const sendMessage = () => {
 		// console.log(p1);
@@ -82,15 +82,7 @@ function Pong() {
 	// 	h: number;
 	// }
 
-	let p1: Paddle = {
-			// x: canvas.width * 0.1,
-			// y: canvas.height / 3,
-			// dy: 10,
-			// w: canvas.width / 80,
-			// h: canvas.height / 3,
-			// score: 0,
-			// color: 'blue',
-		}
+	let p1: Paddle = paddle;
 
 	useEffect(() => {
 
@@ -119,15 +111,7 @@ function Pong() {
 	
 		window.addEventListener('resize', resizeCanvas);
 	
-		p1 = {
-			x: canvas.width * 0.1,
-			y: canvas.height / 3,
-			dy: 10,
-			w: canvas.width / 80,
-			h: canvas.height / 3,
-			score: 0,
-			color: 'blue',
-		}
+		// p1 = paddle;
 	
 		let p2: Paddle = {
 			x: canvas.width * 0.9,
@@ -291,7 +275,7 @@ function Pong() {
 		animate();
 
 		return () => window.removeEventListener('resize', resizeCanvas);
-	}, [reset, resize])
+	}, [reset, resize, p1])
   
 	return (
 		<>
