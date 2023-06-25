@@ -1,12 +1,13 @@
 import { React, useRef, useEffect } from 'react'
 // import gif from '../../asset/images/search.gif';
 import { Ball, Paddle } from '../../shared/interfaces/game.interface'
+import { socket } from '../Socket/socketInit';
 
 // import io from "socket.io-client";
 
 // const socket = io.connect("http://localhost:5000");
 
-function Pong({socket}) {
+function Pong() {
 
 	const sendMessage = () => {
 		// console.log(p1);

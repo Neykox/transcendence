@@ -5,6 +5,8 @@ import { PlayerDto } from '../dto/player.dto'
 
 import { User, Room } from '../../shared/interfaces/game.interface'
 
+const players = {};
+
 @WebSocketGateway({
 	cors: {
 		origin: '*',
@@ -40,5 +42,13 @@ export class SocketService {
 		player.y += player.dy * player.dir;
 		client.emit('playerMoved', player);
 		// this.server.to(player.room).emit('playerMoved', player)
+	}
+
+	@SubscribeMessage('join_list')
+	joinList(@ConnectedSocket() client: Socket) {
+		// this.server.emit('message', client.id, data);
+		console.log(client.id, "joined the list");
+		players[client.id] = {};
+		console.log(players);
 	}
 } 
