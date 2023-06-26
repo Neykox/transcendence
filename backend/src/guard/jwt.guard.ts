@@ -6,8 +6,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { Request, response } from 'express';
 import { ConfigService } from '@nestjs/config'
+import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { Http2ServerResponse } from 'http2';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -23,8 +25,10 @@ export class JwtGuard implements CanActivate {
     }
     const payload = await this.jwtService.verifyAsync(token, {secret: 'secret'/*this.configService.get('JWT_SECRET')*/});
 
-    if (!payload)
-      throw new BadRequestException('token verification failled');
+    if (!payload) 
+	{
+		throw new UnauthorizedException('token verification failed');
+	}
 
 
     // 💡 We're assigning the payload to the request object here

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useContext } from 'react';
+import React, { useState, ChangeEvent, useContext, useEffect } from 'react';
 import './Settings.scss';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
@@ -20,6 +20,7 @@ import smiley from '../../../asset/images/smiley.jpg';
 import vert from '../../../asset/images/vert.jpg';
 import UserContext from '../../../model/userContext';
 import { UserInfo } from '../../../model/userInfo';
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -36,8 +37,10 @@ const Settings = () => {
   const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
   const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState("");
   const [doubleAuthEnabled, setDoubleAuthEnabled] = useState(false);
+  const [unlogged, setUnlogged] = useState(false);
   //const [userId, setUserId] = useState(user.id);
-
+  const navigate = useNavigate();
+  const direction = "http://localhost:3000/page1.tsx"
   /*
   evenements de changement de nom d'utilisateur
   */
@@ -71,6 +74,8 @@ const Settings = () => {
       .then(response => {
         if (response.ok) {
           toast.success('Pseudo mis à jour avec succès');
+		} else if (response.status == 401) {
+			setUnlogged(true);
         } else {
           toast.error('Une erreur est survenue lors de la mise à jour du pseudo');
         }
@@ -138,7 +143,9 @@ const Settings = () => {
      .then(response => {
        if (response.ok) {
          toast.success('Avatar mis à jour avec succès');
-       } else {
+		} else if (response.status == 401) {
+			setUnlogged(true);
+    	} else {
          toast.error('Une erreur est survenue lors de la mise à jour de l\'avatar');
        }
      })
@@ -154,8 +161,9 @@ const Settings = () => {
     //  user.avatar = selectedDefaultAvatar;
     //  toast.success('Avatar par défaut enregistré avec succès');
     //}
-  };
-  
+	if (unlogged)
+	 navigate(direction);
+};
 
   return (
 
