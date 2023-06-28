@@ -20,6 +20,7 @@ export interface Paddle {
 	score: number;
 	color: string;
 	room: string;
+	socketId: string;
 }
 
 export interface Ball {

@@ -7,15 +7,19 @@ import { socket } from '../Socket/socketInit';
 
 // const socket = io.connect("http://localhost:5000");
 
-function Pong({paddle}) {
 
+
+function Pong({paddle1, paddle2}) {
+
+	console.log("socket.id = ", socket.id);
 	const sendMessage = () => {
 		// console.log(p1);
-	socket.emit("updatePlayers", p1);
+	socket.emit("updatePlayers", {p1, p2});
 
 	socket.on('playerMoved', (data) => {
 		// console.log(data);
-		p1 = data;
+		p1 = data.p1;
+		p2 = data.p2;
 	} )
 	};
 
@@ -24,7 +28,7 @@ function Pong({paddle}) {
 	// let up: boolean = useRef(false);
 	// let down: boolean = useRef(false);
 	let reset: boolean = useRef(true);
-	let resize: boolean = useRef(false);
+	let resize: boolean = useRef(true);
 
 	const handleKeyDown = event => {
 		event.preventDefault();
@@ -32,7 +36,16 @@ function Pong({paddle}) {
 		{
 			// up.current = true;
 			// down.current = false;
-			p1.dir = -1;
+			if (paddle1.socketId === socket.id)
+			{
+				p1.dir = -1;
+				p2.dir = 0;
+			}
+			else
+			{
+				p1.dir = 0;
+				p2.dir = -1;
+			}
 			sendMessage();
 			// p1.y -= p1.dy
 		}
@@ -41,7 +54,16 @@ function Pong({paddle}) {
 			// up.current = false;
 			// down.current = true;
 			// p1.y += p1.dy
-			p1.dir = 1;
+			if (paddle1.socketId === socket.id)
+			{
+				p1.dir = 1;
+				p2.dir = 0;
+			}
+			else
+			{
+				p1.dir = 0;
+				p2.dir = 1;
+			}
 			sendMessage();
 		}
 	};
@@ -82,7 +104,8 @@ function Pong({paddle}) {
 	// 	h: number;
 	// }
 
-	let p1: Paddle = paddle;
+	let p1: Paddle = paddle1.socketId === socket.id ? paddle1 : paddle2;	
+	let p2: Paddle = paddle1.socketId === socket.id ? paddle2 : paddle1;
 
 	useEffect(() => {
 
@@ -113,15 +136,15 @@ function Pong({paddle}) {
 	
 		// p1 = paddle;
 	
-		let p2: Paddle = {
-			x: canvas.width * 0.9,
-			y: canvas.height / 3,
-			dy: 0,
-			w: canvas.width / 80,
-			h: canvas.height / 3,
-			score: 0,
-			color: 'red',
-		}
+		// let p2: Paddle = {
+		// 	x: canvas.width * 0.9,
+		// 	y: canvas.height / 3,
+		// 	dy: 0,
+		// 	w: canvas.width / 80,
+		// 	h: canvas.height / 3,
+		// 	score: 0,
+		// 	color: 'red',
+		// }
 	
 		let ball: Ball = {
 			radius: 3 + canvas.height / 40,
@@ -157,15 +180,15 @@ function Pong({paddle}) {
 				toile.rx = toile.x / toile.oldx;
 				toile.ry = toile.y / toile.oldy;
 
-				p1.x = canvas.width * 0.1;
-				p1.y = canvas.height / 3;
-				p1.w = canvas.width / 80;
-				p1.h = canvas.height / 3;
+				// p1.x = canvas.width * 0.1;
+				// p1.y = canvas.height / 3;
+				// p1.w = canvas.width / 80;
+				// p1.h = canvas.height / 3;
 
-				p2.x = canvas.width * 0.9;
-				p2.y = canvas.height / 3;
-				p2.w = canvas.width / 80;
-				p2.h = canvas.height / 3;
+				// p2.x = canvas.width * 0.9;
+				// p2.y = canvas.height / 3;
+				// p2.w = canvas.width / 80;
+				// p2.h = canvas.height / 3;
 
 				ball.x *= toile.rx;
 				ball.y *= toile.ry;
@@ -178,8 +201,8 @@ function Pong({paddle}) {
 			{
 				ball.x = canvas.width / 2;
 				ball.y = canvas.height / 2;
-				ball.dx = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
+				ball.dx = 0//7 * (Math.floor(Math.random() * 2) ? 1 : -1);
+				ball.dy = 0//7 * (Math.floor(Math.random() * 2) ? 1 : -1);
 				p1.score = 0;
 				p2.score = 0;
 				ball.color = 'white';
@@ -273,9 +296,12 @@ function Pong({paddle}) {
 		}
 
 		animate();
+		// draw_paddle(p1);
+		// draw_paddle(p2);
+		// draw_ball();
 
 		return () => window.removeEventListener('resize', resizeCanvas);
-	}, [reset, resize, p1])
+	}, [reset, resize, p1, p2])
   
 	return (
 		<>

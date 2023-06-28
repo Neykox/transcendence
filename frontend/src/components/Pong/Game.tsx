@@ -6,10 +6,13 @@ import { socket } from '../Socket/socketInit';
 function Game() {
 
 	const [matched, setMatched] = useState(false);
-	const [paddle, setPaddle] = useState({});
+	const [paddle1, setPaddle1] = useState({});
+	const [paddle2, setPaddle2] = useState({});
 
 	socket.on('matched', (data) => {
-		setPaddle(data);
+		// console.log(data)
+		setPaddle1(data.paddle1);
+		setPaddle2(data.paddle2);
 		setMatched(true);
 	} )
 
@@ -28,7 +31,7 @@ function Game() {
 		<>
 			{
 				matched
-				? <Pong paddle={paddle}/>
+				? <Pong paddle1={paddle1} paddle2={paddle2}/>
 				: <img src={gif} alt="searching for opponents..." />
 			}
 		</>
