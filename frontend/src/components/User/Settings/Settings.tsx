@@ -40,7 +40,7 @@ const Settings = () => {
   const [unlogged, setUnlogged] = useState(false);
   //const [userId, setUserId] = useState(user.id);
   const navigate = useNavigate();
-  const direction = "http://localhost:3000/page1.tsx"
+  const direction = "/"
   /*
   evenements de changement de nom d'utilisateur
   */
