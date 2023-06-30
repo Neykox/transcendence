@@ -1,41 +1,28 @@
 import { React, useRef, useEffect } from 'react'
-// import gif from '../../asset/images/search.gif';
 import { Ball, Paddle } from '../../shared/interfaces/game.interface'
 import { socket } from '../Socket/socketInit';
 
-// import io from "socket.io-client";
 
-// const socket = io.connect("http://localhost:5000");
+function Pong({paddle1, paddle2, newBall}) {
 
-
-
-function Pong({paddle1, paddle2}) {
-
-	console.log("socket.id = ", socket.id);
 	const sendMessage = () => {
-		// console.log(p1);
-	socket.emit("updatePlayers", {p1, p2});
+		socket.emit("updatePlayers", {p1, p2});
 
-	socket.on('playerMoved', (data) => {
-		// console.log(data);
-		p1 = data.p1;
-		p2 = data.p2;
-	} )
+		socket.on('playerMoved', (data) => {
+			// console.log(data);
+			p1 = data.p1;
+			p2 = data.p2;
+		} )
 	};
 
 	const canvasRef = useRef<HTMLCanvasElement>(null); 
 
-	// let up: boolean = useRef(false);
-	// let down: boolean = useRef(false);
-	let reset: boolean = useRef(true);
 	let resize: boolean = useRef(true);
 
 	const handleKeyDown = event => {
 		event.preventDefault();
 		if (event.keyCode === 38)//up
 		{
-			// up.current = true;
-			// down.current = false;
 			if (paddle1.socketId === socket.id)
 			{
 				p1.dir = -1;
@@ -47,13 +34,9 @@ function Pong({paddle1, paddle2}) {
 				p2.dir = -1;
 			}
 			sendMessage();
-			// p1.y -= p1.dy
 		}
 		if (event.keyCode === 40)//down
 		{
-			// up.current = false;
-			// down.current = true;
-			// p1.y += p1.dy
 			if (paddle1.socketId === socket.id)
 			{
 				p1.dir = 1;
@@ -68,9 +51,6 @@ function Pong({paddle1, paddle2}) {
 		}
 	};
 
-	// const resetGame = () => {
-	// 	reset.current = true;
-	// }
 
 	type Toile = {
 		x: number;
@@ -81,33 +61,17 @@ function Pong({paddle1, paddle2}) {
 		ry: number;
 	}
 
-	// type Paddle = {
-	// 	x: number;
-	// 	y: number;
-	// 	dy: number;
-	// 	dir: number;
-	// 	w: number;
-	// 	h: number;
-	// 	score: number;
-	// 	color: string;
-	// 	login: string;
-	// }
-
-	// type Ball = {
-	// 	x: number;
-	// 	y: number;
-	// 	dx: number;
-	// 	dy: number;
-	// 	radius: number;
-	// 	color: string;
-	// 	w: number;
-	// 	h: number;
-	// }
-
 	let p1: Paddle = paddle1.socketId === socket.id ? paddle1 : paddle2;	
 	let p2: Paddle = paddle1.socketId === socket.id ? paddle2 : paddle1;
+	let ball: Ball = newBall;
 
 	useEffect(() => {
+
+		const interval = setInterval(() => {
+			p1.dir = 0;
+			p2.dir = 0;
+			sendMessage();
+		}, 600);//makes sure the paddles are assigned and updated at the start
 
 		const canvas = canvasRef.current!;
 		if (!canvas)
@@ -116,13 +80,6 @@ function Pong({paddle1, paddle2}) {
 		const ctx = canvas.getContext('2d')!;
 		if (!ctx)
 			return;
-
-		let toile: Toile = {
-			x: canvas.width,
-			y: canvas.height,
-			oldx: canvas.width,
-			oldy: canvas.height,
-		}
 
 		function resizeCanvas() {
 			canvas.width = window.innerWidth;
@@ -134,22 +91,20 @@ function Pong({paddle1, paddle2}) {
 	
 		window.addEventListener('resize', resizeCanvas);
 	
-		// p1 = paddle;
-	
-		// let p2: Paddle = {
-		// 	x: canvas.width * 0.9,
-		// 	y: canvas.height / 3,
-		// 	dy: 0,
-		// 	w: canvas.width / 80,
-		// 	h: canvas.height / 3,
-		// 	score: 0,
-		// 	color: 'red',
-		// }
-	
-		let ball: Ball = {
-			radius: 3 + canvas.height / 40,
-			color: 'white'
+
+		let toile: Toile = {
+			x: canvas.width,
+			y: canvas.height,
+			oldx: canvas.width,
+			oldy: canvas.height,
 		}
+
+
+	
+		ball.radius = 3 + canvas.height / 40;
+		ball.color = 'white';
+		ball.x = canvas.width / 2;	
+		ball.y = canvas.height / 2;
 	
 		const draw_background = () => {
 			ctx.fillStyle = '#000000';
@@ -197,39 +152,16 @@ function Pong({paddle1, paddle2}) {
 				resize.current = false;
 			}
 
-			if (reset.current)
-			{
-				ball.x = canvas.width / 2;
-				ball.y = canvas.height / 2;
-				ball.dx = 0//7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-				ball.dy = 0//7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-				p1.score = 0;
-				p2.score = 0;
-				ball.color = 'white';
-				reset.current = false;
-			}
+			
 			window.requestAnimationFrame(animate);
 			draw_background();
 			draw_ball();
-			// draw_paddle(ball);
 			draw_paddle(p1);
 			draw_paddle(p2);
 
 			//ball movement
 			ball.x += ball.dx;
 			ball.y += ball.dy;
-
-			//player movement
-			// if (up.current)
-			// {
-			// 	p1.y -= p1.dy;
-			// 	up.current = false
-			// }
-			// if (down.current)
-			// {
-			// 	p1.y += p1.dy
-			// 	down.current = false;
-			// }
 
 
 			//ball colliding with wall
@@ -238,14 +170,14 @@ function Pong({paddle1, paddle2}) {
 			}
 
 			//reset ball / increment score
-			if (ball.x + ball.radius > canvas.width) {
+			if (ball.x + ball.radius >= canvas.width) {
 				ball.x = canvas.width / 2;
 				ball.y = canvas.height / 2;
 				ball.dx = -ball.dx;
 				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
 				p1.score += 1;
 			}
-			if (ball.x - ball.radius < 0) {
+			if (ball.x - ball.radius <= 0) {
 				ball.x = canvas.width / 2;
 				ball.y = canvas.height / 2;
 				ball.dx = -ball.dx;
@@ -296,12 +228,12 @@ function Pong({paddle1, paddle2}) {
 		}
 
 		animate();
-		// draw_paddle(p1);
-		// draw_paddle(p2);
-		// draw_ball();
 
-		return () => window.removeEventListener('resize', resizeCanvas);
-	}, [reset, resize, p1, p2])
+		return () => {
+			window.removeEventListener('resize', resizeCanvas);
+			clearInterval(interval);
+		};
+	}, [resize, p1, p2, ball, sendMessage])
   
 	return (
 		<>

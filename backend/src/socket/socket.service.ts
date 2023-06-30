@@ -9,9 +9,11 @@ const players: Socket[] = [];
 let count = 0;
 
 @WebSocketGateway({
-	cors: {
-		origin: '*',
+		transport: ['websocket'],
+		cors: {
+			origin: '*',
 		},
+		// cors: '*/*',
 		// path: '/pong',
 		pingInterval: 2000,
 		pingTimeout: 5000,
@@ -62,24 +64,22 @@ export class SocketService {
 			else
 				break;
 		}
+
+		
 		const room = count.toString();
-		// p1.room = room;
-		// p2.room = room;
 		p1.join(room);
 		p2.join(room);
-		// console.log("p1 = ", p1);
-		// console.log("p2 = ", p2);
-		// console.log("players before delete = ", players);
 		delete players[p1.id];
 		delete players[p2.id];
-		// console.log("players after delete = ", players);
+
+
 		let paddle1: Paddle = {
-			x: 100,
+			x: 80,
 			y: 100,
 			dy: 10,
 			dir: 0,
-			w: 100,
-			h: 100,
+			w: 20,
+			h: 300,
 			score: 0,
 			color: 'green',
 			room: room,
@@ -87,24 +87,24 @@ export class SocketService {
 		};
 
 		let paddle2: Paddle = {
-			x: 300,
-			y: 200,
+			x: 1100,
+			y: 100,
 			dy: 10,
 			dir: 0,
-			w: 100,
-			h: 100,
+			w: 20,
+			h: 300,
 			score: 0,
 			color: 'yellow',
 			room: room,
 			socketId: p2.id,
 		};
 
-		this.server.to(room).emit('matched', { "paddle1": paddle1, "paddle2": paddle2 });
-		// p1.to(room).emit("matched", { "paddle1": paddle1, "paddle2": paddle2 });
-		// p2.to(room).emit("matched", { "paddle1": paddle2, "paddle2": paddle1 });
+		let ball = {
+			dx: 7 * (Math.floor(Math.random() * 2) ? 1 : -1),
+			dy: 7 * (Math.floor(Math.random() * 2) ? 1 : -1)
+		}
 
-		// p1.to(room).emit("playedMoved", { "paddle1": paddle1, "paddle2": paddle2 })
-		// p2.to(room).emit("playedMoved", { "paddle1": paddle2, "paddle2": paddle1 })
+		this.server.to(room).emit('matched', { "paddle1": paddle1, "paddle2": paddle2, "ball": ball });
 		count++;
 	}
 
@@ -124,7 +124,7 @@ export class SocketService {
 	@SubscribeMessage('join_list')
 	joinList(@ConnectedSocket() client: Socket) {
 		// this.server.emit('message', client.id, data);
-		console.log(client.id, "joined the list");
+		console.log(client.id, "joined the list\n");
 		players[client.id] = client;
 		// console.log(players);
 		// console.log("players length = ", Object.keys(players).length);
