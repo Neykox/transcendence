@@ -3,10 +3,10 @@ import { Ball, Paddle } from '../../shared/interfaces/game.interface'
 import { socket } from '../Socket/socketInit';
 
 
-function Pong({paddle1, paddle2, newBall}) {
+function Pong({newToile, paddle1, paddle2, newBall}) {
 
 	const sendMessage = () => {
-		socket.emit("updatePlayers", {p1, p2});
+		socket.emit("updateGame", {p1, p2, ball});
 
 		socket.on('playerMoved', (data) => {
 			// console.log(data);
@@ -14,6 +14,14 @@ function Pong({paddle1, paddle2, newBall}) {
 			p2 = data.p2;
 		} )
 	};
+
+
+socket.on('newFrame', (data) => {
+			// console.log(data);
+			p1 = data.p1;
+			p2 = data.p2;
+			ball = data.ball
+		} );
 
 	const canvasRef = useRef<HTMLCanvasElement>(null); 
 
@@ -64,14 +72,16 @@ function Pong({paddle1, paddle2, newBall}) {
 	let p1: Paddle = paddle1.socketId === socket.id ? paddle1 : paddle2;	
 	let p2: Paddle = paddle1.socketId === socket.id ? paddle2 : paddle1;
 	let ball: Ball = newBall;
+	let toile: Toile = newToile
+
 
 	useEffect(() => {
 
-		const interval = setInterval(() => {
-			p1.dir = 0;
-			p2.dir = 0;
-			sendMessage();
-		}, 600);//makes sure the paddles are assigned and updated at the start
+		// const interval = setInterval(() => {
+		// 	p1.dir = 0;
+		// 	p2.dir = 0;
+		// 	sendMessage();
+		// }, 600);//makes sure the paddles are assigned and updated at the start
 
 		const canvas = canvasRef.current!;
 		if (!canvas)
@@ -102,6 +112,8 @@ function Pong({paddle1, paddle2, newBall}) {
 
 	
 		ball.radius = 3 + canvas.height / 40;
+		ball.h = canvas.width / 80;
+		ball.w = canvas.width / 80;
 		ball.color = 'white';
 		ball.x = canvas.width / 2;	
 		ball.y = canvas.height / 2;
@@ -156,61 +168,113 @@ function Pong({paddle1, paddle2, newBall}) {
 			window.requestAnimationFrame(animate);
 			draw_background();
 			draw_ball();
+			// draw_paddle(ball);
 			draw_paddle(p1);
 			draw_paddle(p2);
 
-			//ball movement
-			ball.x += ball.dx;
-			ball.y += ball.dy;
+			// //ball movement
+			// ball.x += ball.dx;
+			// ball.y += ball.dy;
 
 
-			//ball colliding with wall
-			if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
-				ball.dy = -ball.dy;
-			}
-
-			//reset ball / increment score
-			if (ball.x + ball.radius >= canvas.width) {
-				ball.x = canvas.width / 2;
-				ball.y = canvas.height / 2;
-				ball.dx = -ball.dx;
-				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-				p1.score += 1;
-			}
-			if (ball.x - ball.radius <= 0) {
-				ball.x = canvas.width / 2;
-				ball.y = canvas.height / 2;
-				ball.dx = -ball.dx;
-				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-				p2.score += 1;
-			}
-
-			//ball colliding with paddles, not feeling to good may need revision
-			// if ((ball.x + ball.radius <= p1.x + p1.w && ball.x + ball.radius >= p1.x) && (ball.y + ball.radius <= p1.y + p1.h && ball.y + ball.radius >= p1.y)) {
-			// 	ball.dx = -ball.dx;
+			// //old code when ball was a ball
+			// //ball colliding with wall
+			// if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+			// 	ball.dy = -ball.dy;
 			// }
-			// if ((ball.x + ball.radius <= p2.x + p2.w && ball.x + ball.radius >= p2.x) && (ball.y + ball.radius <= p2.y + p2.h && ball.y + ball.radius >= p2.y)) {
+
+			// //reset ball / increment score
+			// if (ball.x + ball.radius >= canvas.width) {
+			// 	ball.x = canvas.width / 2;
+			// 	ball.y = canvas.height / 2;
 			// 	ball.dx = -ball.dx;
+			// 	ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
+			// 	p1.score += 1;
 			// }
-			if (
-				ball.x - ball.radius < p1.x + p1.w &&
-				ball.x > p1.x &&
-				ball.y < p1.y + p1.h &&
-				ball.radius + ball.y > p1.y
-			)
-				ball.dx = -ball.dx;
-			if (
-				ball.x < p2.x + p2.w &&
-				ball.x + ball.radius > p2.x &&
-				ball.y < p2.y + p2.h &&
-				ball.radius + ball.y > p2.y
-			)
-				ball.dx = -ball.dx;
+			// if (ball.x - ball.radius <= 0) {
+			// 	ball.x = canvas.width / 2;
+			// 	ball.y = canvas.height / 2;
+			// 	ball.dx = -ball.dx;
+			// 	ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
+			// 	p2.score += 1;
+			// }
+
+			// //ball colliding with paddles, not feeling to good may need revision
+			// // if ((ball.x + ball.radius <= p1.x + p1.w && ball.x + ball.radius >= p1.x) && (ball.y + ball.radius <= p1.y + p1.h && ball.y + ball.radius >= p1.y)) {
+			// // 	ball.dx = -ball.dx;
+			// // }
+			// // if ((ball.x + ball.radius <= p2.x + p2.w && ball.x + ball.radius >= p2.x) && (ball.y + ball.radius <= p2.y + p2.h && ball.y + ball.radius >= p2.y)) {
+			// // 	ball.dx = -ball.dx;
+			// // }
+			// if (
+			// 	ball.x - ball.radius < p1.x + p1.w &&
+			// 	ball.x > p1.x &&
+			// 	ball.y < p1.y + p1.h &&
+			// 	ball.radius + ball.y > p1.y
+			// )
+			// 	ball.dx = -ball.dx;
+			// if (
+			// 	ball.x < p2.x + p2.w &&
+			// 	ball.x + ball.radius > p2.x &&
+			// 	ball.y < p2.y + p2.h &&
+			// 	ball.radius + ball.y > p2.y
+			// )
+			// 	ball.dx = -ball.dx;
 
 			// rect1.x < rect2.x + rect2.w &&
 			// rect1.x + rect1.w > rect2.x &&
 			// rect1.y < rect2.y + rect2.h &&
 			// rect1.h + rect1.y > rect2.y
+
+
+			//new code where ball is a square
+			// //ball colliding with wall
+			// if (ball.y + ball.h > canvas.height || ball.y < 0) {
+			// 	ball.dy = -ball.dy;
+			// }
+
+			// //reset ball / increment score
+			// if (ball.x + ball.w >= canvas.width) {
+			// 	// ball.x = canvas.width / 2;
+			// 	// ball.y = canvas.height / 2;
+			// 	ball.dx = -ball.dx;
+			// 	// ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
+			// 	// p1.score += 1;
+			// }
+			// if (ball.x <= 0) {
+			// 	// ball.x = canvas.width / 2;
+			// 	// ball.y = canvas.height / 2;
+			// 	ball.dx = -ball.dx;
+			// 	// ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
+			// 	// p2.score += 1;
+			// }
+
+		
+			// if (
+			// 	ball.x < p1.x + p1.w &&
+			// 	ball.x + ball.w > p1.x &&
+			// 	ball.y < p1.y + p1.h &&
+			// 	ball.h + ball.y > p1.y
+			// )
+			// {
+			// 	if (ball.x < p1.x || ball.x > p1.x + p1.w)
+			// 		ball.dx = -ball.dx;
+			// 	else
+			// 		ball.dy = -ball.dy;
+			// }
+			// if (
+			// 	ball.x < p2.x + p2.w &&
+			// 	ball.x + ball.w > p2.x &&
+			// 	ball.y < p2.y + p2.h &&
+			// 	ball.h + ball.y > p2.y
+			// )
+			// {
+			// 	if (ball.x < p2.x || ball.x > p2.x + p2.w)
+			// 		ball.dx = -ball.dx;
+			// 	else
+			// 		ball.dy = -ball.dy;
+			// }
+
 
 			//write score
 			ctx.font = "48px serif";
@@ -220,9 +284,9 @@ function Pong({paddle1, paddle2, newBall}) {
 			//write end screen / stop game
 			if (p1.score === 2 || p2.score === 2)
 			{
-				ball.dx = 0;
-				ball.dy = 0;
-				ball.color = 'black';
+				// ball.dx = 0;
+				// ball.dy = 0;
+				// ball.color = 'black';
 				ctx.fillText((p1.score === 5 ? 'P1' : 'P2') + ' won!', canvas.width / 2, canvas.height / 2)
 			}
 		}
@@ -231,7 +295,7 @@ function Pong({paddle1, paddle2, newBall}) {
 
 		return () => {
 			window.removeEventListener('resize', resizeCanvas);
-			clearInterval(interval);
+			// clearInterval(interval);
 		};
 	}, [resize, p1, p2, ball, sendMessage])
   
