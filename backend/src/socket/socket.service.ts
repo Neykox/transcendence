@@ -6,6 +6,7 @@ import { PlayerDto } from '../dto/player.dto'
 import { User, Room, Ball, Paddle, Toile, } from '../../shared/interfaces/game.interface'
 
 const players: Socket[] = [];
+const rooms: Room[] = [];
 let count = 0;
 
 const randomColor = (() => {
@@ -58,12 +59,15 @@ export class SocketService {
 	playerMove(@MessageBody() {p1, p2} , @ConnectedSocket() client: Socket) {
 		// console.log("p1: ", p1, "p2: ", p2, "ball: ", ball)
 		
-		p1.y += p1.dy * p1.dir;
-		p2.y += p2.dy * p2.dir;
+		// p1.y += p1.dy * p1.dir;
+		// p2.y += p2.dy * p2.dir;
 
-		p1.dir = 0;
-		p2.dir = 0;
-		this.server.to(p1.room).emit('playerMoved', {p1, p2});
+		// p1.dir = 0;
+		// p2.dir = 0;
+		// this.server.to(p1.room).emit('playerMoved', {p1, p2});
+
+		rooms[p1.room].p1 = p1;
+		rooms[p1.room].p2 = p2;
 	}
 
 	async make_room()
@@ -86,7 +90,6 @@ export class SocketService {
 		p2.join(room);
 		delete players[p1.id];
 		delete players[p2.id];
-
 
 		let paddle1: Paddle = {
 			x: 80,
@@ -134,18 +137,36 @@ export class SocketService {
 			ry: 0,
 		}
 
+		rooms[room] = {
+			p1: paddle1,
+			p2: paddle2
+		}
+
 		this.server.to(room).emit('matched', { "toile": toile, "paddle1": paddle1, "paddle2": paddle2, "ball": ball });
-		this.game_loop(paddle1, paddle2, ball, toile);
+		this.game_loop(room, ball, toile);
 		count++;
 	}
 
-	async game_loop(p1: Paddle, p2: Paddle, ball: Ball, canvas: Toile)//need to clean empty games (finished / dc'ed)
+	async game_loop(room: string, ball: Ball, canvas: Toile)//need to clean empty games (finished / dc'ed)
 	{
+		const p1 = rooms[room].p1;
+		const p2 = rooms[room].p2;
+		// console.log(rooms);
+		// console.log("p1 = ", p1, " | p2 = ", p2)
 		const interval = setInterval(() =>{
+			// console.log('sup');
 			// console.log("p1.socket = ", p1.socketId, " | p2.socket = ", p2.socketId)
 			// ball.x = 500;
 			// ball.y = 500;
 			// ball.color = randomColor();
+			const p1 = rooms[room].p1;
+			const p2 = rooms[room].p2;
+
+			p1.y += p1.dy * p1.dir;
+			p2.y += p2.dy * p2.dir;
+
+			p1.dir = 0;
+			p2.dir = 0;
 
 
 			//ball movement
@@ -165,14 +186,14 @@ export class SocketService {
 				ball.y = canvas.y / 2;
 				ball.dx = -ball.dx;
 				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-				// p1.score += 1;
+				p1.score += 1;
 			}
 			if (ball.x - ball.radius <= 0) {
 				ball.x = canvas.x / 2;
 				ball.y = canvas.y / 2;
 				ball.dx = -ball.dx;
 				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-				// p2.score += 1;
+				p2.score += 1;
 			}
 
 			//ball colliding with paddles, not feeling to good may need revision
@@ -202,6 +223,8 @@ export class SocketService {
 				ball.dx = 0;
 				ball.dy = 0;
 				ball.color = 'black';
+				// delete rooms[room];
+				clearInterval(interval);
 			}
 
 			this.server.to(p1.room).emit('newFrame', {p1, p2, ball});

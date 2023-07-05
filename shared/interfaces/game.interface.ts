@@ -41,11 +41,8 @@ export interface User {
 }
 
 export interface Room {
-	id: string
 	p1: Paddle
 	p2: Paddle
-	ball: Ball
-	toile: Toile
 }
 
 export interface Toile {

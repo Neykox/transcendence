@@ -2,7 +2,7 @@ FROM node:20.2.0
 
 WORKDIR /usr/src/app/frontend
 
-COPY package*.json ./
+COPY package.json ./
 
 RUN yarn global add typescript
 

@@ -1,12 +1,12 @@
 import { React, useRef, useEffect } from 'react'
-import { Ball, Paddle } from '../../shared/interfaces/game.interface'
+import { Ball, Paddle, Toile } from '../../shared/interfaces/game.interface'
 import { socket } from '../Socket/socketInit';
 
 
 function Pong({newToile, paddle1, paddle2, newBall}) {
 
 	const sendMessage = () => {
-		socket.emit("updateGame", {p1, p2, ball});
+		socket.emit("updateGame", {p1, p2});
 
 		socket.on('playerMoved', (data) => {
 			// console.log(data);
@@ -16,12 +16,12 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 	};
 
 
-socket.on('newFrame', (data) => {
-			// console.log(data);
-			p1 = data.p1;
-			p2 = data.p2;
-			ball = data.ball
-		} );
+	socket.on('newFrame', (data) => {
+		// console.log(data);
+		p1 = data.p1;
+		p2 = data.p2;
+		ball = data.ball
+	} );
 
 	const canvasRef = useRef<HTMLCanvasElement>(null); 
 
@@ -59,16 +59,6 @@ socket.on('newFrame', (data) => {
 		}
 	};
 
-
-	type Toile = {
-		x: number;
-		y: number;
-		oldx: number;
-		oldy: number;
-		rx: number;
-		ry: number;
-	}
-
 	let p1: Paddle = paddle1.socketId === socket.id ? paddle1 : paddle2;	
 	let p2: Paddle = paddle1.socketId === socket.id ? paddle2 : paddle1;
 	let ball: Ball = newBall;
@@ -100,15 +90,6 @@ socket.on('newFrame', (data) => {
 		resizeCanvas();
 	
 		window.addEventListener('resize', resizeCanvas);
-	
-
-		let toile: Toile = {
-			x: canvas.width,
-			y: canvas.height,
-			oldx: canvas.width,
-			oldy: canvas.height,
-		}
-
 
 	
 		ball.radius = 3 + canvas.height / 40;
@@ -168,113 +149,8 @@ socket.on('newFrame', (data) => {
 			window.requestAnimationFrame(animate);
 			draw_background();
 			draw_ball();
-			// draw_paddle(ball);
 			draw_paddle(p1);
 			draw_paddle(p2);
-
-			// //ball movement
-			// ball.x += ball.dx;
-			// ball.y += ball.dy;
-
-
-			// //old code when ball was a ball
-			// //ball colliding with wall
-			// if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
-			// 	ball.dy = -ball.dy;
-			// }
-
-			// //reset ball / increment score
-			// if (ball.x + ball.radius >= canvas.width) {
-			// 	ball.x = canvas.width / 2;
-			// 	ball.y = canvas.height / 2;
-			// 	ball.dx = -ball.dx;
-			// 	ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-			// 	p1.score += 1;
-			// }
-			// if (ball.x - ball.radius <= 0) {
-			// 	ball.x = canvas.width / 2;
-			// 	ball.y = canvas.height / 2;
-			// 	ball.dx = -ball.dx;
-			// 	ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-			// 	p2.score += 1;
-			// }
-
-			// //ball colliding with paddles, not feeling to good may need revision
-			// // if ((ball.x + ball.radius <= p1.x + p1.w && ball.x + ball.radius >= p1.x) && (ball.y + ball.radius <= p1.y + p1.h && ball.y + ball.radius >= p1.y)) {
-			// // 	ball.dx = -ball.dx;
-			// // }
-			// // if ((ball.x + ball.radius <= p2.x + p2.w && ball.x + ball.radius >= p2.x) && (ball.y + ball.radius <= p2.y + p2.h && ball.y + ball.radius >= p2.y)) {
-			// // 	ball.dx = -ball.dx;
-			// // }
-			// if (
-			// 	ball.x - ball.radius < p1.x + p1.w &&
-			// 	ball.x > p1.x &&
-			// 	ball.y < p1.y + p1.h &&
-			// 	ball.radius + ball.y > p1.y
-			// )
-			// 	ball.dx = -ball.dx;
-			// if (
-			// 	ball.x < p2.x + p2.w &&
-			// 	ball.x + ball.radius > p2.x &&
-			// 	ball.y < p2.y + p2.h &&
-			// 	ball.radius + ball.y > p2.y
-			// )
-			// 	ball.dx = -ball.dx;
-
-			// rect1.x < rect2.x + rect2.w &&
-			// rect1.x + rect1.w > rect2.x &&
-			// rect1.y < rect2.y + rect2.h &&
-			// rect1.h + rect1.y > rect2.y
-
-
-			//new code where ball is a square
-			// //ball colliding with wall
-			// if (ball.y + ball.h > canvas.height || ball.y < 0) {
-			// 	ball.dy = -ball.dy;
-			// }
-
-			// //reset ball / increment score
-			// if (ball.x + ball.w >= canvas.width) {
-			// 	// ball.x = canvas.width / 2;
-			// 	// ball.y = canvas.height / 2;
-			// 	ball.dx = -ball.dx;
-			// 	// ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-			// 	// p1.score += 1;
-			// }
-			// if (ball.x <= 0) {
-			// 	// ball.x = canvas.width / 2;
-			// 	// ball.y = canvas.height / 2;
-			// 	ball.dx = -ball.dx;
-			// 	// ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-			// 	// p2.score += 1;
-			// }
-
-		
-			// if (
-			// 	ball.x < p1.x + p1.w &&
-			// 	ball.x + ball.w > p1.x &&
-			// 	ball.y < p1.y + p1.h &&
-			// 	ball.h + ball.y > p1.y
-			// )
-			// {
-			// 	if (ball.x < p1.x || ball.x > p1.x + p1.w)
-			// 		ball.dx = -ball.dx;
-			// 	else
-			// 		ball.dy = -ball.dy;
-			// }
-			// if (
-			// 	ball.x < p2.x + p2.w &&
-			// 	ball.x + ball.w > p2.x &&
-			// 	ball.y < p2.y + p2.h &&
-			// 	ball.h + ball.y > p2.y
-			// )
-			// {
-			// 	if (ball.x < p2.x || ball.x > p2.x + p2.w)
-			// 		ball.dx = -ball.dx;
-			// 	else
-			// 		ball.dy = -ball.dy;
-			// }
-
 
 			//write score
 			ctx.font = "48px serif";
@@ -284,9 +160,6 @@ socket.on('newFrame', (data) => {
 			//write end screen / stop game
 			if (p1.score === 2 || p2.score === 2)
 			{
-				// ball.dx = 0;
-				// ball.dy = 0;
-				// ball.color = 'black';
 				ctx.fillText((p1.score === 5 ? 'P1' : 'P2') + ' won!', canvas.width / 2, canvas.height / 2)
 			}
 		}
@@ -297,13 +170,12 @@ socket.on('newFrame', (data) => {
 			window.removeEventListener('resize', resizeCanvas);
 			// clearInterval(interval);
 		};
-	}, [resize, p1, p2, ball, sendMessage])
+	}, [resize, p1, p2, ball, toile, ])
   
 	return (
 		<>
 			<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
 				<canvas ref={canvasRef}></canvas>
-				{/*<button onClick={resetGame}> reset game </button>*/}
 			</div>
 		</>
 	)
