@@ -161,12 +161,14 @@ const Settings = () => {
     //  user.avatar = selectedDefaultAvatar;
     //  toast.success('Avatar par défaut enregistré avec succès');
     //}
-	if (unlogged)
-	 navigate(direction);
 };
 
-  return (
-
+if (unlogged) {
+	navigate(direction);
+	localStorage.clear();
+}
+return (
+	
      
     <div>
      <NavBar />
