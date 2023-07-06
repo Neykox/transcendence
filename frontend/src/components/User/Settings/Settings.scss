@@ -82,3 +82,8 @@ button {
   .modal-buttons button {
     margin-left: 10px;
   }
+
+  .selected {
+	border: 10px solid #22A7F0;
+	transition: 0.5 ease-in;
+  }

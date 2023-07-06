@@ -247,17 +247,17 @@ const Settings = () => {
         <h2>Choisir un avatar par défaut</h2>
         <div>   
           {/* ajouter la photo 42 */}
-          <img className="imglist" src={test}  alt="Avatar4" onClick={() => setSelectedDefaultAvatar(() => test)} />
-          <img className="imglist" src={arcencielfille}  alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => arcencielfille)} />
-          <img className="imglist" src={chat}  alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => chat)} />
-          <img className="imglist" src={fille}  alt="Avatar3" onClick={() => setSelectedDefaultAvatar(() => fille)} />
-          <img className="imglist" src={lunette2}  alt="Avatar5" onClick={() => setSelectedDefaultAvatar(() => lunette2)} />
-          <img className="imglist" src={lunette}  alt="Avatar6" onClick={() => setSelectedDefaultAvatar(() => lunette)} />
-          <img className="imglist" src={lunettesoleil} alt="Avatar7" onClick={() => setSelectedDefaultAvatar(() => lunettesoleil)} />
-          <img className="imglist" src={peinture}  alt="Avatar8" onClick={() => setSelectedDefaultAvatar(() => peinture)} />
-          <img className="imglist" src={smiley}  alt="Avatar9" onClick={() => setSelectedDefaultAvatar(() => smiley)} />
-          <img className="imglist" src={vert}  alt="Avatar10" onClick={() => setSelectedDefaultAvatar(() => vert)} />
-          <img className="imglist" src={arcencielgarcon}  alt="Avatar11" onClick={() => setSelectedDefaultAvatar(() => arcencielgarcon)} />
+          <img className={selectedDefaultAvatar === test ? "selected imglist" : "imglist"} src={test}  alt="Avatar4" onClick={() => setSelectedDefaultAvatar(() => test)} />
+          <img className={selectedDefaultAvatar === arcencielfille ? "selected imglist" : "imglist"} src={arcencielfille}  alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => arcencielfille)} />
+          <img className={selectedDefaultAvatar === chat ? "selected imglist" : "imglist"} src={chat}  alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => chat)} />
+          <img className={selectedDefaultAvatar === fille ? "selected imglist" : "imglist"} src={fille}  alt="Avatar3" onClick={() => setSelectedDefaultAvatar(() => fille)} />
+          <img className={selectedDefaultAvatar === lunette2 ? "selected imglist" : "imglist"} src={lunette2}  alt="Avatar5" onClick={() => setSelectedDefaultAvatar(() => lunette2)} />
+          <img className={selectedDefaultAvatar === lunette ? "selected imglist" : "imglist"} src={lunette}  alt="Avatar6" onClick={() => setSelectedDefaultAvatar(() => lunette)} />
+          <img className={selectedDefaultAvatar === lunettesoleil ? "selected imglist" : "imglist"} src={lunettesoleil} alt="Avatar7" onClick={() => setSelectedDefaultAvatar(() => lunettesoleil)} />
+          <img className={selectedDefaultAvatar === peinture ? "selected imglist" : "imglist"} src={peinture}  alt="Avatar8" onClick={() => setSelectedDefaultAvatar(() => peinture)} />
+          <img className={selectedDefaultAvatar === smiley ? "selected imglist" : "imglist"} src={smiley}  alt="Avatar9" onClick={() => setSelectedDefaultAvatar(() => smiley)} />
+          <img className={selectedDefaultAvatar === vert ? "selected imglist" : "imglist"} src={vert}  alt="Avatar10" onClick={() => setSelectedDefaultAvatar(() => vert)} />
+          <img className={selectedDefaultAvatar === arcencielgarcon ? "selected imglist" : "imglist"} src={arcencielgarcon}  alt="Avatar11" onClick={() => setSelectedDefaultAvatar(() => arcencielgarcon)} />
         </div>
         {selectedDefaultAvatar && (
           <button onClick={handleSave}>Enregistrer</button>
