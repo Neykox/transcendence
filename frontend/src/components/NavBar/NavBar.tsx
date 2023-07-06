@@ -18,28 +18,28 @@ function NavBar() {
 
 	return (
 		<nav>
-			<div className={active.active === "profile" ? "selected" : ""}>
+			<div className={active.active === "profile" ? "selectedLink" : ""}>
 				<Link to={"/profile"} onClick={() => active.setActive("profile")}>
 					<img src={homePageImg} alt="homePage" className="first" />
 				</Link>
 			</div>
 			<div className="line"></div>
-			<div className={active.active === "message" ? "selected" : ""}>
+			<div className={active.active === "message" ? "selectedLink" : ""}>
 				<Link to={"/message"} onClick={() => active.setActive("message")}>
 					<img src={messageImg} alt="" />
 				</Link>
 			</div>
-			<div className={active.active === "user" ? "selected" : ""}>
+			<div className={active.active === "user" ? "selectedLink" : ""}>
 				<Link to={"/message"} onClick={() => active.setActive("message")}>
 					<img src={userImg} alt="" />
 				</Link>
 			</div>
-			<div className={active.active === "friends" ? "selected" : ""}>
+			<div className={active.active === "friends" ? "selectedLink" : ""}>
 				<Link to={"/message"} onClick={() => active.setActive("message")}>
 					<img src={crowdImg} alt="" />
 				</Link>
 			</div>
-			<div className={active.active === "settings" ? "set selected" : "set"}>
+			<div className={active.active === "settings" ? "set selectedLink" : "set"}>
 				<Link to={"/settings"} onClick={() => active.setActive("settings")}>
 					<img src={settings} alt="" />
 				</Link>
