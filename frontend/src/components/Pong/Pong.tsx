@@ -5,17 +5,6 @@ import { socket } from '../Socket/socketInit';
 
 function Pong({newToile, paddle1, paddle2, newBall}) {
 
-	const sendMessage = () => {
-		socket.emit("updateGame", {p1, p2});
-
-		socket.on('playerMoved', (data) => {
-			// console.log(data);
-			p1 = data.p1;
-			p2 = data.p2;
-		} )
-	};
-
-
 	socket.on('newFrame', (data) => {
 		// console.log(data);
 		p1 = data.p1;
@@ -27,35 +16,26 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 
 	let resize: boolean = useRef(true);
 
-	const handleKeyDown = event => {
+	const handleKeyDown = event => {//dont need the zeros 
 		event.preventDefault();
-		if (event.keyCode === 38)//up
+		if (p1.score < 2 && p2.score < 2)
 		{
-			if (paddle1.socketId === socket.id)
+			if (event.keyCode === 38)//up
 			{
-				p1.dir = -1;
-				p2.dir = 0;
+				if (paddle1.socketId === socket.id)
+					p1.dir = -1;
+				else
+					p2.dir = -1;
+				socket.emit("updateGame", {p1, p2});
 			}
-			else
+			if (event.keyCode === 40)//down
 			{
-				p1.dir = 0;
-				p2.dir = -1;
+				if (paddle1.socketId === socket.id)
+					p1.dir = 1;
+				else
+					p2.dir = 1;
+				socket.emit("updateGame", {p1, p2});
 			}
-			sendMessage();
-		}
-		if (event.keyCode === 40)//down
-		{
-			if (paddle1.socketId === socket.id)
-			{
-				p1.dir = 1;
-				p2.dir = 0;
-			}
-			else
-			{
-				p1.dir = 0;
-				p2.dir = 1;
-			}
-			sendMessage();
 		}
 	};
 
@@ -66,12 +46,6 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 
 
 	useEffect(() => {
-
-		// const interval = setInterval(() => {
-		// 	p1.dir = 0;
-		// 	p2.dir = 0;
-		// 	sendMessage();
-		// }, 600);//makes sure the paddles are assigned and updated at the start
 
 		const canvas = canvasRef.current!;
 		if (!canvas)
@@ -168,7 +142,6 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 
 		return () => {
 			window.removeEventListener('resize', resizeCanvas);
-			// clearInterval(interval);
 		};
 	}, [resize, p1, p2, ball, toile, ])
   

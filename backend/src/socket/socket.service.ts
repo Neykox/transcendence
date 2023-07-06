@@ -57,15 +57,6 @@ export class SocketService {
 
 	@SubscribeMessage('updateGame')
 	playerMove(@MessageBody() {p1, p2} , @ConnectedSocket() client: Socket) {
-		// console.log("p1: ", p1, "p2: ", p2, "ball: ", ball)
-		
-		// p1.y += p1.dy * p1.dir;
-		// p2.y += p2.dy * p2.dir;
-
-		// p1.dir = 0;
-		// p2.dir = 0;
-		// this.server.to(p1.room).emit('playerMoved', {p1, p2});
-
 		rooms[p1.room].p1 = p1;
 		rooms[p1.room].p2 = p2;
 	}
@@ -151,14 +142,9 @@ export class SocketService {
 	{
 		const p1 = rooms[room].p1;
 		const p2 = rooms[room].p2;
-		// console.log(rooms);
-		// console.log("p1 = ", p1, " | p2 = ", p2)
+
 		const interval = setInterval(() =>{
-			// console.log('sup');
-			// console.log("p1.socket = ", p1.socketId, " | p2.socket = ", p2.socketId)
-			// ball.x = 500;
-			// ball.y = 500;
-			// ball.color = randomColor();
+
 			const p1 = rooms[room].p1;
 			const p2 = rooms[room].p2;
 
@@ -223,34 +209,18 @@ export class SocketService {
 				ball.dx = 0;
 				ball.dy = 0;
 				ball.color = 'black';
-				// delete rooms[room];
+				delete rooms[room];
+				console.log(rooms);
 				clearInterval(interval);
 			}
 
-			this.server.to(p1.room).emit('newFrame', {p1, p2, ball});
+			this.server.to(room).emit('newFrame', {p1, p2, ball});
 		}, 15);
 	}
 
-	// reset_ball()
-	// {
-	// 	let ball: Ball = {
-	// 		// ball.x = canvas.width / 2;
-	// 		// ball.y = canvas.height / 2;
-	// 		ball.dx = 0//7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-	// 		ball.dy = 0//7 * (Math.floor(Math.random() * 2) ? 1 : -1);
-	// 		// p1.score = 0;
-	// 		// p2.score = 0;
-	// 		ball.color = 'white';
-	// 	}
-	// }
-
 	@SubscribeMessage('join_list')
 	joinList(@ConnectedSocket() client: Socket) {
-		// this.server.emit('message', client.id, data);
-		console.log(client.id, "joined the list\n");
 		players[client.id] = client;
-		// console.log(players);
-		// console.log("players length = ", Object.keys(players).length);
 
 		if (Object.keys(players).length >= 2 && Object.keys(players).length % 2 == 0)
 			this.make_room();
