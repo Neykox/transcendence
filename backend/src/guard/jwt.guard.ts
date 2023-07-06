@@ -3,11 +3,13 @@ import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
-  BadRequestException,
+  BadRequestException
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import { Request, response } from 'express';
 import { ConfigService } from '@nestjs/config'
+import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { Http2ServerResponse } from 'http2';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -19,18 +21,23 @@ export class JwtGuard implements CanActivate {
     const token = request.cookies['my_cooky']
 
     if (!token) {
-      throw new BadRequestException('yoken doesnt exist');
+		request['error'] = 401;
+		return true;
     }
-    const payload = await this.jwtService.verifyAsync(token, {secret: 'secret'/*this.configService.get('JWT_SECRET')*/});
-
-    if (!payload)
-      throw new BadRequestException('token verification failled');
+	try {
+		const payload = await this.jwtService.verifyAsync(token, {secret: 'secret'/*this.configService.get('JWT_SECRET')*/});
+		if (!payload) 
+			throw new UnauthorizedException('token verification failed');
+		request['user'] = payload;
+		return true;
+	} catch (e) {
+		request['error'] = 401;
+		return true;
+	}
 
 
     // 💡 We're assigning the payload to the request object here
     // so that we can access it in our route handlers
-    request['user'] = payload;
-    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
