@@ -6,35 +6,41 @@ import crowdImg from '../../asset/images/crowd.png';
 import settings from '../../asset/images/settings.png';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+class active {
+	static setActive(name : string) {
+		active.active = name;
+	}
+
+	static active: string;
+}
 
 function NavBar() {
-	const [active, setActive] = useState(0);
-	
+
 	return (
 		<nav>
-			<div className={active === "profile" ? "selected" : ""}>
-				<Link to={"/profile"} onClick={() => setActive("profile")}>
+			<div className={active.active === "profile" ? "selected" : ""}>
+				<Link to={"/profile"} onClick={() => active.setActive("profile")}>
 					<img src={homePageImg} alt="homePage" className="first" />
 				</Link>
 			</div>
 			<div className="line"></div>
-			<div className={active === "message" ? "selected" : ""}>
-				<Link to={"/message"} onClick={() => setActive("message")}>
+			<div className={active.active === "message" ? "selected" : ""}>
+				<Link to={"/message"} onClick={() => active.setActive("message")}>
 					<img src={messageImg} alt="" />
 				</Link>
 			</div>
-			<div className={active === "user" ? "selected" : ""}>
-				<Link to={"/message"} onClick={() => setActive("message")}>
+			<div className={active.active === "user" ? "selected" : ""}>
+				<Link to={"/message"} onClick={() => active.setActive("message")}>
 					<img src={userImg} alt="" />
 				</Link>
 			</div>
-			<div className={active === "friends" ? "selected" : ""}>
-				<Link to={"/message"} onClick={() => setActive("message")}>
+			<div className={active.active === "friends" ? "selected" : ""}>
+				<Link to={"/message"} onClick={() => active.setActive("message")}>
 					<img src={crowdImg} alt="" />
 				</Link>
 			</div>
-			<div className={active === "settings" ? "set selected" : "set"}>
-				<Link to={"/settings"} onClick={() => setActive("settings")}>
+			<div className={active.active === "settings" ? "set selected" : "set"}>
+				<Link to={"/settings"} onClick={() => active.setActive("settings")}>
 					<img src={settings} alt="" />
 				</Link>
 			</div>
