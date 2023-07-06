@@ -163,10 +163,24 @@ const Settings = () => {
     //}
 };
 
+const clearCookie = async () => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ title: 'React POST Request Example' })
+    };
+
+    await fetch('http://localhost:5000/auth/clear_cookie', requestOptions);
+ };
+
+
 if (unlogged) {
 	navigate(direction);
 	localStorage.clear();
+	clearCookie();
 }
+
 return (
 	
      
