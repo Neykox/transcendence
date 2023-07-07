@@ -106,7 +106,7 @@ export class SocketService {
 		};
 
 		let paddle2: Paddle = {
-			x: 1100,
+			x: 1120,
 			y: 100,
 			dy: 10,
 			dir: 0,

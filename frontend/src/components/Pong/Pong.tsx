@@ -67,13 +67,6 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 		window.addEventListener('resize', resizeCanvas);
 
 	
-		// ball.radius = 3 + canvas.height / 40;
-		// ball.h = canvas.width / 80;
-		// ball.w = canvas.width / 80;
-		// ball.color = 'white';
-		// ball.x = canvas.width / 2;	
-		// ball.y = canvas.height / 2;
-	
 		const draw_background = () => {
 			ctx.fillStyle = '#000000';
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
