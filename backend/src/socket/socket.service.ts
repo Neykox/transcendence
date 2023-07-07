@@ -46,6 +46,15 @@ export class SocketService {
 
 	handleDisconnect(client: Socket){
 		delete players[client.id];
+		// console.log(rooms);
+		// for (const id in rooms)
+		// {
+		// 	if (rooms[id].p1.socketId === client.id)
+		// 		delete rooms[id].p1;
+		// 	if (rooms[id].p2.socketId === client.id)
+		// 		delete rooms[id].p2;
+		// }
+		// console.log(rooms);
 		console.log('client disconnected: ', client.id);
 	}
 
@@ -204,7 +213,7 @@ export class SocketService {
 			)
 				ball.dx = -ball.dx;
 
-			if (p1.score === 2 || p2.score === 2)
+			if (p1.score === 200 || p2.score === 200)
 			{
 				ball.dx = 0;
 				ball.dy = 0;

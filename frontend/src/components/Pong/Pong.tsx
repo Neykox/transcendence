@@ -10,13 +10,14 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 		p1 = data.p1;
 		p2 = data.p2;
 		ball = data.ball
+		resize.current = true;
 	} );
 
 	const canvasRef = useRef<HTMLCanvasElement>(null); 
 
 	let resize: boolean = useRef(true);
 
-	const handleKeyDown = event => {//dont need the zeros 
+	const handleKeyDown = event => {
 		event.preventDefault();
 		if (p1.score < 2 && p2.score < 2)
 		{
@@ -56,8 +57,8 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 			return;
 
 		function resizeCanvas() {
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
+			canvas.width = window.innerWidth - 10;//-10 to allow the 5px border to show
+			canvas.height = window.innerHeight - 10;
 			resize.current = true;
 		}
 	
@@ -66,12 +67,12 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 		window.addEventListener('resize', resizeCanvas);
 
 	
-		ball.radius = 3 + canvas.height / 40;
-		ball.h = canvas.width / 80;
-		ball.w = canvas.width / 80;
-		ball.color = 'white';
-		ball.x = canvas.width / 2;	
-		ball.y = canvas.height / 2;
+		// ball.radius = 3 + canvas.height / 40;
+		// ball.h = canvas.width / 80;
+		// ball.w = canvas.width / 80;
+		// ball.color = 'white';
+		// ball.x = canvas.width / 2;	
+		// ball.y = canvas.height / 2;
 	
 		const draw_background = () => {
 			ctx.fillStyle = '#000000';
@@ -112,9 +113,9 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 				// p2.w = canvas.width / 80;
 				// p2.h = canvas.height / 3;
 
-				ball.x *= toile.rx;
-				ball.y *= toile.ry;
-				ball.radius = 3 + canvas.height / 40;
+				// ball.x *= toile.rx;
+				// ball.y *= toile.ry;
+				// ball.radius = 3 + canvas.height / 40;
 
 				resize.current = false;
 			}
@@ -148,7 +149,7 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 	return (
 		<>
 			<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
-				<canvas ref={canvasRef}></canvas>
+				<canvas ref={canvasRef} style={{border: "5px solid red"}}></canvas>
 			</div>
 		</>
 	)
