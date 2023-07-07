@@ -13,14 +13,14 @@ const randomColor = (() => {
 	  "use strict";
 
 	  const randomInt = (min, max) => {
-	    return Math.floor(Math.random() * (max - min + 1)) + min;
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	  };
 
 	  return () => {
-	    var h = randomInt(0, 360);
-	    var s = randomInt(42, 98);
-	    var l = randomInt(40, 90);
-	    return `hsl(${h},${s}%,${l}%)`;
+		var h = randomInt(0, 360);
+		var s = randomInt(42, 98);
+		var l = randomInt(40, 90);
+		return `hsl(${h},${s}%,${l}%)`;
 	  };
 })();
 
@@ -142,12 +142,14 @@ export class SocketService {
 			p2: paddle2
 		}
 
-		this.server.to(room).emit('matched', { "toile": toile, "paddle1": paddle1, "paddle2": paddle2, "ball": ball });
-		this.game_loop(room, ball, toile);
+		const max_score = 5;
+
+		this.server.to(room).emit('matched', { "toile": toile, "paddle1": paddle1, "paddle2": paddle2, "ball": ball, "max_score": max_score });
+		this.game_loop(room, ball, toile, max_score);
 		count++;
 	}
 
-	async game_loop(room: string, ball: Ball, canvas: Toile)//need to clean empty games (finished / dc'ed)
+	async game_loop(room: string, ball: Ball, canvas: Toile, max_score: number)//need to clean empty games (finished / dc'ed)
 	{
 		const p1 = rooms[room].p1;
 		const p2 = rooms[room].p2;
@@ -198,22 +200,59 @@ export class SocketService {
 			// if ((ball.x + ball.radius <= p2.x + p2.w && ball.x + ball.radius >= p2.x) && (ball.y + ball.radius <= p2.y + p2.h && ball.y + ball.radius >= p2.y)) {
 			// 	ball.dx = -ball.dx;
 			// }
-			if (
-				ball.x - ball.radius < p1.x + p1.w &&
-				ball.x > p1.x &&
-				ball.y < p1.y + p1.h &&
-				ball.radius + ball.y > p1.y
-			)
-				ball.dx = -ball.dx;
-			if (
-				ball.x < p2.x + p2.w &&
-				ball.x + ball.radius > p2.x &&
-				ball.y < p2.y + p2.h &&
-				ball.radius + ball.y > p2.y
-			)
-				ball.dx = -ball.dx;
+			// if (
+			// 	ball.x - ball.radius < p1.x + p1.w &&
+			// 	ball.x > p1.x &&
+			// 	ball.y < p1.y + p1.h &&
+			// 	ball.radius + ball.y > p1.y
+			// )
+			// 	ball.dx = -ball.dx;
+			// if (
+			// 	ball.x < p2.x + p2.w &&
+			// 	ball.x + ball.radius > p2.x &&
+			// 	ball.y < p2.y + p2.h &&
+			// 	ball.radius + ball.y > p2.y
+			// )
+			// 	ball.dx = -ball.dx;
 
-			if (p1.score === 200 || p2.score === 200)
+
+			// supposed to be better but not working
+			if (ball.x + ball.radius >= p1.x && ball.x - ball.radius <= p1.x + p1.w)
+			{
+				if (ball.y + ball.radius >= p1.y && ball.y - ball.radius <= p1.y + p1.h)
+				{
+					if (ball.x > p1.x + p1.w || ball.x < p1.x)
+						ball.dx = -ball.dx;
+					else
+						ball.dy = -ball.dy;
+				}
+			}
+
+			// if (ball.y + ball.radius >= p1.y && ball.y - ball.radius <= p1.y + p1.h)
+			// {
+			// 	if (ball.x + ball.radius >= p1.x && ball.x - ball.radius <= p1.x + p1.w)
+			// 	{
+			// 		// ball.dx = -ball.dx;
+			// 		ball.dy = -ball.dy;
+			// 		if (ball.y > p1.y + p1.h || ball.y < p1.y)
+			// 			ball.dy = -ball.dy;
+			// 		else
+			// 			ball.dx = -ball.dx;
+			// 	}
+			// }
+
+			if (ball.x + ball.radius >= p2.x && ball.x - ball.radius <= p2.x + p2.w)
+			{
+				if (ball.y + ball.radius >= p2.y && ball.y - ball.radius <= p2.y + p2.h)
+				{
+					if (ball.x > p2.x + p2.w || ball.x < p2.x)
+						ball.dx = -ball.dx;
+					else
+						ball.dy = -ball.dy;
+				}
+			}
+
+			if (p1.score === max_score || p2.score === max_score)
 			{
 				ball.dx = 0;
 				ball.dy = 0;

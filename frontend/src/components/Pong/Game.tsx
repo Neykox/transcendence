@@ -10,6 +10,7 @@ function Game() {
 	const [paddle2, setPaddle2] = useState({});
 	const [ball, setBall] = useState({});
 	const [toile, setToile] = useState({});
+	const [maxScore, setMaxScore] = useState(0);
 
 	socket.on('matched', (data) => {
 		console.log(data)
@@ -17,6 +18,7 @@ function Game() {
 		setPaddle2(data.paddle2);
 		setBall(data.ball);
 		setToile(data.toile);
+		setMaxScore(data.max_score);
 		setMatched(true);
 	} )
 
@@ -35,7 +37,7 @@ function Game() {
 		<>
 			{
 				matched
-				? <Pong newToile={toile} paddle1={paddle1} paddle2={paddle2} newBall={ball}/>
+				? <Pong newToile={toile} paddle1={paddle1} paddle2={paddle2} newBall={ball} max_score={maxScore}/>
 				: <img src={gif} alt="searching for opponents..." />
 			}
 		</>

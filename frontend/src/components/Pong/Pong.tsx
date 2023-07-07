@@ -3,7 +3,7 @@ import { Ball, Paddle, Toile } from '../../shared/interfaces/game.interface'
 import { socket } from '../Socket/socketInit';
 
 
-function Pong({newToile, paddle1, paddle2, newBall}) {
+function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 
 	socket.on('newFrame', (data) => {
 		// console.log(data);
@@ -19,7 +19,7 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 
 	const handleKeyDown = event => {
 		event.preventDefault();
-		if (p1.score < 2 && p2.score < 2)
+		if (p1.score < max_score && p2.score < max_score)
 		{
 			if (event.keyCode === 38)//up
 			{
@@ -77,6 +77,9 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 		const draw_background = () => {
 			ctx.fillStyle = '#000000';
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+			ctx.fillStyle = "red";
+			ctx.fillRect(0, 800, 1200, 10);
 		}
 	
 		const draw_ball = () => {
@@ -133,7 +136,7 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 			ctx.fillText(p1.score + ":" + p2.score, canvas.width / 2, 40)
 
 			//write end screen / stop game
-			if (p1.score === 2 || p2.score === 2)
+			if (p1.score === max_score || p2.score === max_score)
 			{
 				ctx.fillText((p1.score === 5 ? 'P1' : 'P2') + ' won!', canvas.width / 2, canvas.height / 2)
 			}
@@ -144,7 +147,7 @@ function Pong({newToile, paddle1, paddle2, newBall}) {
 		return () => {
 			window.removeEventListener('resize', resizeCanvas);
 		};
-	}, [resize, p1, p2, ball, toile, ])
+	}, [resize, p1, p2, ball, toile, max_score, ])
   
 	return (
 		<>
