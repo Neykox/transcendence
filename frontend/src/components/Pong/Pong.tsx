@@ -91,7 +91,7 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 		}
 	
 		const draw_paddle = (paddle: Paddle) => {
-			ctx.fillStyle = paddle.color;
+			ctx.fillStyle = paddle.socketId === socket.id ? "red" : "white";
 			ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
 		}
 
@@ -152,7 +152,7 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 	return (
 		<>
 			<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
-				<canvas ref={canvasRef} style={{border: "5px solid red"}}></canvas>
+				<canvas ref={canvasRef} style={{border: "5px solid white"}}></canvas>
 			</div>
 		</>
 	)

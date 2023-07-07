@@ -66,8 +66,10 @@ export class SocketService {
 
 	@SubscribeMessage('updateGame')
 	playerMove(@MessageBody() {p1, p2} , @ConnectedSocket() client: Socket) {
-		rooms[p1.room].p1 = p1;
-		rooms[p1.room].p2 = p2;
+		if (p1.socketId === client.id)
+			rooms[p1.room].p1.dir = p1.dir;
+		else
+			rooms[p1.room].p2.dir = p2.dir;
 	}
 
 	async make_room()
@@ -99,7 +101,6 @@ export class SocketService {
 			w: 20,
 			h: 300,
 			score: 0,
-			color: 'green',
 			room: room,
 			socketId: p1.id,
 		};
@@ -112,7 +113,6 @@ export class SocketService {
 			w: 20,
 			h: 300,
 			score: 0,
-			color: 'yellow',
 			room: room,
 			socketId: p2.id,
 		};
@@ -156,9 +156,7 @@ export class SocketService {
 
 		const interval = setInterval(() =>{
 
-			const p1 = rooms[room].p1;
-			const p2 = rooms[room].p2;
-
+			//player movement
 			p1.y += p1.dy * p1.dir;
 			p2.y += p2.dy * p2.dir;
 
@@ -193,30 +191,8 @@ export class SocketService {
 				p2.score += 1;
 			}
 
-			//ball colliding with paddles, not feeling to good may need revision
-			// if ((ball.x + ball.radius <= p1.x + p1.w && ball.x + ball.radius >= p1.x) && (ball.y + ball.radius <= p1.y + p1.h && ball.y + ball.radius >= p1.y)) {
-			// 	ball.dx = -ball.dx;
-			// }
-			// if ((ball.x + ball.radius <= p2.x + p2.w && ball.x + ball.radius >= p2.x) && (ball.y + ball.radius <= p2.y + p2.h && ball.y + ball.radius >= p2.y)) {
-			// 	ball.dx = -ball.dx;
-			// }
-			// if (
-			// 	ball.x - ball.radius < p1.x + p1.w &&
-			// 	ball.x > p1.x &&
-			// 	ball.y < p1.y + p1.h &&
-			// 	ball.radius + ball.y > p1.y
-			// )
-			// 	ball.dx = -ball.dx;
-			// if (
-			// 	ball.x < p2.x + p2.w &&
-			// 	ball.x + ball.radius > p2.x &&
-			// 	ball.y < p2.y + p2.h &&
-			// 	ball.radius + ball.y > p2.y
-			// )
-			// 	ball.dx = -ball.dx;
 
-
-			// supposed to be better but not working
+			//ball/paddle collision/bounce
 			if (ball.x + ball.radius >= p1.x && ball.x - ball.radius <= p1.x + p1.w)
 			{
 				if (ball.y + ball.radius >= p1.y && ball.y - ball.radius <= p1.y + p1.h)
@@ -227,19 +203,6 @@ export class SocketService {
 						ball.dy = -ball.dy;
 				}
 			}
-
-			// if (ball.y + ball.radius >= p1.y && ball.y - ball.radius <= p1.y + p1.h)
-			// {
-			// 	if (ball.x + ball.radius >= p1.x && ball.x - ball.radius <= p1.x + p1.w)
-			// 	{
-			// 		// ball.dx = -ball.dx;
-			// 		ball.dy = -ball.dy;
-			// 		if (ball.y > p1.y + p1.h || ball.y < p1.y)
-			// 			ball.dy = -ball.dy;
-			// 		else
-			// 			ball.dx = -ball.dx;
-			// 	}
-			// }
 
 			if (ball.x + ball.radius >= p2.x && ball.x - ball.radius <= p2.x + p2.w)
 			{
@@ -252,18 +215,20 @@ export class SocketService {
 				}
 			}
 
+			//stop game
 			if (p1.score === max_score || p2.score === max_score)
 			{
 				ball.dx = 0;
 				ball.dy = 0;
 				ball.color = 'black';
+				this.server.to(room).emit('newFrame', {p1, p2, ball});
 				delete rooms[room];
 				console.log(rooms);
 				clearInterval(interval);
 			}
 
 			this.server.to(room).emit('newFrame', {p1, p2, ball});
-		}, 15);
+		}, 60);
 	}
 
 	@SubscribeMessage('join_list')
