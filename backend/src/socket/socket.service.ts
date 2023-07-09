@@ -25,7 +25,7 @@ const randomColor = (() => {
 })();
 
 @WebSocketGateway({
-		transport: ['websocket'],
+		// transport: ['websocket'],
 		cors: {
 			origin: '*',
 		},
@@ -33,6 +33,12 @@ const randomColor = (() => {
 		// path: '/pong',
 		pingInterval: 2000,
 		pingTimeout: 5000,
+		// connectionStateRecovery: {
+		// 	// the backup duration of the sessions and the packets
+		// 	maxDisconnectionDuration: 2 * 60 * 1000,
+		// 	// whether to skip middlewares upon successful recovery
+		// 	skipMiddlewares: true,
+		// },https://socket.io/docs/v4/connection-state-recovery
 })
 
 export class SocketService {
@@ -220,7 +226,7 @@ export class SocketService {
 			{
 				ball.dx = 0;
 				ball.dy = 0;
-				ball.color = 'black';
+				ball.color = 'blue';
 				this.server.to(room).emit('newFrame', {p1, p2, ball});
 				delete rooms[room];
 				console.log(rooms);

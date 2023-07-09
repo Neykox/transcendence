@@ -1,6 +1,7 @@
-import { React, useRef, useEffect } from 'react'
+import { React, useRef, useEffect, useState } from 'react'
 import { Ball, Paddle, Toile } from '../../shared/interfaces/game.interface'
 import { socket } from '../Socket/socketInit';
+import './Pong.scss'
 
 
 function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
@@ -10,7 +11,8 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 		p1 = data.p1;
 		p2 = data.p2;
 		ball = data.ball
-		resize.current = true;
+		setScore({p1: p1.score, p2: p2.score});//maybe not change state everyframe
+		// resize.current = true;
 	} );
 
 	const canvasRef = useRef<HTMLCanvasElement>(null); 
@@ -40,11 +42,11 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 		}
 	};
 
-	let p1: Paddle = paddle1.socketId === socket.id ? paddle1 : paddle2;	
-	let p2: Paddle = paddle1.socketId === socket.id ? paddle2 : paddle1;
+	let p1: Paddle = paddle1;	
+	let p2: Paddle = paddle2;
 	let ball: Ball = newBall;
-	let toile: Toile = newToile
-
+	let toile: Toile = newToile;
+	const [score, setScore] = useState({p1: p1.score, p2: p2.score});
 
 	useEffect(() => {
 
@@ -57,8 +59,8 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 			return;
 
 		function resizeCanvas() {
-			canvas.width = window.innerWidth - 10;//-10 to allow the 5px border to show
-			canvas.height = window.innerHeight - 10;
+			canvas.width = window.innerWidth ;
+			canvas.height = window.innerHeight ;
 			resize.current = true;
 		}
 	
@@ -71,8 +73,23 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 			ctx.fillStyle = '#000000';
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+			// ctx.fillStyle  = "white";
+			ctx.strokeStyle = "white";
+			ctx.lineWidth = 15;
+			ctx.setLineDash([15, 15]);
+			ctx.beginPath();
+			ctx.moveTo(canvas.width/2, 0);
+			ctx.lineTo(canvas.width/2, canvas.height);
+			ctx.stroke();
+
 			ctx.fillStyle = "red";
 			ctx.fillRect(0, 800, 1200, 10);
+
+			ctx.fillStyle = "blue";
+			ctx.fillRect(0, 0, 1, canvas.height);
+			ctx.fillRect(0, 0, canvas.width, 1);
+			ctx.fillRect(canvas.width - 1, 0, canvas.width, canvas.height);
+			ctx.fillRect(0, canvas.height - 1, canvas.width, canvas.height);
 		}
 	
 		const draw_ball = () => {
@@ -123,14 +140,11 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 			draw_paddle(p1);
 			draw_paddle(p2);
 
-			//write score
-			ctx.font = "48px serif";
-			ctx.fillStyle = 'white';
-			ctx.fillText(p1.score + ":" + p2.score, canvas.width / 2, 40)
-
 			//write end screen / stop game
 			if (p1.score === max_score || p2.score === max_score)
 			{
+				ctx.font = "48px serif";
+				ctx.fillStyle = 'white';
 				ctx.fillText((p1.score === 5 ? 'P1' : 'P2') + ' won!', canvas.width / 2, canvas.height / 2)
 			}
 		}
@@ -144,8 +158,13 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
   
 	return (
 		<>
-			<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
-				<canvas ref={canvasRef} style={{border: "5px solid white"}}></canvas>
+			<div className="scoreboard">
+				<div className="d">{p1.socketId}</div>
+				<div className="d">{score.p1} : {score.p2}</div>
+				<div className="d">{p2.socketId}</div>
+			</div>
+			<div className="e" tabIndex={0} onKeyDown={handleKeyDown} style={{border: "5px solid green"}}>
+				<canvas ref={canvasRef}></canvas>
 			</div>
 		</>
 	)

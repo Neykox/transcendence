@@ -1,0 +1,20 @@
+.scoreboard {
+    display: table;
+    width: 100%; /*Optional*/
+    table-layout: fixed; /*Optional*/
+    border-spacing: 10px; /*Optional*/
+    background-color: yellow; /*Optional*/
+}
+.d {
+    display: table-cell;
+    background-color: red; /*Optional*/
+}
+
+.e {
+   background-color: orange; /*Optional*/
+
+   canvas{
+      max-width:100%;
+      height:100%;
+   }
+}
