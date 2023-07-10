@@ -7,7 +7,7 @@ build :
 	docker-compose up --build
 
 down :
-	docker-compose down
+	docker-compose down -v 
 
 prune: down
 #ajouter les commandes

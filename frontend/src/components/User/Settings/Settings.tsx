@@ -1,8 +1,8 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useContext } from 'react';
 import './Settings.scss';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
-import { user } from '../Profile/PlayerInfo/PlayerInfo';
+//import { user } from '../Profile/PlayerInfo/PlayerInfo';
 import NavBar from '../../NavBar/NavBar';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,9 +18,16 @@ import lunettesoleil from '../../../asset/images/lunettesoleil.jpg';
 import peinture from '../../../asset/images/peinture.jpg';
 import smiley from '../../../asset/images/smiley.jpg';
 import vert from '../../../asset/images/vert.jpg';
+import UserContext from '../../../model/userContext';
+import { UserInfo } from '../../../model/userInfo';
+
+
+
 
 const Settings = () => {
-  const [username, setUsername] = useState(user.username);
+  const { user, setUser } = useContext<UserInfo>(UserContext);
+  //const [username, setUsername] = useState(user.username);
+  const [pseudo, setPseudo] = useState(user.pseudo);
   const [darkMode, setDarkMode] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState('');
@@ -29,13 +36,13 @@ const Settings = () => {
   const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
   const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState("");
   const [doubleAuthEnabled, setDoubleAuthEnabled] = useState(false);
-
+  //const [userId, setUserId] = useState(user.id);
 
   /*
   evenements de changement de nom d'utilisateur
   */
-  const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+  const handlePseudoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPseudo(event.target.value);
   };
 
   const handleModalOpen = () => {
@@ -46,8 +53,33 @@ const Settings = () => {
     setIsModalOpen(false);
   };
 
+  //const handleModalSave = () => {
+  //  user.login = login; 
+  //  setIsModalOpen(false);
+  //};
+
   const handleModalSave = () => {
-    user.username = username; 
+    setUser(prevUser => ({ ...prevUser, pseudo }));
+    fetch(`http://localhost:5000/users/changePseudo`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ Pseudo: pseudo }),
+    })
+      .then(response => {
+        if (response.ok) {
+          toast.success('Pseudo mis à jour avec succès');
+        } else {
+          toast.error('Une erreur est survenue lors de la mise à jour du pseudo');
+        }
+      })
+      .catch(error => {
+        console.error('Erreur lors de la mise à jour du pseudo', error);
+        toast.error('Une erreur est survenue lors de la mise à jour du pseudo');
+      });
+  
     setIsModalOpen(false);
   };
 
@@ -88,16 +120,42 @@ const Settings = () => {
   };
 
   const handleSave = () => {
-    if (profilePhoto) {
-      user.avatar = profilePhoto;
-      toast.success('Photo de profil enregistrée avec succès');
-    } else if (selectedDefaultAvatar) {
-      user.avatar = selectedDefaultAvatar;
-      toast.success('Avatar par défaut enregistré avec succès');
-    }
-  };
-  
 
+    if (profilePhoto) 
+       user.image = profilePhoto;
+    else if (selectedDefaultAvatar) 
+      user.image = selectedDefaultAvatar;
+    
+     setUser(prevUser => ({ ...prevUser, Image }));
+     fetch(`http://localhost:5000/users/changeAvatar`, {
+     method: 'PUT',
+     credentials: 'include',
+     headers: {
+       'Content-Type': 'application/json',
+     },
+     body: JSON.stringify({ Image: user.image }),
+      })
+     .then(response => {
+       if (response.ok) {
+         toast.success('Avatar mis à jour avec succès');
+       } else {
+         toast.error('Une erreur est survenue lors de la mise à jour de l\'avatar');
+       }
+     })
+     .catch(error => {
+       console.error('Erreur lors de la mise à jour du l\'avatar', error);
+       toast.error('Une erreur est survenue lors de la mise à jour du l\'avatar');
+     });
+
+    //if (profilePhoto) {
+    //  user.avatar = profilePhoto;
+    //  toast.success('Photo de profil enregistrée avec succès');
+    //} else if (selectedDefaultAvatar) {
+    //  user.avatar = selectedDefaultAvatar;
+    //  toast.success('Avatar par défaut enregistré avec succès');
+    //}
+  };
+  var image42:string = localStorage.getItem('42image') as string;
   return (
 
      
@@ -105,7 +163,7 @@ const Settings = () => {
      <NavBar />
       <div className="settinglist">
       <div>
-      <label htmlFor="username">Modifier son pseudo: </label>
+      <label htmlFor="login">Modifier son pseudo: </label>
       <button onClick={handleModalOpen}>Modifier</button>
 
       {isModalOpen && (
@@ -114,9 +172,9 @@ const Settings = () => {
             <h2>Modifier le pseudo</h2>
             <input
               type="text"
-              id="username"
-              value={username}
-              onChange={handleUsernameChange}
+              id="pseudo"
+              value={pseudo}
+              onChange={handlePseudoChange}
             />
             <div className="modal-buttons">
               <button onClick={handleModalSave}>Enregistrer</button>
@@ -175,7 +233,7 @@ const Settings = () => {
               {profilePhoto && (
         <div>
           <h3>Ancienne photo de profil : </h3>
-          <img className="imglist" src={user.avatar} alt="Avatar" />
+          <img className="imglist" src={user.image} alt="Avatar" />
           <h3>Nouvelle photo de profil : </h3>
           <img className="imglist" src={profilePhoto} alt="Avatar" />
           <button onClick={handleSave}>Enregistrer</button>
@@ -187,7 +245,9 @@ const Settings = () => {
       <Modal isOpen={isDefaultModalOpen}>
         <h2>Choisir un avatar par défaut</h2>
         <div>   
-          {/* ajouter la photo 42 */}
+          {image42 !== 'null' && ( 
+            <img className="imglist" src={image42} alt="Avatar" onClick={() => setSelectedDefaultAvatar(() => image42)} />
+          )}
           <img className="imglist" src={test}  alt="Avatar4" onClick={() => setSelectedDefaultAvatar(() => test)} />
           <img className="imglist" src={arcencielfille}  alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => arcencielfille)} />
           <img className="imglist" src={chat}  alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => chat)} />

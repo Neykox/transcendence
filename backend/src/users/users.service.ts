@@ -53,4 +53,14 @@ export class UsersService {
 	const newuser = this.usersRepository.create(user);
 	return this.usersRepository.save(newuser);
   }
+
+  async changePseudo(user: User, newPseudo: string) {
+	this.usersRepository.update(user.id, {pseudo: newPseudo, });
 }
+
+async changeAvatar(user: User, newAvatar: string) {
+	this.usersRepository.update(user.id, {image: newAvatar, });
+}
+}
+
+

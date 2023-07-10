@@ -28,23 +28,6 @@ function Message() {
 		{id: 5, name: "Marion", status: "offline"},
 	]);
 
-	const friendsList = () => {
-		const id = new Date().getTime();
-		const name = randomName();
-		const status = Math.random() < 0.5 ? "online" : "offline";
-		const friendsToAdd = { id, name, status };
-
-		// 1. Copy du state
-		const friendsCopy = [...friends];
-
-
-		// 2. Manipuler mon state
-		friendsCopy.unshift(friendsToAdd);
-
-		// 3. Modifier mon state
-		setFriends(friendsCopy);
-	};
-
 	return (
 		<div className="message">
 			<NavBar />
