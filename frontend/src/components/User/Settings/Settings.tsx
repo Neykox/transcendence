@@ -155,8 +155,7 @@ const Settings = () => {
     //  toast.success('Avatar par défaut enregistré avec succès');
     //}
   };
-  
-
+  var image42:string = localStorage.getItem('42image') as string;
   return (
 
      
@@ -246,8 +245,10 @@ const Settings = () => {
       <Modal isOpen={isDefaultModalOpen}>
         <h2>Choisir un avatar par défaut</h2>
         <div>   
-          {/* ajouter la photo 42 */}
-          <img className={selectedDefaultAvatar === test ? "selectedImage imglist" : "imglist"} src={test}  alt="Avatar4" onClick={() => setSelectedDefaultAvatar(() => test)} />
+		{image42 !== 'null' && ( 
+            <img className={selectedDefaultAvatar === image42 ? "selectedImage imglist" : "imglist"} src={image42} alt="Avatar" onClick={() => setSelectedDefaultAvatar(() => image42)} />
+          )}
+		  <img className={selectedDefaultAvatar === test ? "selectedImage imglist" : "imglist"} src={test}  alt="Avatar4" onClick={() => setSelectedDefaultAvatar(() => test)} />
           <img className={selectedDefaultAvatar === arcencielfille ? "selectedImage imglist" : "imglist"} src={arcencielfille}  alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => arcencielfille)} />
           <img className={selectedDefaultAvatar === chat ? "selectedImage imglist" : "imglist"} src={chat}  alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => chat)} />
           <img className={selectedDefaultAvatar === fille ? "selectedImage imglist" : "imglist"} src={fille}  alt="Avatar3" onClick={() => setSelectedDefaultAvatar(() => fille)} />
@@ -257,7 +258,7 @@ const Settings = () => {
           <img className={selectedDefaultAvatar === peinture ? "selectedImage imglist" : "imglist"} src={peinture}  alt="Avatar8" onClick={() => setSelectedDefaultAvatar(() => peinture)} />
           <img className={selectedDefaultAvatar === smiley ? "selectedImage imglist" : "imglist"} src={smiley}  alt="Avatar9" onClick={() => setSelectedDefaultAvatar(() => smiley)} />
           <img className={selectedDefaultAvatar === vert ? "selectedImage imglist" : "imglist"} src={vert}  alt="Avatar10" onClick={() => setSelectedDefaultAvatar(() => vert)} />
-          <img className={selectedDefaultAvatar === arcencielgarcon ? "selectedImage imglist" : "imglist"} src={arcencielgarcon}  alt="Avatar11" onClick={() => setSelectedDefaultAvatar(() => arcencielgarcon)} />
+          <img className={selectedDefaultAvatar === arcencielgarcon ? "selectedImage imglist" : "imglist"} src={arcencielgarcon}  alt="Avatar11" onClick={() => setSelectedDefaultAvatar(() => arcencielgarcon)} /> master
         </div>
         {selectedDefaultAvatar && (
           <button onClick={handleSave}>Enregistrer</button>

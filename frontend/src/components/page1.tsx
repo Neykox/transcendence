@@ -130,9 +130,9 @@ export default function Page1() {
           userContext.setUser(JSON.parse(userJSON));
           setDirection("/profile");
         }
-
-
-
+        if ( localStorage.getItem("42image") === null) {
+          localStorage.setItem("42image", user_info.image.link);
+        }
         setRedirect(true);
       }
     };
