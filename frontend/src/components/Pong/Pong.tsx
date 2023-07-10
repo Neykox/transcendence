@@ -12,7 +12,7 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 		p2 = data.p2;
 		ball = data.ball
 		setScore({p1: p1.score, p2: p2.score});//maybe not change state everyframe
-		// resize.current = true;
+		resize.current = true;
 	} );
 
 	const canvasRef = useRef<HTMLCanvasElement>(null); 
@@ -73,7 +73,7 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 			ctx.fillStyle = '#000000';
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-			// ctx.fillStyle  = "white";
+			//middle line
 			ctx.strokeStyle = "white";
 			ctx.lineWidth = 15;
 			ctx.setLineDash([15, 15]);
@@ -81,15 +81,17 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 			ctx.moveTo(canvas.width/2, 0);
 			ctx.lineTo(canvas.width/2, canvas.height);
 			ctx.stroke();
+		}
 
-			ctx.fillStyle = "red";
-			ctx.fillRect(0, 800, 1200, 10);
-
-			ctx.fillStyle = "blue";
-			ctx.fillRect(0, 0, 1, canvas.height);
-			ctx.fillRect(0, 0, canvas.width, 1);
-			ctx.fillRect(canvas.width - 1, 0, canvas.width, canvas.height);
-			ctx.fillRect(0, canvas.height - 1, canvas.width, canvas.height);
+		const draw_boundingbox = () => {
+			const rx = canvas.width / 1200;
+			const ry = canvas.height / 800;
+			const scale = rx < ry ? rx : ry;
+			ctx.fillStyle = "purple";
+			ctx.fillRect(0, 0, 1, 800 * scale);
+			ctx.fillRect(0, 0, 1200 * scale, 1);
+			ctx.fillRect(1200 * scale - 1, 0, 1200 * scale, 800 * scale);
+			ctx.fillRect(0, 800 * scale - 1, 1200 * scale, 800 * scale);
 		}
 	
 		const draw_ball = () => {
@@ -109,26 +111,27 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 
 			if (resize.current)
 			{
-				toile.oldx = toile.x;
-				toile.oldy = toile.y;
-				toile.x = canvas.width;
-				toile.y = canvas.height;
-				toile.rx = toile.x / toile.oldx;
-				toile.ry = toile.y / toile.oldy;
+				const orignalWidth = 1200;
+				const orignalHeight = 800;
+				const currentWidth = canvas.width;
+				const currentHeight = canvas.height;
+				const rx = currentWidth / orignalWidth;
+				const ry = currentHeight / orignalHeight;
+				const scale = rx < ry ? rx : ry;
 
-				// p1.x = canvas.width * 0.1;
-				// p1.y = canvas.height / 3;
-				// p1.w = canvas.width / 80;
-				// p1.h = canvas.height / 3;
+				p1.x *= scale;
+				p1.y *= scale;
+				p1.w *= scale;
+				p1.h *= scale;
 
-				// p2.x = canvas.width * 0.9;
-				// p2.y = canvas.height / 3;
-				// p2.w = canvas.width / 80;
-				// p2.h = canvas.height / 3;
+				p2.x *= scale;
+				p2.y *= scale;
+				p2.w *= scale;
+				p2.h *= scale;
 
-				// ball.x *= toile.rx;
-				// ball.y *= toile.ry;
-				// ball.radius = 3 + canvas.height / 40;
+				ball.x *= scale;
+				ball.y *= scale;
+				ball.radius *= scale;
 
 				resize.current = false;
 			}
@@ -136,6 +139,7 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 			
 			window.requestAnimationFrame(animate);
 			draw_background();
+			draw_boundingbox();
 			draw_ball();
 			draw_paddle(p1);
 			draw_paddle(p2);
@@ -158,12 +162,12 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
   
 	return (
 		<>
-			<div className="scoreboard">
-				<div className="d">{p1.socketId}</div>
-				<div className="d">{score.p1} : {score.p2}</div>
-				<div className="d">{p2.socketId}</div>
-			</div>
 			<div className="e" tabIndex={0} onKeyDown={handleKeyDown} style={{border: "5px solid green"}}>
+				<div className="scoreboard">
+					<div className="cells">{p1.socketId}</div>
+					<div className="cells">{score.p1} : {score.p2}</div>
+					<div className="cells">{p2.socketId}</div>
+				</div>
 				<canvas ref={canvasRef}></canvas>
 			</div>
 		</>
