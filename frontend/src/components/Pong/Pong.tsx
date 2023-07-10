@@ -1,10 +1,10 @@
 import { React, useRef, useEffect, useState } from 'react'
-import { Ball, Paddle, Toile } from '../../shared/interfaces/game.interface'
+import { Ball, Paddle } from '../../shared/interfaces/game.interface'
 import { socket } from '../Socket/socketInit';
 import './Pong.scss'
 
 
-function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
+function Pong({paddle1, paddle2, newBall, max_score}) {
 
 	socket.on('newFrame', (data) => {
 		// console.log(data);
@@ -45,7 +45,6 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 	let p1: Paddle = paddle1;	
 	let p2: Paddle = paddle2;
 	let ball: Ball = newBall;
-	let toile: Toile = newToile;
 	const [score, setScore] = useState({p1: p1.score, p2: p2.score});
 
 	useEffect(() => {
@@ -158,15 +157,15 @@ function Pong({newToile, paddle1, paddle2, newBall, max_score}) {
 		return () => {
 			window.removeEventListener('resize', resizeCanvas);
 		};
-	}, [resize, p1, p2, ball, toile, max_score, ])
+	}, [resize, p1, p2, ball, max_score, ])
   
 	return (
 		<>
 			<div className="e" tabIndex={0} onKeyDown={handleKeyDown} style={{border: "5px solid green"}}>
 				<div className="scoreboard">
-					<div className="cells">{p1.socketId}</div>
+					<div className="cells">{p1.name}</div>
 					<div className="cells">{score.p1} : {score.p2}</div>
-					<div className="cells">{p2.socketId}</div>
+					<div className="cells">{p2.name}</div>
 				</div>
 				<canvas ref={canvasRef}></canvas>
 			</div>

@@ -21,6 +21,8 @@ export interface Paddle {
 	// color: string;
 	room: string;
 	socketId: string;
+	name: string;
+	dc: boolean;
 }
 
 export interface Ball {
@@ -30,8 +32,6 @@ export interface Ball {
 	dy: number;
 	radius: number;
 	color: string;
-	w: number;
-	h: number;
 }
 
 export interface User {

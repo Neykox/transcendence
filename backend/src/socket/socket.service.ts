@@ -3,34 +3,17 @@ import { Server, Socket } from 'socket.io';
 import { PlayerDto } from '../dto/player.dto'
 
 
-import { User, Room, Ball, Paddle, Toile, } from '../../shared/interfaces/game.interface'
+import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interface'
 
-const players: Socket[] = [];
+const players: { name: string, socket: Socket}[] = [] ;
 const rooms: Room[] = [];
 let count = 0;
-
-const randomColor = (() => {
-	  "use strict";
-
-	  const randomInt = (min, max) => {
-		return Math.floor(Math.random() * (max - min + 1)) + min;
-	  };
-
-	  return () => {
-		var h = randomInt(0, 360);
-		var s = randomInt(42, 98);
-		var l = randomInt(40, 90);
-		return `hsl(${h},${s}%,${l}%)`;
-	  };
-})();
 
 @WebSocketGateway({
 		// transport: ['websocket'],
 		cors: {
 			origin: '*',
 		},
-		// cors: '*/*',
-		// path: '/pong',
 		pingInterval: 2000,
 		pingTimeout: 5000,
 		// connectionStateRecovery: {
@@ -53,14 +36,14 @@ export class SocketService {
 	handleDisconnect(client: Socket){
 		delete players[client.id];
 		// console.log(rooms);
-		// for (const id in rooms)
-		// {
-		// 	if (rooms[id].p1.socketId === client.id)
-		// 		delete rooms[id].p1;
-		// 	if (rooms[id].p2.socketId === client.id)
-		// 		delete rooms[id].p2;
-		// }
-		// console.log(rooms);
+		for (const id in rooms)
+		{
+			if (rooms[id].p1.socketId === client.id)
+				rooms[id].p1.dc = true;
+			if (rooms[id].p2.socketId === client.id)
+				rooms[id].p2.dc = true;
+		}
+		console.log(rooms);
 		console.log('client disconnected: ', client.id);
 	}
 
@@ -85,9 +68,9 @@ export class SocketService {
 		for (const id in players)
 		{
 			if (p1 === null)
-				p1 = players[id];
+				p1 = players[id].socket;
 			else if (p2 === null)
-				p2 = players[id]
+				p2 = players[id].socket;
 			else
 				break;
 		}
@@ -96,8 +79,6 @@ export class SocketService {
 		const room = count.toString();
 		p1.join(room);
 		p2.join(room);
-		delete players[p1.id];
-		delete players[p2.id];
 
 		let paddle1: Paddle = {
 			x: 80,
@@ -109,6 +90,8 @@ export class SocketService {
 			score: 0,
 			room: room,
 			socketId: p1.id,
+			name: players[p1.id].name,
+			dc: false,
 		};
 
 		let paddle2: Paddle = {
@@ -121,7 +104,12 @@ export class SocketService {
 			score: 0,
 			room: room,
 			socketId: p2.id,
+			name: players[p2.id].name,
+			dc: false,
 		};
+
+		delete players[p1.id];
+		delete players[p2.id];
 
 		let ball = {
 			x: 500,
@@ -130,17 +118,6 @@ export class SocketService {
 			dx: 7 * (Math.floor(Math.random() * 2) ? 1 : -1),
 			dy: 7 * (Math.floor(Math.random() * 2) ? 1 : -1),
 			color: "white",
-			h: 10,
-			w: 10,
-		}
-
-		let toile: Toile = {
-			x: 1200,
-			y: 800,
-			oldx: 1200,
-			oldy: 800,
-			rx: 0,
-			ry: 0,
 		}
 
 		rooms[room] = {
@@ -150,17 +127,25 @@ export class SocketService {
 
 		const max_score = 5;
 
-		this.server.to(room).emit('matched', { "toile": toile, "paddle1": paddle1, "paddle2": paddle2, "ball": ball, "max_score": max_score });
-		this.game_loop(room, ball, toile, max_score);
+		this.server.to(room).emit('matched', { "paddle1": paddle1, "paddle2": paddle2, "ball": ball, "max_score": max_score });
+		this.game_loop(room, ball, max_score);
 		count++;
 	}
 
-	async game_loop(room: string, ball: Ball, canvas: Toile, max_score: number)//need to clean empty games (finished / dc'ed)
+	async game_loop(room: string, ball: Ball, max_score: number)//need to clean empty games (finished / dc'ed)
 	{
 		const p1 = rooms[room].p1;
 		const p2 = rooms[room].p2;
+		const canvas = {x: 1200, y: 800};
 
 		const interval = setInterval(() =>{
+
+			if (p1.dc && p2.dc)
+			{
+				delete rooms[room];
+				console.log(rooms);
+				clearInterval(interval);
+			}
 
 			//player movement
 			p1.y += p1.dy * p1.dir;
@@ -238,8 +223,8 @@ export class SocketService {
 	}
 
 	@SubscribeMessage('join_list')
-	joinList(@ConnectedSocket() client: Socket) {
-		players[client.id] = client;
+	joinList(@MessageBody() data, @ConnectedSocket() client: Socket) {
+		players[client.id] = { name: data, socket: client }
 
 		if (Object.keys(players).length >= 2 && Object.keys(players).length % 2 == 0)
 			this.make_room();
