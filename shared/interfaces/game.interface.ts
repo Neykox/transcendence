@@ -18,7 +18,7 @@ export interface Paddle {
 	w: number;
 	h: number;
 	score: number;
-	// color: string;
+	color: string;
 	room: string;
 	socketId: string;
 	name: string;

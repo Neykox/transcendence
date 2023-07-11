@@ -21,7 +21,8 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 
 	const handleKeyDown = event => {
 		event.preventDefault();
-		if (p1.score < max_score && p2.score < max_score)
+		console.log(p1, p2)
+		if (p1.dc === false || p2.dc === false)//need to reword this condition
 		{
 			if (event.keyCode === 38)//up
 			{
@@ -102,7 +103,7 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 		}
 	
 		const draw_paddle = (paddle: Paddle) => {
-			ctx.fillStyle = paddle.socketId === socket.id ? "red" : "white";
+			ctx.fillStyle = paddle.color;
 			ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
 		}
 
@@ -161,7 +162,7 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
   
 	return (
 		<>
-			<div className="e" tabIndex={0} onKeyDown={handleKeyDown} style={{border: "5px solid green"}}>
+			<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
 				<div className="scoreboard">
 					<div className="cells">{p1.name}</div>
 					<div className="cells">{score.p1} : {score.p2}</div>

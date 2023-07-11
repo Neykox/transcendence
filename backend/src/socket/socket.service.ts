@@ -8,6 +8,8 @@ import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interfac
 const players: { name: string, socket: Socket}[] = [] ;
 const rooms: Room[] = [];
 let count = 0;
+const ballSpeed = 1;
+const max_score = 1;
 
 @WebSocketGateway({
 		// transport: ['websocket'],
@@ -82,7 +84,7 @@ export class SocketService {
 
 		let paddle1: Paddle = {
 			x: 80,
-			y: 100,
+			y: 250,
 			dy: 10,
 			dir: 0,
 			w: 20,
@@ -91,12 +93,13 @@ export class SocketService {
 			room: room,
 			socketId: p1.id,
 			name: players[p1.id].name,
+			color: players[p1.id].color,
 			dc: false,
 		};
 
 		let paddle2: Paddle = {
 			x: 1120,
-			y: 100,
+			y: 250,
 			dy: 10,
 			dir: 0,
 			w: 20,
@@ -105,6 +108,7 @@ export class SocketService {
 			room: room,
 			socketId: p2.id,
 			name: players[p2.id].name,
+			color: players[p2.id].color,
 			dc: false,
 		};
 
@@ -115,8 +119,8 @@ export class SocketService {
 			x: 500,
 			y: 500,
 			radius: 20,
-			dx: 7 * (Math.floor(Math.random() * 2) ? 1 : -1),
-			dy: 7 * (Math.floor(Math.random() * 2) ? 1 : -1),
+			dx: ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1),
+			dy: ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1),
 			color: "white",
 		}
 
@@ -125,14 +129,12 @@ export class SocketService {
 			p2: paddle2
 		}
 
-		const max_score = 5;
-
 		this.server.to(room).emit('matched', { "paddle1": paddle1, "paddle2": paddle2, "ball": ball, "max_score": max_score });
-		this.game_loop(room, ball, max_score);
+		this.game_loop(room, ball);
 		count++;
 	}
 
-	async game_loop(room: string, ball: Ball, max_score: number)//need to clean empty games (finished / dc'ed)
+	async game_loop(room: string, ball: Ball)
 	{
 		const p1 = rooms[room].p1;
 		const p2 = rooms[room].p2;
@@ -171,14 +173,14 @@ export class SocketService {
 				ball.x = canvas.x / 2;
 				ball.y = canvas.y / 2;
 				ball.dx = -ball.dx;
-				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
+				ball.dy = ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1);
 				p1.score += 1;
 			}
 			if (ball.x - ball.radius <= 0) {
 				ball.x = canvas.x / 2;
 				ball.y = canvas.y / 2;
 				ball.dx = -ball.dx;
-				ball.dy = 7 * (Math.floor(Math.random() * 2) ? 1 : -1);
+				ball.dy = ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1);
 				p2.score += 1;
 			}
 
@@ -212,6 +214,8 @@ export class SocketService {
 				ball.dx = 0;
 				ball.dy = 0;
 				ball.color = 'blue';
+				p1.dc = true;
+				p2.dc = true;
 				this.server.to(room).emit('newFrame', {p1, p2, ball});
 				delete rooms[room];
 				console.log(rooms);
@@ -219,12 +223,12 @@ export class SocketService {
 			}
 
 			this.server.to(room).emit('newFrame', {p1, p2, ball});
-		}, 60);
+		}, 15);
 	}
 
 	@SubscribeMessage('join_list')
 	joinList(@MessageBody() data, @ConnectedSocket() client: Socket) {
-		players[client.id] = { name: data, socket: client }
+		players[client.id] = { name: data.pseudo, color: data.color, socket: client }
 
 		if (Object.keys(players).length >= 2 && Object.keys(players).length % 2 == 0)
 			this.make_room();
