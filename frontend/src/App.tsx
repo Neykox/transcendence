@@ -9,7 +9,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Page1 from './components/page1';
 import Page2 from './components/page2';
-import Game from './components/Pong/Game';
+import Lobby from './components/Pong/Lobby';
 import { UserProvider } from './model/userContext';
 import { useState, useEffect } from 'react';
 
@@ -78,7 +78,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/page1" element={<Page1 />} />
           <Route path="/page2" element={<Page2 />} />
-          <Route path='/game' element={<Game />} />
+          <Route path='/lobby' element={<Lobby />} />
         </Routes>
       </div>
     </UserProvider>

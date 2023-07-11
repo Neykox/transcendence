@@ -52,8 +52,9 @@ import gif from '../../asset/images/search.gif';
 import Pong from './Pong'
 import { socket } from '../Socket/socketInit';
 import UserContext from '../../model/userContext';
+import './Lobby.scss'
 
-function Game() {
+function Lobby() {
 
 	const { user } = useContext(UserContext);
 
@@ -99,7 +100,7 @@ function Game() {
 	// const _2balls = <DoubleBall paddle1={paddle1} paddle2={paddle2} newBall={ball} newBall2={ball2} max_score={maxScore}/>;
 
 	return (
-		<>
+		<div className="whole">
 			{gamemode === "select"
 			?	<div className="menu">
 					<div>select a paddle color</div>
@@ -114,11 +115,11 @@ function Game() {
 			{gamemode === "1v1" ? _1v1 : <></>}
 			{/*{gamemode === "1v3" ? _1v3 : <></>}
 			{gamemode === "2balls" ? _2balls : <></>}*/}
-		</>
+		</div>
 	)
 }
  
-export default Game
+export default Lobby
 
 
 

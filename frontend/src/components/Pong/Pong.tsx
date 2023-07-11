@@ -149,7 +149,7 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 			{
 				ctx.font = "48px serif";
 				ctx.fillStyle = 'white';
-				ctx.fillText((p1.score === 5 ? 'P1' : 'P2') + ' won!', canvas.width / 2, canvas.height / 2)
+				ctx.fillText((p1.score === 5 ? p1.name : p2.name) + ' won!', canvas.width / 2, canvas.height / 2)
 			}
 		}
 
