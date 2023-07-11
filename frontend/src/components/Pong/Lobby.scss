@@ -1,7 +1,56 @@
-*{
-	background: gray
+.whole{
+	color: #ecdefd;
+	background-color: #130326;
+	height: 100vh;/*no clue if we really need that*/
 }
 
 .menu{
-	background: lightgray
+	padding: 20px;
+	background-color: #1d0439;
+	text-align: center;
+}
+
+.circle{
+/*	display:block;*/
+	height: 40px;
+	width: 30px;
+	border-radius: 0%;
+}
+
+.queue{
+	color: black;
+	background-color: #a662f4;
+	border: 1px solid #1d0439;
+	box-shadow: #7e1aef 0px 3px 7px;
+}
+
+.queue:hover{
+	background-color: #ae70f5 + 30;
+}
+
+.gamemodes{
+	padding-top: 15px;
+	padding-bottom: 15px;
+/*	margin: 10px;*/
+	text-align: center;
+	font-size: 30px;
+	display: flow;
+	margin: auto;
+	border-radius: 10px;
+	width: 80%;
+	background-color: #180330;
+	vertical-align: middle;
+}
+
+.colors{
+	padding-top: 15px;
+	padding-bottom: 15px;
+	border-radius: 10px;
+	width: 80%;
+/*	box-shadow: pink 0px 5px 15px;*/
+	margin: auto;
+	margin-bottom: 20px;
+	display: bloc;
+	background-color: #180330;
+	text-align: center;
 }

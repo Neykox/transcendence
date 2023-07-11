@@ -161,16 +161,14 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 	}, [resize, p1, p2, ball, max_score, ])
   
 	return (
-		<>
-			<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
-				<div className="scoreboard">
-					<div className="cells">{p1.name}</div>
-					<div className="cells">{score.p1} : {score.p2}</div>
-					<div className="cells">{p2.name}</div>
-				</div>
-				<canvas ref={canvasRef}></canvas>
+		<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
+			<div className="scoreboard">
+				<div className="cells">{p1.name}</div>
+				<div className="cells">{score.p1} : {score.p2}</div>
+				<div className="cells">{p2.name}</div>
 			</div>
-		</>
+			<canvas ref={canvasRef}></canvas>
+		</div>
 	)
 }
 

@@ -89,8 +89,12 @@ function Lobby() {
 		socket.emit("join_list", {pseudo: user.pseudo, color: color});
 	}
 
+	// const mystyle = {
+    //   background: "",
+    //   border: 1px solid lightblue,
+    // };
 	const listItems = colors.map((colory) =>
-		<button className="circle" style={{ background: colory }} onClick={() => {setColor(colory);}}></button>
+		<button className="circle" style={{ background: colory, "border-radius": "10px", border: "2px solid black", "box-shadow": colory + " 0px 5px 15px",}} onClick={() => {setColor(colory);}}></button>
 	);
 
 
@@ -103,12 +107,17 @@ function Lobby() {
 		<div className="whole">
 			{gamemode === "select"
 			?	<div className="menu">
-					<div>select a paddle color</div>
-					<ul>{listItems}</ul>
-					<div>Current color: {color}</div>
-					<button type="button" onClick={matchmaking}>1v1 match</button>
-					<button type="button" onClick={matchmaking}>1v3 match</button>
-					<button type="button" onClick={matchmaking}>2 Balls</button>
+					<div className="colors">Select your paddle's color
+						<ul>{listItems}</ul>
+						<div>Current color: {<button className="circle" style={{ background: color, "border-radius": "10px", border: "2px solid black", "box-shadow": color + " 0px 5px 15px",}}></button>}</div>
+					</div>
+					<div className="gamemodes"> Available gamemodes
+						<div className="queues">
+							<button className="queue" type="button" onClick={matchmaking}>1v1 match</button>
+							<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>
+							<button className="queue" type="button" onClick={matchmaking}>2 Balls</button>
+						</div>
+					</div>
 				</div>
 			: <></>}
 			{gamemode === "gif" ? Gif : <></>}
