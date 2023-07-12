@@ -122,7 +122,7 @@ function Lobby() {
 						<div className="queues">
 							<button className="queue" type="button" onClick={matchmaking}>1v1 match</button>
 							<button className="queue" type="button" onClick={matchmaking_2balls}>2 Balls</button>
-							<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>
+							{/*<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>*/}
 						</div>
 					</div>
 				</div>
