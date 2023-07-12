@@ -49,6 +49,7 @@
 
 import { React, useState, useContext } from 'react'
 import Pong from './Pong'
+import DoubleBall from './DoubleBall'
 import { socket } from '../Socket/socketInit';
 import UserContext from '../../model/userContext';
 import './Lobby.scss'
@@ -81,9 +82,24 @@ function Lobby() {
 		setGamemode("1v1");
 	} )
 
+	socket.on('2balls', (data) => {
+		// console.log(data)
+		setPaddle1(data.paddle1);
+		setPaddle2(data.paddle2);
+		setBall(data.ball);
+		setBall2(data.ball2);
+		setMaxScore(data.max_score);
+		setGamemode("2balls");
+	} )
+
 	const matchmaking = async () => {
-		setGamemode("gif");
-		socket.emit("join_list", {pseudo: user.pseudo, color: color});
+		setGamemode("matchmaking");
+		socket.emit("join_list", {pseudo: user.pseudo, color: color, gametype: "1v1"});
+	}
+
+	const matchmaking_2balls = async () => {
+		setGamemode("matchmaking");
+		socket.emit("join_list", {pseudo: user.pseudo, color: color, gametype: "2balls"});
 	}
 
 	const listItems = colors.map((colory) =>
@@ -92,7 +108,7 @@ function Lobby() {
 
 	const _1v1 = <Pong paddle1={paddle1} paddle2={paddle2} newBall={ball} max_score={maxScore}/>;
 	// const _1v3 = <Pong4 paddle1={paddle1} paddle2={paddle2} paddle3={paddle3} paddle4={paddle4} newBall={ball} max_score={maxScore}/>;
-	// const _2balls = <DoubleBall paddle1={paddle1} paddle2={paddle2} newBall={ball} newBall2={ball2} max_score={maxScore}/>;
+	const _2balls = <DoubleBall paddle1={paddle1} paddle2={paddle2} newBall={ball} newBall2={ball2} max_score={maxScore}/>;
 
 	return (
 		<>
@@ -105,20 +121,20 @@ function Lobby() {
 					<div className="gamemodes">Available gamemodes
 						<div className="queues">
 							<button className="queue" type="button" onClick={matchmaking}>1v1 match</button>
+							<button className="queue" type="button" onClick={matchmaking_2balls}>2 Balls</button>
 							<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>
-							<button className="queue" type="button" onClick={matchmaking}>2 Balls</button>
 						</div>
 					</div>
 				</div>
 			: <></>}
-			{gamemode === "gif"
+			{gamemode === "matchmaking"
 			?	<div className="menu">
 					<div className="gamemodes">Looking for opponents</div>
 				</div>
 			: <></>}
 			{gamemode === "1v1" ? _1v1 : <></>}
-			{/*{gamemode === "1v3" ? _1v3 : <></>}
-			{gamemode === "2balls" ? _2balls : <></>}*/}
+			{/*{gamemode === "1v3" ? _1v3 : <></>}*/}
+			{gamemode === "2balls" ? _2balls : <></>}
 		</>
 	)
 }

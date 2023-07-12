@@ -4,13 +4,14 @@ import { socket } from '../Socket/socketInit';
 import './Pong.scss'
 
 
-function Pong({paddle1, paddle2, newBall, max_score}) {
+function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score}) {
 
 	socket.on('newFrame', (data) => {
 		// console.log(data);
 		p1 = data.p1;
 		p2 = data.p2;
 		ball = data.ball
+		ball2 = data.ball2
 		setScore({p1: p1.score, p2: p2.score});//maybe not change state everyframe
 		resize.current = true;
 	} );
@@ -44,6 +45,7 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 	let p1: Paddle = paddle1;	
 	let p2: Paddle = paddle2;
 	let ball: Ball = newBall;
+	let ball2: Ball = newBall2;
 	const [score, setScore] = useState({p1: p1.score, p2: p2.score});
 
 	useEffect(() => {
@@ -92,7 +94,7 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 			ctx.fillRect(0, 800 * scale - 1, 1200 * scale, 800 * scale);
 		}
 	
-		const draw_ball = () => {
+		const draw_ball = (ball: Ball) => {
 			ctx.beginPath();
 			ctx.fillStyle = ball.color;
 			ctx.arc(ball.x + ball.dx, ball.y, ball.radius, 0, 2*Math.PI);
@@ -131,6 +133,10 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 				ball.y *= scale;
 				ball.radius *= scale;
 
+				ball2.x *= scale;
+				ball2.y *= scale;
+				ball2.radius *= scale;
+
 				resize.current = false;
 			}
 
@@ -138,7 +144,8 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 			window.requestAnimationFrame(animate);
 			draw_background();
 			draw_boundingbox();
-			draw_ball();
+			draw_ball(ball);
+			draw_ball(ball2);
 			draw_paddle(p1);
 			draw_paddle(p2);
 
@@ -170,7 +177,7 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 	)
 }
 
-export default Pong
+export default DoubleBall
 
 // ctx.fillRect(x, y, width, height)
 // ctx.arc(x, y, radius, startAngle, endAngle, counterclockwise);
