@@ -47,8 +47,7 @@
  
 // export default Game
 
-import { React, useState, useEffect, useContext } from 'react'
-import gif from '../../asset/images/search.gif';
+import { React, useState, useContext } from 'react'
 import Pong from './Pong'
 import { socket } from '../Socket/socketInit';
 import UserContext from '../../model/userContext';
@@ -59,9 +58,8 @@ function Lobby() {
 	const { user } = useContext(UserContext);
 
 	const [color, setColor] = useState("white");
-	const colors = ["red", "green", "blue", "pink", "orange", "purple"];
+	const colors = ["red", "lightgreen", "skyblue", "pink", "orange", "purple"];
 
-	const [matched, setMatched] = useState(false);
 	const [gamemode, setGamemode] = useState("select");
 
 	const [paddle1, setPaddle1] = useState({});
@@ -81,7 +79,6 @@ function Lobby() {
 		setBall(data.ball);
 		setMaxScore(data.max_score);
 		setGamemode("1v1");
-		setMatched(true);
 	} )
 
 	const matchmaking = async () => {
@@ -89,29 +86,23 @@ function Lobby() {
 		socket.emit("join_list", {pseudo: user.pseudo, color: color});
 	}
 
-	// const mystyle = {
-    //   background: "",
-    //   border: 1px solid lightblue,
-    // };
 	const listItems = colors.map((colory) =>
-		<button className="circle" style={{ background: colory, "border-radius": "10px", border: "2px solid black", "box-shadow": colory + " 0px 5px 15px",}} onClick={() => {setColor(colory);}}></button>
+		<button className="square" style={{ background: colory, border: "2px solid black", "box-shadow": colory + " 0px 5px 15px",}} onClick={() => {setColor(colory);}}></button>
 	);
 
-
-	const Gif = <img src={gif} alt="searching for opponents..." />;
 	const _1v1 = <Pong paddle1={paddle1} paddle2={paddle2} newBall={ball} max_score={maxScore}/>;
 	// const _1v3 = <Pong4 paddle1={paddle1} paddle2={paddle2} paddle3={paddle3} paddle4={paddle4} newBall={ball} max_score={maxScore}/>;
 	// const _2balls = <DoubleBall paddle1={paddle1} paddle2={paddle2} newBall={ball} newBall2={ball2} max_score={maxScore}/>;
 
 	return (
-		<div className="whole">
+		<>
 			{gamemode === "select"
 			?	<div className="menu">
 					<div className="colors">Select your paddle's color
-						<ul>{listItems}</ul>
-						<div>Current color: {<button className="circle" style={{ background: color, "border-radius": "10px", border: "2px solid black", "box-shadow": color + " 0px 5px 15px",}}></button>}</div>
+						<div>{listItems}</div>
+						<div className="currentColor">Current color: {<button className="square" style={{ background: color, "border-radius": "10px", border: "2px solid black", "box-shadow": color + " 0px 5px 15px",}}></button>}</div>
 					</div>
-					<div className="gamemodes"> Available gamemodes
+					<div className="gamemodes">Available gamemodes
 						<div className="queues">
 							<button className="queue" type="button" onClick={matchmaking}>1v1 match</button>
 							<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>
@@ -120,11 +111,15 @@ function Lobby() {
 					</div>
 				</div>
 			: <></>}
-			{gamemode === "gif" ? Gif : <></>}
+			{gamemode === "gif"
+			?	<div className="menu">
+					<div className="gamemodes">Looking for opponents</div>
+				</div>
+			: <></>}
 			{gamemode === "1v1" ? _1v1 : <></>}
 			{/*{gamemode === "1v3" ? _1v3 : <></>}
 			{gamemode === "2balls" ? _2balls : <></>}*/}
-		</div>
+		</>
 	)
 }
  

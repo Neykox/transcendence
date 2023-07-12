@@ -1,20 +1,45 @@
-.whole{
-	color: #ecdefd;
-	background-color: #130326;
-	height: 100vh;/*no clue if we really need that*/
-}
-
 .menu{
+	color: #ecdefd;
 	padding: 20px;
 	background-color: #1d0439;
 	text-align: center;
+	height: 100vh;
 }
 
-.circle{
-/*	display:block;*/
+.colors{
+	padding-top: 15px;
+	padding-bottom: 15px;
+	border-radius: 10px;
+	width: 80%;
+/*	box-shadow: pink 0px 5px 15px;*/
+	margin: auto;
+	margin-bottom: 20px;
+	background-color: #180330;
+	text-align: center;
+}
+
+.square{
+	margin: 10px;
 	height: 40px;
 	width: 30px;
-	border-radius: 0%;
+	border-radius: 10px;
+}
+
+.currentColor{
+	text-align: center;
+}
+
+.gamemodes{
+	padding-top: 15px;
+	padding-bottom: 15px;
+	text-align: center;
+	font-size: 30px;
+	display: flow;
+	margin: auto;
+	border-radius: 10px;
+	width: 80%;
+	background-color: #180330;
+	vertical-align: middle;
 }
 
 .queue{
@@ -26,31 +51,4 @@
 
 .queue:hover{
 	background-color: #ae70f5 + 30;
-}
-
-.gamemodes{
-	padding-top: 15px;
-	padding-bottom: 15px;
-/*	margin: 10px;*/
-	text-align: center;
-	font-size: 30px;
-	display: flow;
-	margin: auto;
-	border-radius: 10px;
-	width: 80%;
-	background-color: #180330;
-	vertical-align: middle;
-}
-
-.colors{
-	padding-top: 15px;
-	padding-bottom: 15px;
-	border-radius: 10px;
-	width: 80%;
-/*	box-shadow: pink 0px 5px 15px;*/
-	margin: auto;
-	margin-bottom: 20px;
-	display: bloc;
-	background-color: #180330;
-	text-align: center;
 }

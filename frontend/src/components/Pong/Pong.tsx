@@ -30,7 +30,7 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 					p1.dir = -1;
 				else
 					p2.dir = -1;
-				socket.emit("updateGame", {p1, p2});
+				socket.emit("updateGame", {"p1":{dir:p1.dir, room:p1.room, socketId:p1.socketId}, "p2":{dir:p2.dir, room:p2.room, socketId:p2.socketId}});
 			}
 			if (event.keyCode === 40)//down
 			{
@@ -38,7 +38,7 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 					p1.dir = 1;
 				else
 					p2.dir = 1;
-				socket.emit("updateGame", {p1, p2});
+				socket.emit("updateGame", {"p1":{dir:p1.dir, room:p1.room, socketId:p1.socketId}, "p2":{dir:p2.dir, room:p2.room, socketId:p2.socketId}});
 			}
 		}
 	};
