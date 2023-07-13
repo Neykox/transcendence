@@ -54,14 +54,16 @@ import { socket } from '../Socket/socketInit';
 import UserContext from '../../model/userContext';
 import './Lobby.scss'
 
-function Lobby() {
+function Lobby({challenger}) {
+	console.log(challenger)
 
 	const { user } = useContext(UserContext);
 
 	const [color, setColor] = useState("white");
 	const colors = ["red", "lightgreen", "skyblue", "pink", "orange", "purple"];
 
-	const [gamemode, setGamemode] = useState("select");
+	const [gamemode, setGamemode] = useState(challenger ? "private" : "select");
+	let private_gamemode: string = "1v1";
 
 	const [paddle1, setPaddle1] = useState({});
 	const [paddle2, setPaddle2] = useState({});
@@ -102,6 +104,11 @@ function Lobby() {
 		socket.emit("join_list", {pseudo: user.pseudo, color: color, gametype: "2balls"});
 	}
 
+	const private_match = async () => {
+		setGamemode("matchmaking");
+		socket.emit("private_match", {pseudo: user.pseudo, color: color, gametype: private_gamemode, room: challenger});
+	}
+
 	const listItems = colors.map((colory) =>
 		<button className="square" style={{ background: colory, border: "2px solid black", "box-shadow": colory + " 0px 5px 15px",}} onClick={() => {setColor(colory);}}></button>
 	);
@@ -120,7 +127,7 @@ function Lobby() {
 					</div>
 					<div className="gamemodes">Available gamemodes
 						<div className="queues">
-							<button className="queue" type="button" onClick={matchmaking}>1v1 match</button>
+							<button className="queue" type="button" onClick={matchmaking}>Classic</button>
 							<button className="queue" type="button" onClick={matchmaking_2balls}>2 Balls</button>
 							{/*<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>*/}
 						</div>
@@ -129,12 +136,30 @@ function Lobby() {
 			: <></>}
 			{gamemode === "matchmaking"
 			?	<div className="menu">
-					<div className="gamemodes">Looking for opponents</div>
+					<div className="gamemodes">Waiting for opponents</div>
 				</div>
 			: <></>}
 			{gamemode === "1v1" ? _1v1 : <></>}
 			{/*{gamemode === "1v3" ? _1v3 : <></>}*/}
 			{gamemode === "2balls" ? _2balls : <></>}
+			{gamemode === "private"
+			?	<div className="menu">
+					<div className="colors">Select your paddle's color
+						<div>{listItems}</div>
+						<div className="currentColor">Current color: {<button className="square" style={{ background: color, "border-radius": "10px", border: "2px solid black", "box-shadow": color + " 0px 5px 15px",}}></button>}</div>
+					</div>
+					<div className="gamemodes">Available gamemodes
+						<div className="queues">
+							<button className="queue" type="button" onClick={() => {private_gamemode = "1v1";}}>Classic</button>
+							<button className="queue" type="button" onClick={() => {private_gamemode = "2balls";}}>2 Balls</button>
+							{/*<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>*/}
+						</div>
+					</div>
+					<div className="gamemodes">
+						<button className="queue" type="button" onClick={private_match}>Ready</button>
+					</div>
+				</div>
+			: <></>}
 		</>
 	)
 }

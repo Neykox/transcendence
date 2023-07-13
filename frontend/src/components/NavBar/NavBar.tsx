@@ -4,6 +4,7 @@ import messageImg from '../../asset/images/message.png';
 import userImg from '../../asset/images/user.png';
 import crowdImg from '../../asset/images/crowd.png';
 import settings from '../../asset/images/settings.png';
+import paddle from '../../asset/images/pngwing.com.png';
 import { Link } from 'react-router-dom';
 
 function NavBar() {
@@ -28,6 +29,11 @@ function NavBar() {
 			<div>
 				<Link to={"/message"}>
 					<img src={crowdImg} alt="" />
+				</Link>
+			</div>
+			<div>
+				<Link to={"/lobby"}>
+					<img src={paddle} alt="" />
 				</Link>
 			</div>
 			<div className="set">

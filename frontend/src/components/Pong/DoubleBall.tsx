@@ -163,7 +163,7 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score}) {
 		return () => {
 			window.removeEventListener('resize', resizeCanvas);
 		};
-	}, [resize, p1, p2, ball, max_score, ])
+	}, [resize, p1, p2, ball, ball2, max_score, ])
   
 	return (
 		<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>

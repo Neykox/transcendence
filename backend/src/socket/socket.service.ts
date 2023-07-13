@@ -5,7 +5,7 @@ import { PlayerDto } from '../dto/player.dto'
 
 import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interface'
 
-const players: { name: string, color:string, gametype: string, socket: Socket}[] = [] ;
+const players: { name: string, color:string, gametype: string, room: string, socket: Socket}[] = [] ;
 const rooms: Room[] = [];
 let count = 0;
 const ballSpeed = 1;
@@ -70,20 +70,33 @@ export class SocketService {
 			rooms[p.room].p2.dir = p.dir;
 	}
 
-	async make_room(gametype: string)
+	async make_room(gametype: string, room: string)
 	{
 		let p1: Socket = null;
 		let p2: Socket = null;
-		for (const id in players)
+
+		if (room === null)
 		{
-			if (p1 === null && players[id].gametype === gametype)
-				p1 = players[id].socket;
-			else if (p2 === null && players[id].gametype === gametype)
-				p2 = players[id].socket;
+			for (const id in players)
+			{
+				if (p1 === null && players[id].gametype === gametype && players[id].room === null)
+					p1 = players[id].socket;
+				else if (p2 === null && players[id].gametype === gametype && players[id].room === null)
+					p2 = players[id].socket;
+			}
+			room = count.toString();
+		}
+		else
+		{
+			for (const id in players)
+			{
+				if (p1 === null && players[id].room === room)
+					p1 = players[id].socket;
+				else if (p2 === null && players[id].room === room)
+					p2 = players[id].socket;
+			}
 		}
 
-		
-		const room = count.toString();
 		p1.join(room);
 		p2.join(room);
 
@@ -158,7 +171,8 @@ export class SocketService {
 			this.server.to(room).emit('2balls', { "paddle1": paddle1, "paddle2": paddle2, "ball": ball, "ball2": ball2, "max_score": max_score });
 			this.game_loop_2ball(room, ball, ball2);
 		}
-		count++;
+		if (room === null)
+			count++;
 	}
 
 	async game_loop(room: string, ball: Ball)
@@ -395,7 +409,7 @@ export class SocketService {
 
 	@SubscribeMessage('join_list')
 	joinList(@MessageBody() data, @ConnectedSocket() client: Socket) {
-		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, socket: client }
+		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
 		// console.log(players)
 
 		if (data.gametype === "1v1")
@@ -404,8 +418,30 @@ export class SocketService {
 			_2balls++;
 
 		if (_1v1 >= 2 && _1v1 % 2 == 0)
-			this.make_room("1v1");
+			this.make_room("1v1", null);
 		if (_2balls >= 2 && _2balls % 2 == 0)
-			this.make_room("2balls");
+			this.make_room("2balls", null);
+	}
+
+	@SubscribeMessage("private_match")
+	private__match(@MessageBody() data, @ConnectedSocket() client: Socket) {
+		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: data.room, socket: client }
+		// console.log(players)
+
+		let num = 0;
+
+		for (const id in players)
+		{
+			if (players[id].room === data.room)
+				num++;
+		}
+
+		if (num === 2)
+		{
+			if (data.gametype === "1v1")
+				this.make_room("1v1", data.room);
+			else
+				this.make_room("2balls", data.room);
+		}
 	}
 } 
