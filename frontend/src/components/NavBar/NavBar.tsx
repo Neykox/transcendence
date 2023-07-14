@@ -7,7 +7,12 @@ import settings from '../../asset/images/settings.png';
 import paddle from '../../asset/images/pngwing.com.png';
 import { Link } from 'react-router-dom';
 
+// import UserContext from '../../model/userContext';
+
 function NavBar() {
+
+	// const { user } = useContext(UserContext);
+
 	return (
 		<nav>
 			<div>
@@ -32,7 +37,7 @@ function NavBar() {
 				</Link>
 			</div>
 			<div>
-				<Link to={"/lobby"}>
+				<Link to={"/lobby"} state={{ "challenger": "bob" }}>
 					<img src={paddle} alt="" />
 				</Link>
 			</div>

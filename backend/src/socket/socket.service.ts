@@ -85,6 +85,11 @@ export class SocketService {
 					p2 = players[id].socket;
 			}
 			room = count.toString();
+			count++;
+			if (gametype === "1v1")
+				_1v1 -= 2;
+			else
+				_2balls -= 2;
 		}
 		else
 		{
@@ -133,11 +138,6 @@ export class SocketService {
 		delete players[p1.id];
 		delete players[p2.id];
 
-		if (gametype === "1v1")
-			_1v1 -= 2;
-		else
-			_2balls -= 2;
-
 		let ball = {
 			x: 500,
 			y: 500,
@@ -158,12 +158,16 @@ export class SocketService {
 
 		rooms[room] = {
 			p1: paddle1,
-			p2: paddle2
+			p2: paddle2,
+			// ball: ball,
+			// ball2: ball2,
+			// room: room,
+			// gametype: gametype
 		}
 
 		if (gametype === "1v1")
 		{
-			this.server.to(room).emit('matched', { "paddle1": paddle1, "paddle2": paddle2, "ball": ball, "max_score": max_score });
+			this.server.to(room).emit('1v1', { "paddle1": paddle1, "paddle2": paddle2, "ball": ball, "max_score": max_score });
 			this.game_loop(room, ball);
 		}
 		else
@@ -171,8 +175,6 @@ export class SocketService {
 			this.server.to(room).emit('2balls', { "paddle1": paddle1, "paddle2": paddle2, "ball": ball, "ball2": ball2, "max_score": max_score });
 			this.game_loop_2ball(room, ball, ball2);
 		}
-		if (room === null)
-			count++;
 	}
 
 	async game_loop(room: string, ball: Ball)
@@ -409,39 +411,81 @@ export class SocketService {
 
 	@SubscribeMessage('join_list')
 	joinList(@MessageBody() data, @ConnectedSocket() client: Socket) {
-		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
-		// console.log(players)
 
-		if (data.gametype === "1v1")
-			_1v1++;
-		else
-			_2balls++;
+		let skip: boolean = false;
+		for (const id in rooms)
+		{
+			if (rooms[id].p1.socketId === client.id)
+			{
+				// this.server.to(rooms[id].p1.room).emit(rooms[id].gametype, { "paddle1": rooms[id].p1, "paddle2": rooms[id].p2, "ball": rooms[id].ball, "ball2": rooms[id].ball2, "max_score": max_score });
+				rooms[id].p1.dc = true;
+				// skip = true;
+			}
+			if (rooms[id].p2.socketId === client.id)
+			{
+				// this.server.to(rooms[id].p1.room).emit(rooms[id].gametype, { "paddle1": rooms[id].p1, "paddle2": rooms[id].p2, "ball": rooms[id].ball, "ball2": rooms[id].ball2, "max_score": max_score });
+				rooms[id].p2.dc = true;
+				// skip = true;
+			}
+		}
+		console.log("skip = ", skip)
+		if (skip === false)
+		{
+			players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
+			// console.log(players)
 
-		if (_1v1 >= 2 && _1v1 % 2 == 0)
-			this.make_room("1v1", null);
-		if (_2balls >= 2 && _2balls % 2 == 0)
-			this.make_room("2balls", null);
+			if (data.gametype === "1v1")
+				_1v1++;
+			else
+				_2balls++;
+
+			if (_1v1 >= 2 && _1v1 % 2 == 0)
+				this.make_room("1v1", null);
+			if (_2balls >= 2 && _2balls % 2 == 0)
+				this.make_room("2balls", null);
+		}
 	}
 
 	@SubscribeMessage("private_match")
 	private__match(@MessageBody() data, @ConnectedSocket() client: Socket) {
-		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: data.room, socket: client }
-		// console.log(players)
 
-		let num = 0;
-
-		for (const id in players)
+		let skip: boolean = false;
+		for (const id in rooms)
 		{
-			if (players[id].room === data.room)
-				num++;
+			if (rooms[id].p1.socketId === client.id)
+			{
+				// this.server.to(rooms[id].p1.room).emit(rooms[id].gametype, { "paddle1": rooms[id].p1, "paddle2": rooms[id].p2, "ball": rooms[id].ball, "ball2": rooms[id].ball2, "max_score": max_score });
+				rooms[id].p1.dc = true;
+				// skip = true;
+			}
+			if (rooms[id].p2.socketId === client.id)
+			{
+				// this.server.to(rooms[id].p1.room).emit(rooms[id].gametype, { "paddle1": rooms[id].p1, "paddle2": rooms[id].p2, "ball": rooms[id].ball, "ball2": rooms[id].ball2, "max_score": max_score });
+				rooms[id].p2.dc = true;
+				// skip = true;
+			}
 		}
-
-		if (num === 2)
+		console.log("skip = ", skip)
+		if (skip === false)
 		{
-			if (data.gametype === "1v1")
-				this.make_room("1v1", data.room);
-			else
-				this.make_room("2balls", data.room);
+			players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: data.room, socket: client }
+			console.log(players)
+
+			let num = 0;
+
+			for (const id in players)
+			{
+				if (players[id].room === data.room)
+					num++;
+			}
+
+			if (num === 2)
+			{
+				if (data.gametype === "1v1")
+					this.make_room("1v1", data.room);
+				else
+					this.make_room("2balls", data.room);
+			}
 		}
 	}
-} 
+}

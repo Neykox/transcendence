@@ -53,9 +53,12 @@ import DoubleBall from './DoubleBall'
 import { socket } from '../Socket/socketInit';
 import UserContext from '../../model/userContext';
 import './Lobby.scss'
+import { useLocation } from 'react-router-dom'
 
-function Lobby({challenger}) {
-	console.log(challenger)
+function Lobby() {
+	const location = useLocation()
+	const challenger = location.state ? location.state.challenger : undefined;
+	console.log("chall = ", challenger)
 
 	const { user } = useContext(UserContext);
 
@@ -63,6 +66,7 @@ function Lobby({challenger}) {
 	const colors = ["red", "lightgreen", "skyblue", "pink", "orange", "purple"];
 
 	const [gamemode, setGamemode] = useState(challenger ? "private" : "select");
+	console.log(gamemode);
 	let private_gamemode: string = "1v1";
 
 	const [paddle1, setPaddle1] = useState({});
@@ -75,7 +79,7 @@ function Lobby({challenger}) {
 
 	const [maxScore, setMaxScore] = useState(0);
 
-	socket.on('matched', (data) => {
+	socket.on('1v1', (data) => {
 		// console.log(data)
 		setPaddle1(data.paddle1);
 		setPaddle2(data.paddle2);
