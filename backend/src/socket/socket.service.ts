@@ -10,6 +10,7 @@ const rooms: Room[] = [];
 let count = 0;
 const ballSpeed = 1;
 const max_score = 100;
+const connected: Socket [] = [];
 
 let _1v1 = 0;
 let _2balls = 0;
@@ -36,6 +37,7 @@ export class SocketService {
 
 	handleConnection(client: Socket){
 		console.log('client connected: ', client.id);
+		connected[client.id] = client;
 	}
 
 	handleDisconnect(client: Socket){
@@ -50,6 +52,7 @@ export class SocketService {
 		}
 		console.log(rooms);
 		console.log('client disconnected: ', client.id);
+		delete connected[client.id];
 	}
 
 	// @SubscribeMessage('message')
@@ -447,7 +450,7 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("private_match")
-	private__match(@MessageBody() data, @ConnectedSocket() client: Socket) {
+	private_match(@MessageBody() data, @ConnectedSocket() client: Socket) {
 
 		let skip: boolean = false;
 		for (const id in rooms)
@@ -485,6 +488,32 @@ export class SocketService {
 					this.make_room("1v1", data.room);
 				else
 					this.make_room("2balls", data.room);
+			}
+		}
+	}
+
+	@SubscribeMessage("send_invite")
+	send_invite(@MessageBody() {challenger, gamemode}, @ConnectedSocket() client: Socket) {
+
+		for (const id in connected)
+		{
+			if (connected[id].id != client.id)
+			{
+				this.server.to(connected[id].id).emit("invite_received", { "challenger": challenger, "gamemode": gamemode});
+				break;
+			}
+		}
+	}
+
+	@SubscribeMessage("send_answer")
+	send_answer(@MessageBody() {challenger, answer}, @ConnectedSocket() client: Socket) {
+
+		for (const id in connected)
+		{
+			if (connected[id].id != client.id)
+			{
+				this.server.to(connected[id].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined"});
+				break;
 			}
 		}
 	}

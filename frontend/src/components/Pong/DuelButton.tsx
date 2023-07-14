@@ -16,13 +16,14 @@ function DuelButton() {
 
 	const sendInvite = async () => {
 		setStatus("waitingForAnswer");
-		socket.emit("send_invite", { "challenger": user.login, "gametype": private_gamemode });
+		socket.emit("send_invite", { "challenger": user.login, "gamemode": private_gamemode });
 	}
 
 	socket.on('invite_received', (data) => {
-		// console.log(data)
+		console.log(data)
 		challenger = data.challenger;
 		private_gamemode = data.gamemode;
+		setShow(true);
 		setStatus("invite_received");
 	} )
 
@@ -59,8 +60,8 @@ function DuelButton() {
 					? <div>
 						<div className="gamemodes">{challenger} challenged you to a {private_gamemode === "1v1" ? "Classic" : "2 Balls"} duel!
 							<div className="queues">
-								<button className="queue" type="button" onClick={send_answer(true)}>Accept</button>
-								<button className="queue" type="button" onClick={send_answer(false)}>Decline</button>
+								<button className="queue" type="button" onClick={() => {send_answer(true)}}>Accept</button>
+								<button className="queue" type="button" onClick={() => {send_answer(false)}}>Decline</button>
 							</div>
 						</div>
 					</div>
