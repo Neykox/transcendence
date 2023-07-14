@@ -59,6 +59,7 @@ function Lobby() {
 	const location = useLocation()
 	const challenger = location.state ? location.state.challenger : undefined;
 	console.log("chall = ", challenger)
+	const private_gamemode: string = location.state ? location.state.gametype : "1v1";
 
 	const { user } = useContext(UserContext);
 
@@ -67,7 +68,6 @@ function Lobby() {
 
 	const [gamemode, setGamemode] = useState(challenger ? "private" : "select");
 	console.log(gamemode);
-	let private_gamemode: string = "1v1";
 
 	const [paddle1, setPaddle1] = useState({});
 	const [paddle2, setPaddle2] = useState({});
@@ -151,13 +151,6 @@ function Lobby() {
 					<div className="colors">Select your paddle's color
 						<div>{listItems}</div>
 						<div className="currentColor">Current color: {<button className="square" style={{ background: color, "border-radius": "10px", border: "2px solid black", "box-shadow": color + " 0px 5px 15px",}}></button>}</div>
-					</div>
-					<div className="gamemodes">Available gamemodes
-						<div className="queues">
-							<button className="queue" type="button" onClick={() => {private_gamemode = "1v1";}}>Classic</button>
-							<button className="queue" type="button" onClick={() => {private_gamemode = "2balls";}}>2 Balls</button>
-							{/*<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>*/}
-						</div>
 					</div>
 					<div className="gamemodes">
 						<button className="queue" type="button" onClick={private_match}>Ready</button>
