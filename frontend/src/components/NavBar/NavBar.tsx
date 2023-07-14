@@ -37,7 +37,7 @@ function NavBar() {
 				</Link>
 			</div>
 			<div>
-				<Link to={"/lobby"} state={{ "challenger": "bob" }}>
+				<Link to={"/lobby"} /*state={{ "challenger": "bob" }}*/>
 					<img src={paddle} alt="" />
 				</Link>
 			</div>

@@ -71,8 +71,8 @@ function Lobby() {
 
 	const [paddle1, setPaddle1] = useState({});
 	const [paddle2, setPaddle2] = useState({});
-	const [paddle3, setPaddle3] = useState({});
-	const [paddle4, setPaddle4] = useState({});
+	// const [paddle3, setPaddle3] = useState({});
+	// const [paddle4, setPaddle4] = useState({});
 
 	const [ball, setBall] = useState({});
 	const [ball2, setBall2] = useState({});
