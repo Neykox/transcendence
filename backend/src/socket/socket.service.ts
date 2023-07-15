@@ -512,6 +512,7 @@ export class SocketService {
 		{
 			if (connected[id].id != client.id)
 			{
+				console.log("send_aanswer");
 				this.server.to(connected[id].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined"});
 				break;
 			}

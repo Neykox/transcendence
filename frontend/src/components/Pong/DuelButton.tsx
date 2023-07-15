@@ -23,26 +23,38 @@ function DuelButton() {
 		console.log(data)
 		challenger = data.challenger;
 		setGametype(data.gamemode);
-		setShow(true);
-		setStatus("invite_received");
+		// setShow(true);
+		// setStatus("invite_received");
+		toast(({ closeToast }) => <div>
+									<div >{challenger} challenged you to a {gametype === "1v1" ? "Classic" : "2 Balls"} duel!
+										<div >
+											<button type="button" onClick={() => {send_answer(true)}}>Accept</button>
+											<button type="button" onClick={() => {send_answer(false)}}>Decline</button>
+										</div>
+									</div>
+								</div>, { autoClose: false })
 	} )
 
-	const send_answer = async (status: boolean) => {
-		setStatus(status ? "accepted" : "declined");
-		socket.emit("send_answer", { "challenger": challenger, "answer": status });
+	const send_answer = async (answer: boolean) => {
+		// setStatus(status ? "accepted" : "declined");
+		if (answer === true)
+			toast(({ closeToast }) => <Link to={"/lobby"} state={{ "challenger": user.login, "gametype": gametype }}>Go to the lobby</Link>, { autoClose: false })//redirect
+		else
+			toast(({ closeToast }) => <div>Match was declined</div>)
+		socket.emit("send_answer", { "challenger": challenger, "answer": answer });
 		// setStatus("setting-up");
 		// setShow(false);
 	}
 
 	socket.on('answer_received', (data) => {
 		// console.log(data)
-		setStatus(data.answer);
-		// if (data.answer === "accepted")
-		// 	toast(({ closeToast }) => <Link to={"/lobby"} state={{ "challenger": user.login, "gametype": private_gamemode }}>Go to the lobby</Link>)
-		// else
-		// 	toast(({ closeToast }) => <div>Match was declined</div>)
-		// setStatus("setting-up");
-		// setShow(false);
+		// setStatus(data.answer);
+		setStatus("setting-up");
+		setShow(false);
+		if (data.answer === "accepted")
+			toast(({ closeToast }) => <Link to={"/lobby"} state={{ "challenger": user.login, "gametype": gametype }}>Go to the lobby</Link>, { autoClose: false })//redirect
+		else
+			toast(({ closeToast }) => <div>Match was declined</div>)
 	} )
 
 	return (
@@ -60,20 +72,7 @@ function DuelButton() {
 							<button className="queue" type="button" onClick={sendInvite}>Send invite</button>
 						</div>
 					</div>
-					: <></>}
-					{status === "waitingForAnswer" ? <div>Waiting for answer</div> : <></>}
-					{status === "accepted" ? toast(({ closeToast }) => <Link to={"/lobby"} state={{ "challenger": user.login, "gametype": gametype }}>Go to the lobby</Link>, { autoClose: false }) : <></>}
-					{status === "declined" ? toast(({ closeToast }) => <div>Match was declined</div>, { autoClose: false }) : <></>}
-					{status === "invite_received"
-					? <div>
-						<div className="gamemodes">{challenger} challenged you to a {gametype === "1v1" ? "Classic" : "2 Balls"} duel!
-							<div className="queues">
-								<button className="queue" type="button" onClick={() => {send_answer(true)}}>Accept</button>
-								<button className="queue" type="button" onClick={() => {send_answer(false)}}>Decline</button>
-							</div>
-						</div>
-					</div>
-					: <></>}
+					: <div>Waiting for answer</div> }
 				</>
 			: <></>}
 		</>
