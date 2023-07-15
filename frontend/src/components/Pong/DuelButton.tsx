@@ -1,16 +1,18 @@
 import { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import { socket } from '../Socket/socketInit';
-import './DuelButton.scss'
+import { useNavigate } from "react-router-dom";
+// import './DuelButton.scss'
 
 import UserContext from '../../model/userContext';
 
 function DuelButton() {
 
+	const navigate = useNavigate();
 	const [show, setShow] = useState(false);
 	const { user } = useContext(UserContext);
-	const [gametype, setGametype] = useState("1v1");
+	let gametype:string = "1v1";
 	const [status, setStatus] = useState("setting-up");
 	let challenger: string = "";
 
@@ -20,11 +22,8 @@ function DuelButton() {
 	}
 
 	socket.on('invite_received', (data) => {
-		console.log(data)
 		challenger = data.challenger;
-		setGametype(data.gamemode);
-		// setShow(true);
-		// setStatus("invite_received");
+		gametype = data.gamemode;
 		toast(({ closeToast }) => <div>
 									<div >{challenger} challenged you to a {gametype === "1v1" ? "Classic" : "2 Balls"} duel!
 										<div >
@@ -32,29 +31,25 @@ function DuelButton() {
 											<button type="button" onClick={() => {send_answer(false)}}>Decline</button>
 										</div>
 									</div>
-								</div>, { autoClose: false })
+								</div>, { autoClose: false, toastId: 'dup', closeButton: false, closeOnClick: false,})
 	} )
 
 	const send_answer = async (answer: boolean) => {
-		// setStatus(status ? "accepted" : "declined");
-		if (answer === true)
-			toast(({ closeToast }) => <Link to={"/lobby"} state={{ "challenger": user.login, "gametype": gametype }}>Go to the lobby</Link>, { autoClose: false })//redirect
-		else
-			toast(({ closeToast }) => <div>Match was declined</div>)
+		toast.dismiss("dup");
 		socket.emit("send_answer", { "challenger": challenger, "answer": answer });
-		// setStatus("setting-up");
-		// setShow(false);
+		if (answer === true)
+			navigate('/lobby', {state: { "challenger": user.login, "gametype": gametype }});
+		else
+			toast("Match was declined");
 	}
 
 	socket.on('answer_received', (data) => {
-		// console.log(data)
-		// setStatus(data.answer);
 		setStatus("setting-up");
 		setShow(false);
 		if (data.answer === "accepted")
-			toast(({ closeToast }) => <Link to={"/lobby"} state={{ "challenger": user.login, "gametype": gametype }}>Go to the lobby</Link>, { autoClose: false })//redirect
+			navigate('/lobby', {state: { "challenger": user.login, "gametype": gametype }});
 		else
-			toast(({ closeToast }) => <div>Match was declined</div>)
+			toast("Match was declined", {toastId: 'success1'});
 	} )
 
 	return (
@@ -66,8 +61,8 @@ function DuelButton() {
 					? <div>
 						<div className="gamemodes">Available gamemodes
 							<div className="queues">
-								<button className="queue" type="button" onClick={() => {setGametype("1v1");}}>Classic</button>
-								<button className="queue" type="button" onClick={() => {setGametype("2balls");}}>2 Balls</button>
+								<button className="queue" type="button" onClick={() => {gametype = "1v1";}}>Classic</button>
+								<button className="queue" type="button" onClick={() => {gametype = "2balls";}}>2 Balls</button>
 							</div>
 							<button className="queue" type="button" onClick={sendInvite}>Send invite</button>
 						</div>
@@ -81,6 +76,4 @@ function DuelButton() {
 
 export default DuelButton;
 //swich instead of 2000 ternaries???(could cleanup lobby too)
-//use alert instead of div
-//force redirect if accepted? or just show a little notif waiting to be accepted?
 //challenger name + time to avoid dup
