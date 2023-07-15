@@ -53,9 +53,13 @@ import DoubleBall from './DoubleBall'
 import { socket } from '../Socket/socketInit';
 import UserContext from '../../model/userContext';
 import './Lobby.scss'
+import { useLocation } from 'react-router-dom'
 
-function Lobby({challenger}) {
-	console.log(challenger)
+function Lobby() {
+	const location = useLocation()
+	const challenger = location.state ? location.state.challenger : undefined;
+	console.log("chall = ", challenger)
+	const private_gamemode: string = location.state ? location.state.gametype : "1v1";
 
 	const { user } = useContext(UserContext);
 
@@ -63,19 +67,19 @@ function Lobby({challenger}) {
 	const colors = ["red", "lightgreen", "skyblue", "pink", "orange", "purple"];
 
 	const [gamemode, setGamemode] = useState(challenger ? "private" : "select");
-	let private_gamemode: string = "1v1";
+	console.log(gamemode);
 
 	const [paddle1, setPaddle1] = useState({});
 	const [paddle2, setPaddle2] = useState({});
-	const [paddle3, setPaddle3] = useState({});
-	const [paddle4, setPaddle4] = useState({});
+	// const [paddle3, setPaddle3] = useState({});
+	// const [paddle4, setPaddle4] = useState({});
 
 	const [ball, setBall] = useState({});
 	const [ball2, setBall2] = useState({});
 
 	const [maxScore, setMaxScore] = useState(0);
 
-	socket.on('matched', (data) => {
+	socket.on('1v1', (data) => {
 		// console.log(data)
 		setPaddle1(data.paddle1);
 		setPaddle2(data.paddle2);
@@ -147,13 +151,6 @@ function Lobby({challenger}) {
 					<div className="colors">Select your paddle's color
 						<div>{listItems}</div>
 						<div className="currentColor">Current color: {<button className="square" style={{ background: color, "border-radius": "10px", border: "2px solid black", "box-shadow": color + " 0px 5px 15px",}}></button>}</div>
-					</div>
-					<div className="gamemodes">Available gamemodes
-						<div className="queues">
-							<button className="queue" type="button" onClick={() => {private_gamemode = "1v1";}}>Classic</button>
-							<button className="queue" type="button" onClick={() => {private_gamemode = "2balls";}}>2 Balls</button>
-							{/*<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>*/}
-						</div>
 					</div>
 					<div className="gamemodes">
 						<button className="queue" type="button" onClick={private_match}>Ready</button>

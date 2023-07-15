@@ -1,6 +1,7 @@
 import './Chat.scss';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from "react-router-dom";
+import DuelButton from '../../../Pong/DuelButton';
 
 type ChatMessage = {
 	conversationId: number;
@@ -115,6 +116,7 @@ export default function Chat() {
 				</button>
 				<h2>{friend.name}</h2>
 				<div className={`${friend.status}`}></div>
+				<div className="duel"><DuelButton/></div>
 			</div>
 			<div className="chatBox">
 				<div className="chatMessage">

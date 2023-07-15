@@ -43,6 +43,10 @@ export interface User {
 export interface Room {
 	p1: Paddle
 	p2: Paddle
+	// ball: Ball
+	// ball2: Ball
+	// room: string
+	// gametype: string
 }
 
 export interface Toile {
