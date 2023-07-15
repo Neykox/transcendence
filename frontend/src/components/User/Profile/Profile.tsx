@@ -4,6 +4,8 @@ import History from './History/History';
 import { useState, useEffect } from 'react';
 import PlayerInfo from './PlayerInfo/PlayerInfo';
 import FriendList from './FriendList/FriendList';
+import {socket} from '../../Socket/socketInit'
+import { toast } from 'react-toastify';
 
 // import io from 'socket.io-client';
 
@@ -133,6 +135,11 @@ function Profile() {
 		setFriends(friendsCopy);
 	};
 
+	socket.on('you got mail !', () => toast('YOU GOT MAIL'))
+	function Test() {
+		socket.emit('register', {login : 'ccambium'}, (data:string) => console.log(data));
+		socket.emit('test', {to: 'ccambium'}, (data:string) => console.log(data));
+	}
 	return (
 		<div>
 			<NavBar />
@@ -142,6 +149,7 @@ function Profile() {
 					<History matchs={matchs} onClick={matchList} />
 					<FriendList friends={friends} onClick={friendsList} />
 				</div>
+				<button onClick={Test}>TEST</button>
 			</div>
 		</div>
 	);

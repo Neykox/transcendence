@@ -13,6 +13,7 @@ const max_score = 100;
 
 let _1v1 = 0;
 let _2balls = 0;
+var connected = {};
 
 @WebSocketGateway({
 		// transport: ['websocket'],
@@ -20,7 +21,6 @@ let _2balls = 0;
 			origin: '*',
 		},
 		pingInterval: 2000,
-		pingTimeout: 5000,
 		// connectionStateRecovery: {
 		// 	// the backup duration of the sessions and the packets
 		// 	maxDisconnectionDuration: 2 * 60 * 1000,
@@ -407,6 +407,7 @@ export class SocketService {
 		}, 15);
 	}
 
+	
 	@SubscribeMessage('join_list')
 	joinList(@MessageBody() data, @ConnectedSocket() client: Socket) {
 		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
@@ -444,4 +445,25 @@ export class SocketService {
 				this.make_room("2balls", data.room);
 		}
 	}
-} 
+
+	@SubscribeMessage('register')
+	handleRegister(@MessageBody() {login}, @ConnectedSocket() client: Socket) : string {
+		console.log('received : ', login)
+		if (!login)
+			return('error');
+		
+		connected[login] = client;
+		return ('OK');
+	}
+
+	@SubscribeMessage('sendFriend')
+	handleTest(@MessageBody() {to}, @ConnectedSocket() client: Socket) {
+		console.log("received : ", to);
+		if (to === undefined)
+			return ('error');
+		if (!to || !connected[to])
+			return ('!exist')
+		connected[to].emit('you got mail !');
+		return 'OK'
+	}
+}
