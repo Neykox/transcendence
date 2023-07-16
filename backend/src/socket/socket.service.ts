@@ -1,6 +1,7 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody, ConnectedSocket } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io';
 import { PlayerDto } from '../dto/player.dto'
+import { FriendsService } from "src/friends/friends.service";
 
 
 import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interface'
@@ -30,6 +31,8 @@ var connected = {};
 })
 
 export class SocketService {
+
+	constructor(private readonly friendsService: FriendsService) {}
 
 	@WebSocketServer()
 	server: Server;
@@ -533,12 +536,13 @@ export class SocketService {
 	}
 	
 	@SubscribeMessage('sendFriend')
-	handleTest(@MessageBody() data, @ConnectedSocket() client: Socket) {
-		console.log("received : ", data.to);
-		if (data.to === undefined)
+	async handleFriendSent(@MessageBody() data, @ConnectedSocket() client: Socket) {
+		if (!data.to || !data.from)
 			return ('error');
-		if (!data.to || !connected[data.to])
-			return ('!exist')
+		
+		let response = await this.friendsService.sendRequest(data.to, data.from);
+		if (response != 'Request sent')
+			return (response);
 		connected[data.to].emit('receiveFriend', {from: data.from});
 		return 'OK'
 	}

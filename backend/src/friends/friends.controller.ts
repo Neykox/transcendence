@@ -69,7 +69,7 @@ export class FriendsController {
 	}
 
 	@UseGuards(JwtGuard)
-	@Put('accept/:id')
+	@Delete('accept/:id')
 	acceptRequest(@Param('id') id: number, @Req() request: Request) : Promise<string> {
 		
 		let user = request['user'];

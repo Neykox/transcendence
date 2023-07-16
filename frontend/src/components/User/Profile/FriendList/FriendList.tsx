@@ -6,9 +6,11 @@ import DuelButton from '../../../Pong/DuelButton';
 
 interface HistoryProps {
 	friends: Array<{ id: number; pseudo: string; status: string; }>;
+	requests: Array<{ id: number; from: string; to: string, date: string }>;
+	onClick: () => void;
 }
 
-export default function FriendList({ friends }: HistoryProps) {
+export default function FriendList({ friends, requests, onClick }: HistoryProps) {
 
 	return (
 		<div className="friends">
@@ -37,6 +39,13 @@ export default function FriendList({ friends }: HistoryProps) {
 					</div>
 				)) : <h2>No friends yet</h2>}
 			</div>
+			<div className="requests">
+				<h1>Requests</h1>
+				{requests.length ? requests.map((request: {
+					id: number; pseudo: string;
+				}) => (<p>request</p>) ) : <h2>No requests yet</h2>}
+			</div>
+			<button onClick={onClick}>Add</button>
 		</div>
 	);
 }

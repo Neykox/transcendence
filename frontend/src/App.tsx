@@ -12,6 +12,7 @@ import Page2 from './components/page2';
 import Lobby from './components/Pong/Lobby';
 import { UserProvider } from './model/userContext';
 import { useState, useEffect } from 'react';
+import { socket } from './components/Socket/socketInit';
 
 function App() {
   const [connected, setConnected] = useState(false);
@@ -56,6 +57,16 @@ function App() {
       console.log("Connected");
     }
   }, [storage])
+
+  useEffect(() => {
+	if (localStorage.getItem("user")) {
+		let user = localStorage.getItem("user");
+		let data = JSON.parse(user as string);
+		if (data)
+			socket.emit('register', {login : data.login})
+	}
+  }, [])
+
 
   return (
     <UserProvider>

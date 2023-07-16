@@ -8,6 +8,8 @@ import {socket} from '../../Socket/socketInit'
 import { toast } from 'react-toastify';
 import accept from '../../../asset/images/checkmark-circle.svg';
 import decline from '../../../asset/images/close-circle.svg';
+import Modal from 'react-modal';
+import AddFriend from './AddFriend/AddFriend';
 
 // import io from 'socket.io-client';
 
@@ -28,6 +30,15 @@ function Profile() {
 	// Set les wins et loses avec la db;
 	const [wins, setWins] = useState(5);
 	const [loses, setLoses] = useState(0);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const handleModalOpen = () => {
+		setIsModalOpen(true);
+	  };
+	
+	  const handleModalClose = () => {
+		setIsModalOpen(false);
+	  };
 	//const { user } = useContext(UserContext);
 
 	interface Match {
@@ -43,6 +54,13 @@ function Profile() {
 		status: string;
 	}
 
+	interface Request {
+		id: number;
+		from: string;
+		to: string;
+		date: string;
+	}
+
 	const [matchs, setMatch] = useState<Match[]>([
 		{ id: 1, opponent: "test", scores: "3/2", result: "matchWin" },
 		{ id: 2, opponent: "test", scores: "3/2", result: "matchWin" },
@@ -52,6 +70,7 @@ function Profile() {
 	]);
 
 	const [friends, setFriends] = useState<Friends[]>([]);
+	const [requests, setRequests] = useState<Request[]>([]);
 
 
 	// Écouter les événements de mise à jour
@@ -93,20 +112,49 @@ function Profile() {
 		// };
 
 		const fetchFriends = async () => {
-			const response = await fetch('http://localhost:5000/friends');
-			let data = response.body;
-			if (data === null)
+			const response = await fetch('http://localhost:5000/friends', {
+				credentials: 'include'
+			});
+			if (response.status != 200)
+				return ;
+			let data = await response.text();
+			if (!data)
 				return ;
 			let friendsData: string[] = data.toString().split(",");
-			friendsData.map((user: any) => ({
+			if (friendsData.length === 0)
+				return ;
+			let friends = friendsData.map((user: any) => ({
 				id : new Date().getTime(),
 				pseudo : user,
 				status : "online"
 			}));
+
+			setFriends(friends);
 		};
+
+		const fetchRequest = async () => {
+			const response = await fetch('http://localhost:5000/friends/requests', {
+				credentials: 'include',
+			});
+			if (response.status != 200)
+				return ;
+			let data = await response.json();
+			if (!data)
+				return ;
+			let requests = data.map((req: any) => ({
+				id : req.id,
+				from : req.from,
+				to : req.to,
+				date : req.date
+			}));
+
+			setRequests(requests);
+		};
+
 
 		//getUsers();
 		fetchFriends();
+		fetchRequest();
 	}, []);
 
 
@@ -153,22 +201,24 @@ function Profile() {
 		setFriends(friends);
 	};
 
+	const friendAccept = (accept: boolean, id: number) => {
+		if (accept)
+			fetch('http://localhost:5000/friends/accept/'+id, { method: 'DELETE'});
+		else
+			fetch('http://localhost:5000/friends/decline/'+id, { method: 'DELETE'});
+	}
 	socket.on('receiveFriend', (data) => toast.info(({ closeToast }) => 
 		<div>
 			<div>
 				{data.from} wants to be your friend !
 			</div>
 			<div>
-				<a onClick={() => {send_answer(true)}}><img src={accept} className="friendAccept friendIcon"/></a>
-				<a onClick={() => {send_answer(false)}}><img src={decline} className="friendRefuse friendIcon"/></a>
+				<a onClick={() => {friendAccept(true, data.id)}}><img src={accept} className="friendAccept friendIcon"/></a>
+				<a onClick={() => {friendAccept(false, data.id)}}><img src={decline} className="friendRefuse friendIcon"/></a>
 			</div>
 		</div>, { autoClose: 5000,  toastId: "stopdup" }
 		)
 	)
-	function Test() {
-		socket.emit('register', {login : 'ccambium'}, (data:string) => console.log(data));
-		socket.emit('sendFriend', {to: 'ccambium', from: 'ccambium'}, (data:string) => console.log(data));
-	}
 	return (
 		<div>
 			<NavBar />
@@ -176,9 +226,15 @@ function Profile() {
 				<PlayerInfo wins={wins} loses={loses}/>
 				<div className="grid">
 					<History matchs={matchs} onClick={matchList} />
-					<FriendList friends={friends}/>
+					<FriendList friends={friends} requests={requests} onClick={handleModalOpen}/>
 				</div>
-				<button onClick={Test}>TEST</button>
+				<div>
+					<Modal isOpen={isModalOpen}>
+						<h1> Add friend </h1>
+						<AddFriend />
+						<button onClick={() => handleModalClose()} >Close</button>
+					</Modal>
+				</div>
 			</div>
 		</div>
 	);
