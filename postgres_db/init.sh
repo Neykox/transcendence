@@ -15,8 +15,15 @@ CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
     pseudo VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
+	friend_list TEXT DEFAULT '',
     status VARCHAR(255) DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE "friend_requests" (
+    id SERIAL PRIMARY KEY,
+    sender VARCHAR(255) NOT NULL,
+    receiver VARCHAR(255) NOT NULL,
 );
 EOF

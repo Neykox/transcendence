@@ -13,6 +13,9 @@ export class User {
 
   @Column({ default: "offline" })
   status: string;
+  
+  @Column({ default: "" })
+  friend_list: string;
 
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

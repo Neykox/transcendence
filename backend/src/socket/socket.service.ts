@@ -10,7 +10,6 @@ const rooms: Room[] = [];
 let count = 0;
 const ballSpeed = 1;
 const max_score = 100;
-const connected: Socket [] = [];
 
 let _1v1 = 0;
 let _2balls = 0;
@@ -493,29 +492,9 @@ export class SocketService {
 		}
 	}
 
-	@SubscribeMessage('register')
-	handleRegister(@MessageBody() {login}, @ConnectedSocket() client: Socket) : string {
-		console.log('received : ', login)
-		if (!login)
-			return('error');
-		
-		connected[login] = client;
-		return ('OK');
-	}
-
-	@SubscribeMessage('sendFriend')
-	handleTest(@MessageBody() {to}, @ConnectedSocket() client: Socket) {
-		console.log("received : ", to);
-		if (to === undefined)
-			return ('error');
-		if (!to || !connected[to])
-			return ('!exist')
-		connected[to].emit('you got mail !');
-		return 'OK'
-	}
 	@SubscribeMessage("send_invite")
 	send_invite(@MessageBody() {challenger, gamemode}, @ConnectedSocket() client: Socket) {
-
+		
 		for (const id in connected)
 		{
 			if (connected[id].id != client.id)
@@ -525,10 +504,10 @@ export class SocketService {
 			}
 		}
 	}
-
+	
 	@SubscribeMessage("send_answer")
 	send_answer(@MessageBody() {challenger, answer}, @ConnectedSocket() client: Socket) {
-
+		
 		for (const id in connected)
 		{
 			if (connected[id].id != client.id)
@@ -539,5 +518,28 @@ export class SocketService {
 			}
 		}
 		// this.server.to(client.id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined"});
+	}
+	
+	// TAG FRIEND LIST
+
+	@SubscribeMessage('register')
+	handleRegister(@MessageBody() {login}, @ConnectedSocket() client: Socket) : string {
+		console.log('received : ', login)
+		if (!login)
+			return('error');
+		
+		connected[login] = client;
+		return ('OK');
+	}
+	
+	@SubscribeMessage('sendFriend')
+	handleTest(@MessageBody() data, @ConnectedSocket() client: Socket) {
+		console.log("received : ", data.to);
+		if (data.to === undefined)
+			return ('error');
+		if (!data.to || !connected[data.to])
+			return ('!exist')
+		connected[data.to].emit('receiveFriend', {from: data.from});
+		return 'OK'
 	}
 }

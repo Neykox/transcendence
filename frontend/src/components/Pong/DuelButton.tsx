@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import { socket } from '../Socket/socketInit';
-import './DuelButton.scss'
+//import './DuelButton.scss'
 
 import UserContext from '../../model/userContext';
 

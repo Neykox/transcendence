@@ -6,6 +6,8 @@ import PlayerInfo from './PlayerInfo/PlayerInfo';
 import FriendList from './FriendList/FriendList';
 import {socket} from '../../Socket/socketInit'
 import { toast } from 'react-toastify';
+import accept from '../../../asset/images/checkmark-circle.svg';
+import decline from '../../../asset/images/close-circle.svg';
 
 // import io from 'socket.io-client';
 
@@ -74,23 +76,37 @@ function Profile() {
 	// });
 
 	useEffect(() => {
-		const fetchUsers = async (): Promise<Friends[]> => {
-			const response = await fetch('http://localhost:5000/users');
-			const data = await response.json();
-			const friendsData: Friends[] = data.map((user: any) => ({
-			  id: user.id,
-			  pseudo: user.pseudo,
-			  status: user.status,
-			}));
-			return friendsData;
-		  };
+		// const fetchUsers = async (): Promise<Friends[]> => {
+		// 	const response = await fetch('http://localhost:5000/users');
+		// 	const data = await response.json();
+		// 	const friendsData: Friends[] = data.map((user: any) => ({
+		// 	  id: user.id,
+		// 	  pseudo: user.pseudo,
+		// 	  status: user.status,
+		// 	}));
+		// 	return friendsData;
+		//   };
 
-		const getUsers = async () => {
-			const fetchedUsers = await fetchUsers();
-			setFriends(fetchedUsers);
+		// const getUsers = async () => {
+		// 	const fetchedUsers = await fetchUsers();
+		// 	setFriends(fetchedUsers);
+		// };
+
+		const fetchFriends = async () => {
+			const response = await fetch('http://localhost:5000/friends');
+			let data = response.body;
+			if (data === null)
+				return ;
+			let friendsData: string[] = data.toString().split(",");
+			friendsData.map((user: any) => ({
+				id : new Date().getTime(),
+				pseudo : user,
+				status : "online"
+			}));
 		};
 
-		getUsers();
+		//getUsers();
+		fetchFriends();
 	}, []);
 
 
@@ -119,26 +135,39 @@ function Profile() {
 	};
 
 	const friendsList = () => {
-		const id = new Date().getTime();
-		const pseudo = randomName();
-		const status = Math.random() < 0.5 ? "online" : "offline";
-		const friendsToAdd = { id, pseudo, status };
+		// const id = new Date().getTime();
+		// const pseudo = randomName();
+		// const status = Math.random() < 0.5 ? "online" : "offline";
+		// const friendsToAdd = { id, pseudo, status };
 
-		// 1. Copy du state
-		const friendsCopy = [...friends];
+		
+		// // 1. Copy du state
+		// const friendsCopy = [...friends];
 
 
-		// 2. Manipuler mon state
-		friendsCopy.unshift(friendsToAdd);
+		// // 2. Manipuler mon state
+		// friendsCopy.unshift(friendsToAdd);
 
 		// 3. Modifier mon state
-		setFriends(friendsCopy);
+		let friends = fetchFriends();
+		setFriends(friends);
 	};
 
-	socket.on('you got mail !', () => toast('YOU GOT MAIL'))
+	socket.on('receiveFriend', (data) => toast.info(({ closeToast }) => 
+		<div>
+			<div>
+				{data.from} wants to be your friend !
+			</div>
+			<div>
+				<a onClick={() => {send_answer(true)}}><img src={accept} className="friendAccept friendIcon"/></a>
+				<a onClick={() => {send_answer(false)}}><img src={decline} className="friendRefuse friendIcon"/></a>
+			</div>
+		</div>, { autoClose: 5000,  toastId: "stopdup" }
+		)
+	)
 	function Test() {
 		socket.emit('register', {login : 'ccambium'}, (data:string) => console.log(data));
-		socket.emit('test', {to: 'ccambium'}, (data:string) => console.log(data));
+		socket.emit('sendFriend', {to: 'ccambium', from: 'ccambium'}, (data:string) => console.log(data));
 	}
 	return (
 		<div>
@@ -147,7 +176,7 @@ function Profile() {
 				<PlayerInfo wins={wins} loses={loses}/>
 				<div className="grid">
 					<History matchs={matchs} onClick={matchList} />
-					<FriendList friends={friends} onClick={friendsList} />
+					<FriendList friends={friends}/>
 				</div>
 				<button onClick={Test}>TEST</button>
 			</div>
