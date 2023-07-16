@@ -493,30 +493,29 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("send_invite")
-	send_invite(@MessageBody() {challenger, gamemode}, @ConnectedSocket() client: Socket) {
+	send_invite(@MessageBody() {challenger, time, gamemode}, @ConnectedSocket() client: Socket) {
 
 		for (const id in connected)
 		{
 			if (connected[id].id != client.id)
 			{
-				this.server.to(connected[id].id).emit("invite_received", { "challenger": challenger, "gamemode": gamemode});
+				this.server.to(connected[id].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gamemode});
 				break;
 			}
 		}
 	}
 
 	@SubscribeMessage("send_answer")
-	send_answer(@MessageBody() {challenger, answer}, @ConnectedSocket() client: Socket) {
+	send_answer(@MessageBody() {challenger, time, answer, gametype}, @ConnectedSocket() client: Socket) {
 
 		for (const id in connected)
 		{
 			if (connected[id].id != client.id)
 			{
 				console.log("send_aanswer");
-				this.server.to(connected[id].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined"});
+				this.server.to(connected[id].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "time": time, "gametype": gametype});
 				break;
 			}
 		}
-		// this.server.to(client.id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined"});
 	}
 }
