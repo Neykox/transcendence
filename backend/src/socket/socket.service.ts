@@ -8,8 +8,8 @@ import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interfac
 const players: { name: string, color:string, gametype: string, room: string, socket: Socket}[] = [] ;
 const rooms: Room[] = [];
 let count = 0;
-const ballSpeed = 1;
-const max_score = 100;
+const ballSpeed = 10;
+const max_score = 3;
 const connected: Socket [] = [];
 
 let _1v1 = 0;
@@ -403,6 +403,7 @@ export class SocketService {
 				p1.dc = true;
 				p2.dc = true;
 				this.server.to(room).emit('newFrame', {p1, p2, ball, ball2});
+				this.server.to(room).emit('score', {p1, p2});
 				delete rooms[room];
 				console.log(rooms);
 				clearInterval(interval);

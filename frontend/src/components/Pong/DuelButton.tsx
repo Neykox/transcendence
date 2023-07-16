@@ -55,8 +55,8 @@ function DuelButton() {
 	});
 
 	useEffect(() => {
-	  socket.on('invite_received', myEventHandler2);
-	  return () => socket.off('invite_received', myEventHandler2);
+		socket.on('invite_received', myEventHandler2);
+		return () => socket.off('invite_received', myEventHandler2);
 	}, [myEventHandler2]);
 
 

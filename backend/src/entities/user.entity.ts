@@ -31,4 +31,23 @@ export class User {
 
   @Column({ nullable: true})
   image?: string;
+
+  @Column('json', {nullable: true, array: true })
+  gameHistory: Object[];
 }
+
+
+// @Entity()
+// export class GameHistory {
+//   @PrimaryGeneratedColumn()
+//   id: number;
+
+//   @Column()
+//   opponent: string;
+
+//   @Column()
+//   score: string;
+
+//   @Column()
+//   result: string;
+// }

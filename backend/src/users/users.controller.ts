@@ -2,6 +2,7 @@ import { Controller, Get, Post, Param, Body, NotFoundException, UseGuards, Put, 
 import { UsersService } from './users.service';
 import { User } from '../entities/user.entity';
 import { UserCreationDto } from '../dto/user_creation.dto';
+import { GameScoreDto } from '../dto/game_score.dto';
 import { JwtGuard } from '../guard/jwt.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
@@ -40,14 +41,31 @@ export class UsersController {
 		const user = await this.usersService.findOne(request.user['id']);
 		await this.usersService.changePseudo(user, Pseudo);
 		return Pseudo; 
-	  }
+	}
 
-	  @UseGuards(JwtGuard)
-	  @Put('changeAvatar')
-	  async changeAvatar(@Body() {Image} : UserCreationDto, @Req() request: Request) {
-  
-		  const user = await this.usersService.findOne(request.user['id']);
-		  await this.usersService.changeAvatar(user, Image);
-		  return Image; 
-		}
+	@UseGuards(JwtGuard)
+	@Put('changeAvatar')
+	async changeAvatar(@Body() {Image} : UserCreationDto, @Req() request: Request) {
+
+		const user = await this.usersService.findOne(request.user['id']);
+		await this.usersService.changeAvatar(user, Image);
+		return Image; 
+	}
+
+	@UseGuards(JwtGuard)
+	@Get('getHistory')
+	async getHistory(@Req() request: Request) {
+
+		const user = await this.usersService.findOne(request.user['id']);
+		return (await this.usersService.getHistory(user.id));
+	}
+
+	@UseGuards(JwtGuard)
+	@Post('addGameToHistory')
+	async addGameToHistory(@Body() {score}, @Req() request: Request) {
+		console.log(score);
+
+		const user = await this.usersService.findOne(request.user['id']);
+		await this.usersService.addGameToHistory(user.id, score);
+	}
 }

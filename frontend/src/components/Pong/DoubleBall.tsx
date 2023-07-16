@@ -1,4 +1,4 @@
-import { React, useRef, useEffect, useState } from 'react'
+import { React, useRef, useEffect, useState, useCallback } from 'react'
 import { Ball, Paddle } from '../../shared/interfaces/game.interface'
 import { socket } from '../Socket/socketInit';
 import './Pong.scss'
@@ -15,6 +15,27 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score}) {
 		setScore({p1: p1.score, p2: p2.score});//maybe not change state everyframe
 		resize.current = true;
 	} );
+
+	const myEventHandler = useCallback(data => {
+		let score;
+		if (data.p1.socketId === socket.id)
+			score = { id: 1, opponent: data.p2.name, scores: data.p1.score + "/" + data.p2.score, result: data.p1.score > data.p2.score ? "matchWin" : "matchLose" };
+		else
+			score = { id: 1, opponent: data.p1.name, scores: data.p2.score + "/" + data.p1.score, result: data.p2.score > data.p1.score ? "matchWin" : "matchLose" };
+		console.log("score = ", score);
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({ "score": score }),
+		};
+		fetch("http://localhost:5000/users/addGameToHistory", requestOptions);
+	});
+
+	useEffect(() => {
+		socket.on('score', myEventHandler);
+		return () => socket.off('score', myEventHandler)
+	}, [myEventHandler]);
 
 	const canvasRef = useRef<HTMLCanvasElement>(null); 
 
