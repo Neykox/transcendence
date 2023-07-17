@@ -19,9 +19,9 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score}) {
 	const myEventHandler = useCallback(data => {
 		let score;
 		if (data.p1.socketId === socket.id)
-			score = { id: 1, opponent: data.p2.name, scores: data.p1.score + "/" + data.p2.score, result: data.p1.score > data.p2.score ? "matchWin" : "matchLose" };
+			score = { id: Date().toLocaleString(), opponent: data.p2.name, scores: data.p1.score + "/" + data.p2.score, result: data.p1.score > data.p2.score ? "matchWin" : "matchLose" };
 		else
-			score = { id: 1, opponent: data.p1.name, scores: data.p2.score + "/" + data.p1.score, result: data.p2.score > data.p1.score ? "matchWin" : "matchLose" };
+			score = { id: Date().toLocaleString(), opponent: data.p1.name, scores: data.p2.score + "/" + data.p1.score, result: data.p2.score > data.p1.score ? "matchWin" : "matchLose" };
 		console.log("score = ", score);
 		const requestOptions = {
 			method: "POST",

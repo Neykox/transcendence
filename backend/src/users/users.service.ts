@@ -69,15 +69,46 @@ export class UsersService {
 
 	async addGameToHistory(id: number, lastGame: JSON): Promise<void> {
 		const user = await this.usersRepository.findOneBy({id});
-
-		console.log("History = ", user.gameHistory)
-		console.log("lastGame = ", lastGame)
-		const newHistory = { ...user.gameHistory , ...lastGame };
-		// const newHistory = user.gameHistory;
+		let index;
+		// const newHistory = [ ...user.gameHistory, ...lastGame ];
+		const newHistory = user.gameHistory;
+		for (index in newHistory)
+			;
+		newHistory[index] = lastGame;
+		// newHistory[new Date(Date.now()).toLocaleString()] = lastGame;
 		// newHistory.push(lastGame);
 		console.log("newHistory = ", newHistory)
+		// data = "|" + await JSON.stringify(user.gameHistory)
 		this.usersRepository.update(id, { gameHistory: newHistory });
 	}
+
+	// async addGameToHistory(id: number, lastGame: JSON): Promise<void> {
+	// 	const user = await this.usersRepository.findOneBy({id});
+	// 	var data;
+	// 	if (!user.gameHistory){
+	// 		data = await JSON.stringify(lastGame);
+	// 		this.usersRepository.update(id, { gameHistory: data });
+	// 		return ;
+	// 	}
+	// 	user.gameHistory += "|" + await JSON.stringify(lastGame);
+	// 	// const newHistory = [ ...user.gameHistory, ...lastGame ];
+	// 	// const newHistory = user.gameHistory;
+	// 	// newHistory[new Date(Date.now()).toLocaleString()] = lastGame;
+	// 	// newHistory.push(lastGame);
+	// 	console.log("newHistory = ", user.gameHistory)
+	// 	// data = "|" + await JSON.stringify(user.gameHistory)
+	// 	this.usersRepository.update(id, { gameHistory: user.gameHistory });
+	// }
+
+	// async addGameToHistory(id: number, lastGame: string): Promise<void> {
+	// 	const user = await this.usersRepository.findOneBy({id});
+	// 	// const newHistory = [ ...user.gameHistory, ...lastGame ];
+	// 	const newHistory = user.gameHistory.split(',');
+	// 	// newHistory[new Date(Date.now()).toLocaleString()] = lastGame;
+	// 	newHistory.push(JSON.stringify(lastGame));
+	// 	console.log("newHistory = ", newHistory)
+	// 	this.usersRepository.update(id, { gameHistory: newHistory.join(',')});
+	// }
 
 	// async addFriend(id: number, lastGame: json): Promise<void> {
 	// 	const user = await this.usersRepository.findOneBy({id});

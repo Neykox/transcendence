@@ -39,13 +39,7 @@ function Profile() {
 		status: string;
 	}
 
-	const [matchs, setMatch] = useState<Match[]>([
-		{ id: 1, opponent: "test", scores: "3/2", result: "matchWin" },
-		{ id: 2, opponent: "test", scores: "3/2", result: "matchWin" },
-		{ id: 3, opponent: "test", scores: "3/2", result: "matchWin" },
-		{ id: 4, opponent: "test", scores: "3/2", result: "matchWin" },
-		{ id: 5, opponent: "test", scores: "3/2", result: "matchWin" }
-	]);
+	const [matchs, setMatch] = useState<Match[]>([]);
 
 	const [friends, setFriends] = useState<Friends[]>([]);
 
@@ -89,6 +83,31 @@ function Profile() {
 		};
 
 		getUsers();
+
+		const fetchMatchs = async () => {
+			const response = await fetch('http://localhost:5000/users/history', {
+				method: "POST",
+				credentials: 'include'
+			});
+			// if (response.status != 200)
+			// 	return ;
+			let data = await response.text();
+			console.log("data = ",data)
+			if (!data)
+				return ;
+			let matchsData: string[] = data.toString().split("}");
+			if (matchsData.length === 0)
+				return ;
+			let newMatchs = matchsData.map((match: any) => ({
+				id: match.id,
+				opponent: match.opponent,
+				score: match.score,
+				result: match.result,
+			}));
+
+			setMatch(newMatchs);
+		};
+		fetchMatchs();
 	}, []);
 
 

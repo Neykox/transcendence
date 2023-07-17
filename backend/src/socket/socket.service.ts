@@ -142,8 +142,8 @@ export class SocketService {
 		delete players[p2.id];
 
 		let ball = {
-			x: 500,
-			y: 500,
+			x: 600,
+			y: 600,
 			radius: 20,
 			dx: ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1),
 			dy: ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1),
@@ -151,8 +151,8 @@ export class SocketService {
 		}
 
 		let ball2 = {
-			x: 500,
-			y: 500,
+			x: 600,
+			y: 600,
 			radius: 20,
 			dx: -ball.dx,
 			dy: ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1),
@@ -432,7 +432,7 @@ export class SocketService {
 				// skip = true;
 			}
 		}
-		console.log("skip = ", skip)
+		// console.log("skip = ", skip)
 		if (skip === false)
 		{
 			players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
@@ -469,11 +469,11 @@ export class SocketService {
 				// skip = true;
 			}
 		}
-		console.log("skip = ", skip)
+		// console.log("skip = ", skip)
 		if (skip === false)
 		{
 			players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: data.room, socket: client }
-			console.log(players)
+			// console.log(players)
 
 			let num = 0;
 
