@@ -25,251 +25,251 @@ import { UserInfo } from '../../../model/userInfo';
 
 
 const Settings = () => {
-  const { user, setUser } = useContext<UserInfo>(UserContext);
-  //const [username, setUsername] = useState(user.username);
-  const [pseudo, setPseudo] = useState(user.pseudo);
-  const [darkMode, setDarkMode] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModal2Open, setIsModal2Open] = useState(false);
-  const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
-  const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState("");
-  const [doubleAuthEnabled, setDoubleAuthEnabled] = useState(false);
-  //const [userId, setUserId] = useState(user.id);
+	const { user, setUser } = useContext<UserInfo>(UserContext);
+	//const [username, setUsername] = useState(user.username);
+	const [pseudo, setPseudo] = useState(user.pseudo);
+	const [darkMode, setDarkMode] = useState(false);
+	const [soundEnabled, setSoundEnabled] = useState(false);
+	const [profilePhoto, setProfilePhoto] = useState('');
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isModal2Open, setIsModal2Open] = useState(false);
+	const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
+	const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState("");
+	const [doubleAuthEnabled, setDoubleAuthEnabled] = useState(false);
+	//const [userId, setUserId] = useState(user.id);
 
-  /*
-  evenements de changement de nom d'utilisateur
-  */
-  const handlePseudoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setPseudo(event.target.value);
-  };
+	/*
+	evenements de changement de nom d'utilisateur
+	*/
+	const handlePseudoChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setPseudo(event.target.value);
+	};
 
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
-  };
+	const handleModalOpen = () => {
+		setIsModalOpen(true);
+	};
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
+	const handleModalClose = () => {
+		setIsModalOpen(false);
+	};
 
-  //const handleModalSave = () => {
-  //  user.login = login; 
-  //  setIsModalOpen(false);
-  //};
+	//const handleModalSave = () => {
+	//  user.login = login; 
+	//  setIsModalOpen(false);
+	//};
 
-  const handleModalSave = () => {
-    setUser(prevUser => ({ ...prevUser, pseudo }));
-    fetch(`http://localhost:5000/users/changePseudo`, {
-      method: 'PUT',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ Pseudo: pseudo }),
-    })
-      .then(response => {
-        if (response.ok) {
-          toast.success('Pseudo mis à jour avec succès');
-        } else {
-          toast.error('Une erreur est survenue lors de la mise à jour du pseudo');
-        }
-      })
-      .catch(error => {
-        console.error('Erreur lors de la mise à jour du pseudo', error);
-        toast.error('Une erreur est survenue lors de la mise à jour du pseudo');
-      });
-  
-    setIsModalOpen(false);
-  };
+	const handleModalSave = () => {
+		setUser(prevUser => ({ ...prevUser, pseudo }));
+		fetch(`http://${process.env.REACT_APP_POSTURL}:5000/users/changePseudo`, {
+			method: 'PUT',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ Pseudo: pseudo }),
+		})
+			.then(response => {
+				if (response.ok) {
+					toast.success('Pseudo mis à jour avec succès');
+				} else {
+					toast.error('Une erreur est survenue lors de la mise à jour du pseudo');
+				}
+			})
+			.catch(error => {
+				console.error('Erreur lors de la mise à jour du pseudo', error);
+				toast.error('Une erreur est survenue lors de la mise à jour du pseudo');
+			});
 
-  /*
-  evenements de changement de mode 
-  */
+		setIsModalOpen(false);
+	};
 
-  const handleDarkModeToggle = () => {
-    setDarkMode(!darkMode);
-  };
+	/*
+	evenements de changement de mode 
+	*/
 
-  /*
-  evenements de changement de son
-  */
+	const handleDarkModeToggle = () => {
+		setDarkMode(!darkMode);
+	};
 
-  const handleSoundToggle = () => {
-    setSoundEnabled(!soundEnabled);
-  };
+	/*
+	evenements de changement de son
+	*/
 
-  /* 
-  evenements de changement de double authentification
-  */
+	const handleSoundToggle = () => {
+		setSoundEnabled(!soundEnabled);
+	};
 
-  const doubleAuthhandleSoundToggle = () => {
-    setDoubleAuthEnabled(!doubleAuthEnabled);
-  };
+	/* 
+	evenements de changement de double authentification
+	*/
 
-  /*
-  evenements de changement de photo de profil
-  */ 
+	const doubleAuthhandleSoundToggle = () => {
+		setDoubleAuthEnabled(!doubleAuthEnabled);
+	};
 
-  const handleProfilePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      const newAvatarUrl = URL.createObjectURL(file);
-      setProfilePhoto(newAvatarUrl);
-    }
-  };
+	/*
+	evenements de changement de photo de profil
+	*/
 
-  const handleSave = () => {
+	const handleProfilePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
+		if (event.target.files && event.target.files.length > 0) {
+			const file = event.target.files[0];
+			const newAvatarUrl = URL.createObjectURL(file);
+			setProfilePhoto(newAvatarUrl);
+		}
+	};
 
-    if (profilePhoto) 
-       user.image = profilePhoto;
-    else if (selectedDefaultAvatar) 
-      user.image = selectedDefaultAvatar;
-    
-     setUser(prevUser => ({ ...prevUser, Image }));
-     fetch(`http://localhost:5000/users/changeAvatar`, {
-     method: 'PUT',
-     credentials: 'include',
-     headers: {
-       'Content-Type': 'application/json',
-     },
-     body: JSON.stringify({ Image: user.image }),
-      })
-     .then(response => {
-       if (response.ok) {
-         toast.success('Avatar mis à jour avec succès');
-       } else {
-         toast.error('Une erreur est survenue lors de la mise à jour de l\'avatar');
-       }
-     })
-     .catch(error => {
-       console.error('Erreur lors de la mise à jour du l\'avatar', error);
-       toast.error('Une erreur est survenue lors de la mise à jour du l\'avatar');
-     });
+	const handleSave = () => {
 
-    //if (profilePhoto) {
-    //  user.avatar = profilePhoto;
-    //  toast.success('Photo de profil enregistrée avec succès');
-    //} else if (selectedDefaultAvatar) {
-    //  user.avatar = selectedDefaultAvatar;
-    //  toast.success('Avatar par défaut enregistré avec succès');
-    //}
-  };
-  var image42:string = localStorage.getItem('42image') as string;
-  return (
+		if (profilePhoto)
+			user.image = profilePhoto;
+		else if (selectedDefaultAvatar)
+			user.image = selectedDefaultAvatar;
 
-     
-    <div>
-     <NavBar />
-      <div className="settinglist">
-      <div>
-      <label htmlFor="login">Modifier son pseudo: </label>
-      <button onClick={handleModalOpen}>Modifier</button>
+		setUser(prevUser => ({ ...prevUser, Image }));
+		fetch(`http://${process.env.REACT_APP_POSTURL}:5000/users/changeAvatar`, {
+			method: 'PUT',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ Image: user.image }),
+		})
+			.then(response => {
+				if (response.ok) {
+					toast.success('Avatar mis à jour avec succès');
+				} else {
+					toast.error('Une erreur est survenue lors de la mise à jour de l\'avatar');
+				}
+			})
+			.catch(error => {
+				console.error('Erreur lors de la mise à jour du l\'avatar', error);
+				toast.error('Une erreur est survenue lors de la mise à jour du l\'avatar');
+			});
 
-      {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>Modifier le pseudo</h2>
-            <input
-              type="text"
-              id="pseudo"
-              value={pseudo}
-              onChange={handlePseudoChange}
-            />
-            <div className="modal-buttons">
-              <button onClick={handleModalSave}>Enregistrer</button>
-              <button onClick={handleModalClose}>Annuler</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  
-        <div>
-         <label htmlFor="darkMode">Activer le dark mode : </label>
-        <Toggle
-        id="darkMode"
-        checked={darkMode}
-        onChange={handleDarkModeToggle}
-      />
-        </div>    
-  
-        <div>
-          <label htmlFor="sound">Activer le son : </label>
-          <Toggle
-            id="sound"
-            checked={soundEnabled}
-            onChange={handleSoundToggle}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="2fa">Activer l'authentification à deux facteurs : </label>
-          <Toggle
-            id="2fa"
-            checked={doubleAuthEnabled}
-            onChange={doubleAuthhandleSoundToggle}
-          />
-        </div>
-   
+		//if (profilePhoto) {
+		//  user.avatar = profilePhoto;
+		//  toast.success('Photo de profil enregistrée avec succès');
+		//} else if (selectedDefaultAvatar) {
+		//  user.avatar = selectedDefaultAvatar;
+		//  toast.success('Avatar par défaut enregistré avec succès');
+		//}
+	};
+	var image42: string = localStorage.getItem('42image') as string;
+	return (
 
 
-      <div>
-        <label htmlFor="profilePhoto">Modifier sa photo de profil : </label>
+		<div>
+			<NavBar />
+			<div className="settinglist">
+				<div>
+					<label htmlFor="login">Modifier son pseudo: </label>
+					<button onClick={handleModalOpen}>Modifier</button>
 
-        <button onClick={() => setIsModal2Open(true)}>Avatar perso</button>
-        <button onClick={() => setIsDefaultModalOpen(true)}>Avatar par défaut</button>
-      </div>
+					{isModalOpen && (
+						<div className="modal">
+							<div className="modal-content">
+								<h2>Modifier le pseudo</h2>
+								<input
+									type="text"
+									id="pseudo"
+									value={pseudo}
+									onChange={handlePseudoChange}
+								/>
+								<div className="modal-buttons">
+									<button onClick={handleModalSave}>Enregistrer</button>
+									<button onClick={handleModalClose}>Annuler</button>
+								</div>
+							</div>
+						</div>
+					)}
+				</div>
+
+				<div>
+					<label htmlFor="darkMode">Activer le dark mode : </label>
+					<Toggle
+						id="darkMode"
+						checked={darkMode}
+						onChange={handleDarkModeToggle}
+					/>
+				</div>
+
+				<div>
+					<label htmlFor="sound">Activer le son : </label>
+					<Toggle
+						id="sound"
+						checked={soundEnabled}
+						onChange={handleSoundToggle}
+					/>
+				</div>
+
+				<div>
+					<label htmlFor="2fa">Activer l'authentification à deux facteurs : </label>
+					<Toggle
+						id="2fa"
+						checked={doubleAuthEnabled}
+						onChange={doubleAuthhandleSoundToggle}
+					/>
+				</div>
 
 
 
-      <Modal isOpen={isModal2Open}>
-        <h2>Choisir une photo de profil</h2>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleProfilePhotoChange}
-        />
-              {profilePhoto && (
-        <div>
-          <h3>Ancienne photo de profil : </h3>
-          <img className="imglist" src={user.image} alt="Avatar" />
-          <h3>Nouvelle photo de profil : </h3>
-          <img className="imglist" src={profilePhoto} alt="Avatar" />
-          <button onClick={handleSave}>Enregistrer</button>
-        </div>
-      )}
-        <button onClick={() => setIsModal2Open(false)}>Fermer</button>
-      </Modal>
+				<div>
+					<label htmlFor="profilePhoto">Modifier sa photo de profil : </label>
 
-      <Modal isOpen={isDefaultModalOpen}>
-        <h2>Choisir un avatar par défaut</h2>
-        <div>   
-          {image42 !== 'null' && ( 
-            <img className="imglist" src={image42} alt="Avatar" onClick={() => setSelectedDefaultAvatar(() => image42)} />
-          )}
-          <img className="imglist" src={test}  alt="Avatar4" onClick={() => setSelectedDefaultAvatar(() => test)} />
-          <img className="imglist" src={arcencielfille}  alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => arcencielfille)} />
-          <img className="imglist" src={chat}  alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => chat)} />
-          <img className="imglist" src={fille}  alt="Avatar3" onClick={() => setSelectedDefaultAvatar(() => fille)} />
-          <img className="imglist" src={lunette2}  alt="Avatar5" onClick={() => setSelectedDefaultAvatar(() => lunette2)} />
-          <img className="imglist" src={lunette}  alt="Avatar6" onClick={() => setSelectedDefaultAvatar(() => lunette)} />
-          <img className="imglist" src={lunettesoleil} alt="Avatar7" onClick={() => setSelectedDefaultAvatar(() => lunettesoleil)} />
-          <img className="imglist" src={peinture}  alt="Avatar8" onClick={() => setSelectedDefaultAvatar(() => peinture)} />
-          <img className="imglist" src={smiley}  alt="Avatar9" onClick={() => setSelectedDefaultAvatar(() => smiley)} />
-          <img className="imglist" src={vert}  alt="Avatar10" onClick={() => setSelectedDefaultAvatar(() => vert)} />
-          <img className="imglist" src={arcencielgarcon}  alt="Avatar11" onClick={() => setSelectedDefaultAvatar(() => arcencielgarcon)} />
-        </div>
-        {selectedDefaultAvatar && (
-          <button onClick={handleSave}>Enregistrer</button>
-        )}
-        <button onClick={() => setIsDefaultModalOpen(false)}>Fermer</button>
-      </Modal>
-  
+					<button onClick={() => setIsModal2Open(true)}>Avatar perso</button>
+					<button onClick={() => setIsDefaultModalOpen(true)}>Avatar par défaut</button>
+				</div>
 
-      </div>
-    </div>
-  );
+
+
+				<Modal isOpen={isModal2Open}>
+					<h2>Choisir une photo de profil</h2>
+					<input
+						type="file"
+						accept="image/*"
+						onChange={handleProfilePhotoChange}
+					/>
+					{profilePhoto && (
+						<div>
+							<h3>Ancienne photo de profil : </h3>
+							<img className="imglist" src={user.image} alt="Avatar" />
+							<h3>Nouvelle photo de profil : </h3>
+							<img className="imglist" src={profilePhoto} alt="Avatar" />
+							<button onClick={handleSave}>Enregistrer</button>
+						</div>
+					)}
+					<button onClick={() => setIsModal2Open(false)}>Fermer</button>
+				</Modal>
+
+				<Modal isOpen={isDefaultModalOpen}>
+					<h2>Choisir un avatar par défaut</h2>
+					<div>
+						{image42 !== 'null' && (
+							<img className="imglist" src={image42} alt="Avatar" onClick={() => setSelectedDefaultAvatar(() => image42)} />
+						)}
+						<img className="imglist" src={test} alt="Avatar4" onClick={() => setSelectedDefaultAvatar(() => test)} />
+						<img className="imglist" src={arcencielfille} alt="Avatar1" onClick={() => setSelectedDefaultAvatar(() => arcencielfille)} />
+						<img className="imglist" src={chat} alt="Avatar2" onClick={() => setSelectedDefaultAvatar(() => chat)} />
+						<img className="imglist" src={fille} alt="Avatar3" onClick={() => setSelectedDefaultAvatar(() => fille)} />
+						<img className="imglist" src={lunette2} alt="Avatar5" onClick={() => setSelectedDefaultAvatar(() => lunette2)} />
+						<img className="imglist" src={lunette} alt="Avatar6" onClick={() => setSelectedDefaultAvatar(() => lunette)} />
+						<img className="imglist" src={lunettesoleil} alt="Avatar7" onClick={() => setSelectedDefaultAvatar(() => lunettesoleil)} />
+						<img className="imglist" src={peinture} alt="Avatar8" onClick={() => setSelectedDefaultAvatar(() => peinture)} />
+						<img className="imglist" src={smiley} alt="Avatar9" onClick={() => setSelectedDefaultAvatar(() => smiley)} />
+						<img className="imglist" src={vert} alt="Avatar10" onClick={() => setSelectedDefaultAvatar(() => vert)} />
+						<img className="imglist" src={arcencielgarcon} alt="Avatar11" onClick={() => setSelectedDefaultAvatar(() => arcencielgarcon)} />
+					</div>
+					{selectedDefaultAvatar && (
+						<button onClick={handleSave}>Enregistrer</button>
+					)}
+					<button onClick={() => setIsDefaultModalOpen(false)}>Fermer</button>
+				</Modal>
+
+
+			</div>
+		</div>
+	);
 };
 
 export default Settings;

@@ -15,85 +15,85 @@ import { useState, useEffect } from 'react';
 import { socket } from './components/Socket/socketInit';
 
 function App() {
-  const [connected, setConnected] = useState(false);
-  const [storage, setStorage] = useState(localStorage.getItem("user"));
+	const [connected, setConnected] = useState(false);
+	const [storage, setStorage] = useState(localStorage.getItem("user"));
 
-  const clearCookie = async () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ title: 'React POST Request Example' })
-    };
+	const clearCookie = async () => {
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include',
+			body: JSON.stringify({ title: 'React POST Request Example' })
+		};
 
-    await fetch('http://localhost:5000/auth/clear_cookie', requestOptions);
-  };
-  
-  const handleStorageChange = (event: StorageEvent) => {
-    console.log(event);
-    if (event.key === 'user') {
-      if (event.newValue === null) {
-        clearCookie();
-        setConnected(false);
-        console.log('localStorage has been cleared');
-      } else {
-        setConnected(true);
-        console.log("connected");
-      }
-    }
-  };
+		await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/clear_cookie', requestOptions);
+	};
 
-  useEffect(() => {
-    window.addEventListener('storage', handleStorageChange);
+	const handleStorageChange = (event: StorageEvent) => {
+		console.log(event);
+		if (event.key === 'user') {
+			if (event.newValue === null) {
+				clearCookie();
+				setConnected(false);
+				console.log('localStorage has been cleared');
+			} else {
+				setConnected(true);
+				console.log("connected");
+			}
+		}
+	};
 
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+	useEffect(() => {
+		window.addEventListener('storage', handleStorageChange);
 
-  useEffect(() => {
-    if (storage != null) {
-      setConnected(true);
-      console.log("Connected");
-    }
-  }, [storage])
+		return () => {
+			window.removeEventListener('storage', handleStorageChange);
+		};
+	}, []);
 
-  useEffect(() => {
-	if (localStorage.getItem("user")) {
-		let user = localStorage.getItem("user");
-		let data = JSON.parse(user as string);
-		if (data)
-			socket.emit('register', {login : data.login})
-	}
-  }, [])
+	useEffect(() => {
+		if (storage != null) {
+			setConnected(true);
+			console.log("Connected");
+		}
+	}, [storage])
+
+	useEffect(() => {
+		if (localStorage.getItem("user")) {
+			let user = localStorage.getItem("user");
+			let data = JSON.parse(user as string);
+			if (data)
+				socket.emit('register', { login: data.login })
+		}
+	}, [])
 
 
-  return (
-    <UserProvider>
-      <div className="App">
-        {/* <h1>Home</h1> */}
-        <ToastContainer />
-        <Routes>
-          {connected ? (
-            <Route path="/" element={<Navigate to="/profile" />} />
-          ) : (
-            <Route path="/" element={<Login />} />
-          )}
-          <Route
-            path="/profile"
-            element={connected ? <Profile /> : <Navigate to="/" />}
-          />
-          <Route path="/message" element={<Message />}>
-            <Route path="/message/:id" element={<Chat />} />
-          </Route>
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/page1" element={<Page1 />} />
-          <Route path="/page2" element={<Page2 />} />
-          <Route path='/lobby' element={<Lobby />} />
-        </Routes>
-      </div>
-    </UserProvider>
-  );
+	return (
+		<UserProvider>
+			<div className="App">
+				{/* <h1>Home</h1> */}
+				<ToastContainer />
+				<Routes>
+					{connected ? (
+						<Route path="/" element={<Navigate to="/profile" />} />
+					) : (
+						<Route path="/" element={<Login />} />
+					)}
+					<Route
+						path="/profile"
+						element={connected ? <Profile /> : <Navigate to="/" />}
+					/>
+					<Route path="/message" element={<Message />}>
+						<Route path="/message/:id" element={<Chat />} />
+					</Route>
+					<Route path="/settings" element={<Settings />} />
+					<Route path="/page1" element={<Page1 />} />
+					<Route path="/page2" element={<Page2 />} />
+					<Route path='/lobby' element={<Lobby />} />
+				</Routes>
+			</div>
+		</UserProvider>
+	);
 }
 
 export default App;

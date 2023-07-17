@@ -19,12 +19,12 @@ export default function FriendList({ friends }: AddFriendProps) {
 
 	useEffect(() => {
 		const fetchUsers = async (): Promise<Friends[]> => {
-			const response = await fetch('http://localhost:5000/users');
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users');
 			const data = await response.json();
 			const friendsData: Friends[] = data.map((user: any) => ({
-			id: user.id,
-			pseudo: user.pseudo,
-			status: user.status,
+				id: user.id,
+				pseudo: user.pseudo,
+				status: user.status,
 			}));
 			return friendsData;
 		};
@@ -40,15 +40,15 @@ export default function FriendList({ friends }: AddFriendProps) {
 	const sendFriend = (name: string) => {
 		let user = localStorage.getItem('user');
 		if (user === null)
-			return ;
+			return;
 		let data = JSON.parse(user);
-		socket.emit('sendFriend', {to: name, from: data.login}, (data:string) => console.log(data))
+		socket.emit('sendFriend', { to: name, from: data.login }, (data: string) => console.log(data))
 	}
 	return (
 		<div className="friend-list">
 			{users.map((user) => (
 				<div className="friend" key={user.id}>
-					<div className="friend-avatar"><img src={userImg}/></div>
+					<div className="friend-avatar"><img src={userImg} /></div>
 					<div className="friend-pseudo">{user.pseudo}</div>
 					<img className="add-button" src={addButton} alt="add" onClick={() => sendFriend(user.pseudo)} />
 				</div>

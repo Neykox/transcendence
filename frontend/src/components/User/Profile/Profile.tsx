@@ -4,7 +4,7 @@ import History from './History/History';
 import { useState, useEffect } from 'react';
 import PlayerInfo from './PlayerInfo/PlayerInfo';
 import FriendList from './FriendList/FriendList';
-import {socket} from '../../Socket/socketInit'
+import { socket } from '../../Socket/socketInit'
 import { toast } from 'react-toastify';
 import accept from '../../../asset/images/checkmark-circle.svg';
 import decline from '../../../asset/images/close-circle.svg';
@@ -14,7 +14,7 @@ import AddFriend from './AddFriend/AddFriend';
 // import io from 'socket.io-client';
 
 // Se connecter au canal de websocket
-// const socket = io('http://localhost:5000/users');
+// const socket = io('http://+'process.env.REACT_APP_POSTURL'+:5000/users');
 
 function randomName() {
 	const maleNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew", "Donald", "Anthony", "Mark", "Paul", "Steven", "George", "Kenneth"];
@@ -34,11 +34,11 @@ function Profile() {
 
 	const handleModalOpen = () => {
 		setIsModalOpen(true);
-	  };
-	
-	  const handleModalClose = () => {
+	};
+
+	const handleModalClose = () => {
 		setIsModalOpen(false);
-	  };
+	};
 	//const { user } = useContext(UserContext);
 
 	interface Match {
@@ -96,7 +96,7 @@ function Profile() {
 
 	useEffect(() => {
 		// const fetchUsers = async (): Promise<Friends[]> => {
-		// 	const response = await fetch('http://localhost:5000/users');
+		// 	const response = await fetch('http://+'process.env.REACT_APP_POSTURL'+:5000/users');
 		// 	const data = await response.json();
 		// 	const friendsData: Friends[] = data.map((user: any) => ({
 		// 	  id: user.id,
@@ -112,40 +112,40 @@ function Profile() {
 		// };
 
 		const fetchFriends = async () => {
-			const response = await fetch('http://localhost:5000/friends', {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends', {
 				credentials: 'include'
 			});
 			if (response.status != 200)
-				return ;
+				return;
 			let data = await response.text();
 			if (!data)
-				return ;
+				return;
 			let friendsData: string[] = data.toString().split(",");
 			if (friendsData.length === 0)
-				return ;
+				return;
 			let friends = friendsData.map((user: any) => ({
-				id : new Date().getTime(),
-				pseudo : user,
-				status : "online"
+				id: new Date().getTime(),
+				pseudo: user,
+				status: "online"
 			}));
 
 			setFriends(friends);
 		};
 
 		const fetchRequest = async () => {
-			const response = await fetch('http://localhost:5000/friends/requests', {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/requests', {
 				credentials: 'include',
 			});
 			if (response.status != 200)
-				return ;
+				return;
 			let data = await response.json();
 			if (!data)
-				return ;
+				return;
 			let requests = data.map((req: any) => ({
-				id : req.id,
-				from : req.from,
-				to : req.to,
-				date : req.date
+				id: req.id,
+				from: req.from,
+				to: req.to,
+				date: req.date
 			}));
 
 			setRequests(requests);
@@ -188,7 +188,7 @@ function Profile() {
 		// const status = Math.random() < 0.5 ? "online" : "offline";
 		// const friendsToAdd = { id, pseudo, status };
 
-		
+
 		// // 1. Copy du state
 		// const friendsCopy = [...friends];
 
@@ -203,32 +203,32 @@ function Profile() {
 
 	const friendAccept = (accept: boolean, id: number) => {
 		if (accept)
-			fetch('http://localhost:5000/friends/accept/'+id, { method: 'DELETE'});
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/accept/' + id, { method: 'DELETE' });
 		else
-			fetch('http://localhost:5000/friends/decline/'+id, { method: 'DELETE'});
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/decline/' + id, { method: 'DELETE' });
 	}
 
-	const Test = () => {socket.emit('testreq')}
-	socket.on('receiveFriend', (data) => toast.info(({ closeToast }) => 
+	const Test = () => { socket.emit('testreq') }
+	socket.on('receiveFriend', (data) => toast.info(({ closeToast }) =>
 		<div>
 			<div>
 				{data.from} wants to be your friend !
 			</div>
 			<div>
-				<a onClick={() => {friendAccept(true, data.id)}}><img src={accept} className="friendAccept friendIcon"/></a>
-				<a onClick={() => {friendAccept(false, data.id)}}><img src={decline} className="friendRefuse friendIcon"/></a>
+				<a onClick={() => { friendAccept(true, data.id) }}><img src={accept} className="friendAccept friendIcon" /></a>
+				<a onClick={() => { friendAccept(false, data.id) }}><img src={decline} className="friendRefuse friendIcon" /></a>
 			</div>
-		</div>, { autoClose: 5000,  toastId: "stopdup" }
-		)
+		</div>, { autoClose: 5000, toastId: "stopdup" }
+	)
 	)
 	return (
 		<div>
 			<NavBar />
 			<div className="profile">
-				<PlayerInfo wins={wins} loses={loses}/>
+				<PlayerInfo wins={wins} loses={loses} />
 				<div className="grid">
 					<History matchs={matchs} onClick={matchList} />
-					<FriendList friends={friends} requests={requests} onClick={handleModalOpen}/>
+					<FriendList friends={friends} requests={requests} onClick={handleModalOpen} />
 				</div>
 				<div>
 					<Modal isOpen={isModalOpen} >
