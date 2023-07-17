@@ -546,4 +546,9 @@ export class SocketService {
 		connected[data.to].emit('receiveFriend', {from: data.from});
 		return 'OK'
 	}
+
+	@SubscribeMessage('testreq')
+	async handleTest(@MessageBody() data, @ConnectedSocket() client: Socket) {
+		client.emit('receiveFriend', {from: "royal"})
+	}
 }

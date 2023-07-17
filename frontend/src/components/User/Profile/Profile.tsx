@@ -207,6 +207,8 @@ function Profile() {
 		else
 			fetch('http://localhost:5000/friends/decline/'+id, { method: 'DELETE'});
 	}
+
+	const Test = () => {socket.emit('testreq')}
 	socket.on('receiveFriend', (data) => toast.info(({ closeToast }) => 
 		<div>
 			<div>
@@ -229,13 +231,14 @@ function Profile() {
 					<FriendList friends={friends} requests={requests} onClick={handleModalOpen}/>
 				</div>
 				<div>
-					<Modal isOpen={isModalOpen}>
+					<Modal isOpen={isModalOpen} >
 						<h1> Add friend </h1>
 						<AddFriend />
-						<button onClick={() => handleModalClose()} >Close</button>
+						<button onClick={() => handleModalClose()} className='closeModal'>Close</button>
 					</Modal>
 				</div>
 			</div>
+			<button onClick={Test} />
 		</div>
 	);
 }
