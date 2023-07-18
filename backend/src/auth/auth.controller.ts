@@ -22,4 +22,9 @@ export class AuthController {
 		response.clearCookie('my_cooky');
 		return {msg: 'cookies cleared'}
 	}
+
+	@Post()
+	async auth(@Body() code: number, @Res({passthrough: true}) response: Response) {
+		fetch()
+	}
 }
