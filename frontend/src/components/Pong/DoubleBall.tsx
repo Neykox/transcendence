@@ -204,20 +204,27 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 	}, [max_score, ])
   
 	return (
-		<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
-			<div className="scoreboard">
-				<div className="cells">{p1.current.name}</div>
-				<div className="cells">{score.p1} : {score.p2}</div>
-				<div className="cells">{p2.current.name}</div>
+		<>
+			{ended === false
+			? <div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
+				<div className="scoreboard">
+					<div className="cells">{p1.current.name}</div>
+					<div className="cells">{score.p1} : {score.p2}</div>
+					<div className="cells">{p2.current.name}</div>
+				</div>
+				<canvas ref={canvasRef}></canvas>
 			</div>
-			<canvas ref={canvasRef}></canvas>
-			{ended
-			?<div className="endButtons">
-				<button className="endButton" type="button" onClick={toLobby}>Lobby</button>
-				<button className="endButton" type="button" onClick={() => {navigate('/profile')}}>Profile</button>
-			</div>
-			: <></>}
-		</div>
+		 	:
+		 	<div className="endScreen">
+			 	<div className="endText">
+				 	{p1.current.score === max_score ? p1.current.name : p2.current.name} won!
+				 	<div className="endButtons">
+					 	<button className="endButton" type="button" onClick={toLobby}>Lobby</button>
+						<button className="endButton" type="button" onClick={() => {navigate('/profile')}}>Profile</button>
+					</div>
+				</div>
+			</div>}
+		</>
 	)
 }
 
