@@ -18,42 +18,45 @@ export default function Page1() {
 	};
 
 	const get_access_token = async () => {
-		const requestOptions = {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				grant_type: "authorization_code",
-				client_id: process.env.REACT_APP_UID42,
-				client_secret: process.env.REACT_APP_SECRET42,
-				// code,
-				// redirect_uri: `http://${process.env.REACT_APP_POSTURL}:3000/page1`,
-				"access_token":code,
-				"token_type":"bearer",
-				"expires_in":7200,
-				"scope":"public",
-				"created_at":Date.now()
-			}),
-		};
-		const response = await fetch(
-			"https://api.intra.42.fr/oauth/token",
-			requestOptions
-		);
-		const data = await response.json();
-		return data.access_token;
+		// const requestOptions = {
+		// 	method: "POST",
+		// 	headers: { "Content-Type": "application/json" },
+		// 	body: JSON.stringify({
+		// 		grant_type: "authorization_code",
+		// 		client_id: process.env.REACT_APP_UID42,
+		// 		client_secret: process.env.REACT_APP_SECRET42,
+		// 		// code,
+		// 		// redirect_uri: `http://${process.env.REACT_APP_POSTURL}:3000/page1`,
+		// 		"access_token":code,
+		// 		"token_type":"bearer",
+		// 		"expires_in":7200,
+		// 		"scope":"public",
+		// 		"created_at":Date.now()
+		// 	}),
+		// };
+		// const response = await fetch(
+		// 	"https://api.intra.42.fr/oauth/token",
+		// 	requestOptions
+		// );
+		// const data = await response.json();
+		// return data.access_token;
 	};
 
 
 
-	const get_user_info = async (access_token) => {
-		const requestOptions = {
-			method: "GET",
-			headers: { Authorization: `Bearer ${access_token}` },
-		};
-		const response = await fetch(
-			"https://api.intra.42.fr/v2/me",
-			requestOptions
-		);
-		return response.json();
+	const get_user_info = async () => {
+		// const requestOptions = {
+		// 	method: "GET",
+		// 	headers: { Authorization: `Bearer ${access_token}` },
+		// };
+		// const response = await fetch(
+		// 	"https://api.intra.42.fr/v2/me",
+		// 	requestOptions
+		// );
+		// return response.json();
+
+		const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/auth`, {method: "POST", body: JSON.stringify({code: code})})
+		return await response.json();
 	};
 
 
@@ -106,8 +109,8 @@ export default function Page1() {
 	useEffect(() => {
 		const test = async () => {
 			if (code) {
-				const access_token = await get_access_token();
-				const user_info = await get_user_info(access_token);
+				// const access_token = await get_access_token();
+				const user_info = await get_user_info();
 				const user = await get_user(user_info.login);
 
 

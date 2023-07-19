@@ -24,6 +24,6 @@ CREATE TABLE "user" (
 CREATE TABLE "friend_requests" (
     id SERIAL PRIMARY KEY,
     sender VARCHAR(255) NOT NULL,
-    receiver VARCHAR(255) NOT NULL,
+    receiver VARCHAR(255) NOT NULL
 );
 EOF
