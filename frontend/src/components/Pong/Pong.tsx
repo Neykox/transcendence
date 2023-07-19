@@ -1,10 +1,11 @@
-import { React, useRef, useEffect, useState } from 'react'
+import { React, useRef, useEffect, useState, useCallback } from 'react'
 import { Ball, Paddle } from '../../shared/interfaces/game.interface'
 import { socket } from '../Socket/socketInit';
 import './Pong.scss'
+import { useNavigate } from "react-router-dom";
 
 
-function Pong({paddle1, paddle2, newBall, max_score}) {
+function Pong({paddle1, paddle2, newBall, max_score, toLobby}) {
 
 	socket.on('newFrame', (data) => {
 		// console.log(data);
@@ -15,6 +16,27 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 		resize.current = true;
 	} );
 
+	const myEventHandler = useCallback(data => {
+		setEnded(true);
+		let score;
+		if (data.p1.socketId === socket.id)
+			score = { id: Date().toLocaleString(), opponent: data.p2.name, scores: data.p1.score + "/" + data.p2.score, result: data.p1.score > data.p2.score ? "matchWin" : "matchLose" };
+		else
+			score = { id: Date().toLocaleString(), opponent: data.p1.name, scores: data.p2.score + "/" + data.p1.score, result: data.p2.score > data.p1.score ? "matchWin" : "matchLose" };
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({ "score": score }),
+		};
+		fetch("http://localhost:5000/users/addGameToHistory", requestOptions);
+	});
+
+	useEffect(() => {
+		socket.on('score', myEventHandler);
+		return () => socket.off('score', myEventHandler)
+	}, [myEventHandler]);
+
 	const canvasRef = useRef<HTMLCanvasElement>(null); 
 
 	let resize: boolean = useRef(true);
@@ -22,7 +44,7 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 	const handleKeyDown = event => {
 		event.preventDefault();
 		// console.log(p1, p2)
-		if (p1.dc === false || p2.dc === false)//need to reword this condition
+		if (ended === false)//need to reword this condition
 		{
 			if (event.keyCode === 38)//up
 			{
@@ -45,6 +67,8 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 	let p2: Paddle = paddle2;
 	let ball: Ball = newBall;
 	const [score, setScore] = useState({p1: p1.score, p2: p2.score});
+	const [ended, setEnded] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 
@@ -166,6 +190,12 @@ function Pong({paddle1, paddle2, newBall, max_score}) {
 				<div className="cells">{p2.name}</div>
 			</div>
 			<canvas ref={canvasRef}></canvas>
+			{ended
+			?<div className="endButtons">
+				<button className="endButton" type="button" onClick={toLobby}>Lobby</button>
+				<button className="endButton" type="button" onClick={() => {navigate('/profile')}}>Profile</button>
+			</div>
+			: <></>}
 		</div>
 	)
 }

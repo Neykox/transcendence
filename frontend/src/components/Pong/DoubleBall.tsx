@@ -2,9 +2,10 @@ import { React, useRef, useEffect, useState, useCallback } from 'react'
 import { Ball, Paddle } from '../../shared/interfaces/game.interface'
 import { socket } from '../Socket/socketInit';
 import './Pong.scss'
+import { useNavigate } from "react-router-dom";
 
 
-function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score}) {
+function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 
 	socket.on('newFrame', (data) => {
 		// console.log(data);
@@ -17,12 +18,12 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score}) {
 	} );
 
 	const myEventHandler = useCallback(data => {
+		setEnded(true);
 		let score;
 		if (data.p1.socketId === socket.id)
 			score = { id: Date().toLocaleString(), opponent: data.p2.name, scores: data.p1.score + "/" + data.p2.score, result: data.p1.score > data.p2.score ? "matchWin" : "matchLose" };
 		else
 			score = { id: Date().toLocaleString(), opponent: data.p1.name, scores: data.p2.score + "/" + data.p1.score, result: data.p2.score > data.p1.score ? "matchWin" : "matchLose" };
-		console.log("score = ", score);
 		const requestOptions = {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -44,7 +45,7 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score}) {
 	const handleKeyDown = event => {
 		event.preventDefault();
 		// console.log(p1, p2)
-		if (p1.dc === false || p2.dc === false)//need to reword this condition
+		if (ended === false)//need to reword this condition
 		{
 			if (event.keyCode === 38)//up
 			{
@@ -68,6 +69,8 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score}) {
 	let ball: Ball = newBall;
 	let ball2: Ball = newBall2;
 	const [score, setScore] = useState({p1: p1.score, p2: p2.score});
+	const [ended, setEnded] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 
@@ -194,6 +197,12 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score}) {
 				<div className="cells">{p2.name}</div>
 			</div>
 			<canvas ref={canvasRef}></canvas>
+			{ended
+			?<div className="endButtons">
+				<button className="endButton" type="button" onClick={toLobby}>Lobby</button>
+				<button className="endButton" type="button" onClick={() => {navigate('/profile')}}>Profile</button>
+			</div>
+			: <></>}
 		</div>
 	)
 }

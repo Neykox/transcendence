@@ -261,6 +261,7 @@ export class SocketService {
 				p1.dc = true;
 				p2.dc = true;
 				this.server.to(room).emit('newFrame', {p1, p2, ball});
+				this.server.to(room).emit('score', {p1, p2});
 				delete rooms[room];
 				console.log(rooms);
 				clearInterval(interval);
@@ -520,3 +521,4 @@ export class SocketService {
 		}
 	}
 }
+ 

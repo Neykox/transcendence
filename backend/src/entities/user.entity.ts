@@ -34,23 +34,4 @@ export class User {
 
   @Column({ type: 'jsonb', nullable: false, array: false, default: () => "'[]'", })
   gameHistory: Array<{ id: number, opponent: string, scores: string, result: string }>;
-
-  // @Column({ type: 'jsonb', nullable: false, array: false, default: () => "'[]'", })
-  //   public users!: Array<{ id: string }>;
 }
-
-
-// @Entity()
-// export class GameHistory {
-//   @PrimaryGeneratedColumn()
-//   id: number;
-
-//   @Column()
-//   opponent: string;
-
-//   @Column()
-//   score: string;
-
-//   @Column()
-//   result: string;
-// }

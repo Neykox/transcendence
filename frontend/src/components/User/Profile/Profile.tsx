@@ -22,7 +22,7 @@ function randomName() {
 function Profile() {
 
 	// Set les wins et loses avec la db;
-	const [wins, setWins] = useState(5);
+	const [wins, setWins] = useState(0);
 	const [loses, setLoses] = useState(0);
 	//const { user } = useContext(UserContext);
 
@@ -89,63 +89,29 @@ function Profile() {
 				method: "POST",
 				credentials: 'include'
 			});
-			// if (response.status != 200)
-			// 	return ;
 			let data = await response.json();
 			if (!data)
 				return ;
-			console.log("data = ",data)
-			// for (index in data)
-			// 	console.log("index = ", index)
 			let index = 0;
 			let newMatchs: Match[] = [];
+			let win = 0;
+			let lose = 0;
 			while (data[index])
 			{
-				console.log("index = ", index, " | data = ", data[index]);
-				// newMatchs += { id: data[index].id, opponent: data[index].opponent, scores: data[index].scores, result: data[index].result };
-				newMatchs.push(data[index]);
-				console.log("newMatchs = ", newMatchs);
+				newMatchs.unshift(data[index]);
+				// newMatchs.push(data[index]);
+				if (data[index].result === "matchLose")
+					lose++;
+				else
+					win++;
 				index++;
 			}
-			// let matchsData: string[] = data.toString().split("}");
-			// if (matchsData.length === 0)
-			// 	return ;
-			// let newMatchs = matchsData.map((match: any) => ({
-			// 	id: match.id,
-			// 	opponent: match.opponent,
-			// 	score: match.score,
-			// 	result: match.result,
-			// }));
-
+			setLoses(lose);
+			setWins(win);
 			setMatch(newMatchs);
 		};
 		fetchMatchs();
 	}, []);
-
-
-
-	const matchList = () => {
-		const id = new Date().getTime();
-		const opponent = "Test";
-		const scores = "2/3";
-		// const result = "matchWin";
-		const result = "matchLose";
-		const matchToAdd = { id, opponent, scores, result };
-
-		// 1. Copy du state
-		const matchCopy = [...matchs];
-
-
-		// 2. Manipuler mon state
-		matchCopy.unshift(matchToAdd);
-
-		// 3. Modifier mon state
-		setMatch(matchCopy);
-		if (result === "matchLose")
-			setLoses(loses + 1);
-		else
-			setWins(wins + 1)
-	};
 
 	const friendsList = () => {
 		const id = new Date().getTime();
@@ -170,7 +136,7 @@ function Profile() {
 			<div className="profile">
 				<PlayerInfo wins={wins} loses={loses}/>
 				<div className="grid">
-					<History matchs={matchs} onClick={matchList} />
+					<History matchs={matchs}/>
 					<FriendList friends={friends} onClick={friendsList} />
 				</div>
 			</div>
