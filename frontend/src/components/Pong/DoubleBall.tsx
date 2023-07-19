@@ -7,15 +7,29 @@ import { useNavigate } from "react-router-dom";
 
 function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 
-	socket.on('newFrame', (data) => {
-		// console.log(data);
-		p1 = data.p1;
-		p2 = data.p2;
-		ball = data.ball
-		ball2 = data.ball2
-		setScore({p1: p1.score, p2: p2.score});//maybe not change state everyframe
+	const myEventHandler2 = useCallback(data => {
+		p1.current = data.p1;
+		p2.current = data.p2;
+		ball.current = data.ball;
+		ball2.current = data.ball2;
+		setScore({p1: p1.current.score, p2: p2.current.score});//maybe not change state everyframe
 		resize.current = true;
-	} );
+	}, []);
+
+	useEffect(() => {
+	  socket.on('newFrame', myEventHandler2);
+	  return () => socket.off('newFrame', myEventHandler2);
+	}, [myEventHandler2]);
+
+	// socket.on('newFrame', (data) => {
+	// 	// console.log(data);
+	// 	p1 = data.p1;
+	// 	p2 = data.p2;
+	// 	ball = data.ball
+	// 	ball2 = data.ball2
+	// 	setScore({p1: p1.score, p2: p2.score});//maybe not change state everyframe
+	// 	resize.current = true;
+	// } );
 
 	const myEventHandler = useCallback(data => {
 		setEnded(true);
@@ -31,7 +45,7 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 			body: JSON.stringify({ "score": score }),
 		};
 		fetch("http://localhost:5000/users/addGameToHistory", requestOptions);
-	});
+	}, []);
 
 	useEffect(() => {
 		socket.on('score', myEventHandler);
@@ -50,25 +64,25 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 			if (event.keyCode === 38)//up
 			{
 				if (paddle1.socketId === socket.id)
-					socket.emit("updatePlayer", {"p":{dir: -1, room:p1.room, socketId:p1.socketId}});
+					socket.emit("updatePlayer", {"p":{dir: -1, room:p1.current.room, socketId:p1.current.socketId}});
 				else
-					socket.emit("updatePlayer", {"p":{dir: -1, room:p2.room, socketId:p2.socketId}});
+					socket.emit("updatePlayer", {"p":{dir: -1, room:p2.current.room, socketId:p2.current.socketId}});
 			}
 			if (event.keyCode === 40)//down
 			{
 				if (paddle1.socketId === socket.id)
-					socket.emit("updatePlayer", {"p":{dir: 1, room:p1.room, socketId:p1.socketId}});
+					socket.emit("updatePlayer", {"p":{dir: 1, room:p1.current.room, socketId:p1.current.socketId}});
 				else
-					socket.emit("updatePlayer", {"p":{dir: 1, room:p2.room, socketId:p2.socketId}});
+					socket.emit("updatePlayer", {"p":{dir: 1, room:p2.current.room, socketId:p2.current.socketId}});
 			}
 		}
 	};
 
-	let p1: Paddle = paddle1;	
-	let p2: Paddle = paddle2;
-	let ball: Ball = newBall;
-	let ball2: Ball = newBall2;
-	const [score, setScore] = useState({p1: p1.score, p2: p2.score});
+	let p1: Paddle = useRef(paddle1);	
+	let p2: Paddle = useRef(paddle2);
+	let ball: Ball = useRef(newBall);
+	let ball2: Ball = useRef(newBall2);
+	const [score, setScore] = useState({p1: p1.current.score, p2: p2.current.score});
 	const [ended, setEnded] = useState(false);
 	const navigate = useNavigate();
 
@@ -143,23 +157,23 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 				const ry = currentHeight / orignalHeight;
 				const scale = rx < ry ? rx : ry;
 
-				p1.x *= scale;
-				p1.y *= scale;
-				p1.w *= scale;
-				p1.h *= scale;
+				p1.current.x *= scale;
+				p1.current.y *= scale;
+				p1.current.w *= scale;
+				p1.current.h *= scale;
 
-				p2.x *= scale;
-				p2.y *= scale;
-				p2.w *= scale;
-				p2.h *= scale;
+				p2.current.x *= scale;
+				p2.current.y *= scale;
+				p2.current.w *= scale;
+				p2.current.h *= scale;
 
-				ball.x *= scale;
-				ball.y *= scale;
-				ball.radius *= scale;
+				ball.current.x *= scale;
+				ball.current.y *= scale;
+				ball.current.radius *= scale;
 
-				ball2.x *= scale;
-				ball2.y *= scale;
-				ball2.radius *= scale;
+				ball2.current.x *= scale;
+				ball2.current.y *= scale;
+				ball2.current.radius *= scale;
 
 				resize.current = false;
 			}
@@ -168,17 +182,17 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 			window.requestAnimationFrame(animate);
 			draw_background();
 			draw_boundingbox();
-			draw_ball(ball);
-			draw_ball(ball2);
-			draw_paddle(p1);
-			draw_paddle(p2);
+			draw_ball(ball.current);
+			draw_ball(ball2.current);
+			draw_paddle(p1.current);
+			draw_paddle(p2.current);
 
 			//write end screen / stop game
-			if (p1.score === max_score || p2.score === max_score)
+			if (p1.current.score === max_score || p2.current.score === max_score)
 			{
 				ctx.font = "48px serif";
 				ctx.fillStyle = 'white';
-				ctx.fillText((p1.score === max_score ? p1.name : p2.name) + ' won!', canvas.width / 2, canvas.height / 2)
+				ctx.fillText((p1.current.score === max_score ? p1.current.name : p2.current.name) + ' won!', canvas.width / 2, canvas.height / 2)
 			}
 		}
 
@@ -187,14 +201,14 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 		return () => {
 			window.removeEventListener('resize', resizeCanvas);
 		};
-	}, [resize, p1, p2, ball, ball2, max_score, ])
+	}, [max_score, ])
   
 	return (
 		<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
 			<div className="scoreboard">
-				<div className="cells">{p1.name}</div>
+				<div className="cells">{p1.current.name}</div>
 				<div className="cells">{score.p1} : {score.p2}</div>
-				<div className="cells">{p2.name}</div>
+				<div className="cells">{p2.current.name}</div>
 			</div>
 			<canvas ref={canvasRef}></canvas>
 			{ended

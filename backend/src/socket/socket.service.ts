@@ -77,7 +77,6 @@ export class SocketService {
 	{
 		let p1: Socket = null;
 		let p2: Socket = null;
-		console.log("room = ", room)
 
 		if (room === null)
 		{

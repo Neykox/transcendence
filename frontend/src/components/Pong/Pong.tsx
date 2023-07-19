@@ -7,14 +7,27 @@ import { useNavigate } from "react-router-dom";
 
 function Pong({paddle1, paddle2, newBall, max_score, toLobby}) {
 
-	socket.on('newFrame', (data) => {
-		// console.log(data);
-		p1 = data.p1;
-		p2 = data.p2;
-		ball = data.ball
-		setScore({p1: p1.score, p2: p2.score});//maybe not change state everyframe
+	const myEventHandler2 = useCallback(data => {
+		p1.current = data.p1;
+		p2.current = data.p2;
+		ball.current = data.ball
+		setScore({p1: p1.current.score, p2: p2.current.score});//maybe not change state everyframe
 		resize.current = true;
-	} );
+	}, []);
+
+	useEffect(() => {
+	  socket.on('newFrame', myEventHandler2);
+	  return () => socket.off('newFrame', myEventHandler2);
+	}, [myEventHandler2]);
+
+	// socket.on('newFrame', (data) => {
+	// 	// console.log(data);
+	// 	p1 = data.p1;
+	// 	p2 = data.p2;
+	// 	ball = data.ball
+	// 	setScore({p1: p1.score, p2: p2.score});//maybe not change state everyframe
+	// 	resize.current = true;
+	// } );
 
 	const myEventHandler = useCallback(data => {
 		setEnded(true);
@@ -30,7 +43,7 @@ function Pong({paddle1, paddle2, newBall, max_score, toLobby}) {
 			body: JSON.stringify({ "score": score }),
 		};
 		fetch("http://localhost:5000/users/addGameToHistory", requestOptions);
-	});
+	}, []);
 
 	useEffect(() => {
 		socket.on('score', myEventHandler);
@@ -49,24 +62,24 @@ function Pong({paddle1, paddle2, newBall, max_score, toLobby}) {
 			if (event.keyCode === 38)//up
 			{
 				if (paddle1.socketId === socket.id)
-					socket.emit("updatePlayer", {"p":{dir: -1, room:p1.room, socketId:p1.socketId}});
+					socket.emit("updatePlayer", {"p":{dir: -1, room:p1.current.room, socketId:p1.current.socketId}});
 				else
-					socket.emit("updatePlayer", {"p":{dir: -1, room:p2.room, socketId:p2.socketId}});
+					socket.emit("updatePlayer", {"p":{dir: -1, room:p2.current.room, socketId:p2.current.socketId}});
 			}
 			if (event.keyCode === 40)//down
 			{
 				if (paddle1.socketId === socket.id)
-					socket.emit("updatePlayer", {"p":{dir: 1, room:p1.room, socketId:p1.socketId}});
+					socket.emit("updatePlayer", {"p":{dir: 1, room:p1.current.room, socketId:p1.current.socketId}});
 				else
-					socket.emit("updatePlayer", {"p":{dir: 1, room:p2.room, socketId:p2.socketId}});
+					socket.emit("updatePlayer", {"p":{dir: 1, room:p2.current.room, socketId:p2.current.socketId}});
 			}
 		}
 	};
 
-	let p1: Paddle = paddle1;	
-	let p2: Paddle = paddle2;
-	let ball: Ball = newBall;
-	const [score, setScore] = useState({p1: p1.score, p2: p2.score});
+	let p1: Paddle = useRef(paddle1);	
+	let p2: Paddle = useRef(paddle2);
+	let ball: Ball = useRef(newBall);
+	const [score, setScore] = useState({p1: p1.current.score, p2: p2.current.score});
 	const [ended, setEnded] = useState(false);
 	const navigate = useNavigate();
 
@@ -118,8 +131,8 @@ function Pong({paddle1, paddle2, newBall, max_score, toLobby}) {
 	
 		const draw_ball = () => {
 			ctx.beginPath();
-			ctx.fillStyle = ball.color;
-			ctx.arc(ball.x + ball.dx, ball.y, ball.radius, 0, 2*Math.PI);
+			ctx.fillStyle = ball.current.color;
+			ctx.arc(ball.current.x + ball.current.dx, ball.current.y, ball.current.radius, 0, 2*Math.PI);
 			ctx.fill();
 			ctx.closePath();
 		}
@@ -141,19 +154,19 @@ function Pong({paddle1, paddle2, newBall, max_score, toLobby}) {
 				const ry = currentHeight / orignalHeight;
 				const scale = rx < ry ? rx : ry;
 
-				p1.x *= scale;
-				p1.y *= scale;
-				p1.w *= scale;
-				p1.h *= scale;
+				p1.current.x *= scale;
+				p1.current.y *= scale;
+				p1.current.w *= scale;
+				p1.current.h *= scale;
 
-				p2.x *= scale;
-				p2.y *= scale;
-				p2.w *= scale;
-				p2.h *= scale;
+				p2.current.x *= scale;
+				p2.current.y *= scale;
+				p2.current.w *= scale;
+				p2.current.h *= scale;
 
-				ball.x *= scale;
-				ball.y *= scale;
-				ball.radius *= scale;
+				ball.current.x *= scale;
+				ball.current.y *= scale;
+				ball.current.radius *= scale;
 
 				resize.current = false;
 			}
@@ -163,15 +176,15 @@ function Pong({paddle1, paddle2, newBall, max_score, toLobby}) {
 			draw_background();
 			draw_boundingbox();
 			draw_ball();
-			draw_paddle(p1);
-			draw_paddle(p2);
+			draw_paddle(p1.current);
+			draw_paddle(p2.current);
 
 			//write end screen / stop game
-			if (p1.score === max_score || p2.score === max_score)
+			if (p1.current.score === max_score || p2.current.score === max_score)
 			{
 				ctx.font = "48px serif";
 				ctx.fillStyle = 'white';
-				ctx.fillText((p1.score === max_score ? p1.name : p2.name) + ' won!', canvas.width / 2, canvas.height / 2)
+				ctx.fillText((p1.current.score === max_score ? p1.current.name : p2.current.name) + ' won!', canvas.width / 2, canvas.height / 2)
 			}
 		}
 
@@ -180,23 +193,30 @@ function Pong({paddle1, paddle2, newBall, max_score, toLobby}) {
 		return () => {
 			window.removeEventListener('resize', resizeCanvas);
 		};
-	}, [resize, p1, p2, ball, max_score, ])
+	}, [resize, max_score, ])
   
 	return (
-		<div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
-			<div className="scoreboard">
-				<div className="cells">{p1.name}</div>
-				<div className="cells">{score.p1} : {score.p2}</div>
-				<div className="cells">{p2.name}</div>
+		<>
+			{ended === false
+			? <div className="e" tabIndex={0} onKeyDown={handleKeyDown}>
+				<div className="scoreboard">
+					<div className="cells">{p1.current.name}</div>
+					<div className="cells">{score.p1} : {score.p2}</div>
+					<div className="cells">{p2.current.name}</div>
+				</div>
+				<canvas ref={canvasRef}></canvas>
 			</div>
-			<canvas ref={canvasRef}></canvas>
-			{ended
-			?<div className="endButtons">
-				<button className="endButton" type="button" onClick={toLobby}>Lobby</button>
-				<button className="endButton" type="button" onClick={() => {navigate('/profile')}}>Profile</button>
-			</div>
-			: <></>}
-		</div>
+		 	:
+		 	<div className="endScreen">
+			 	<div className="endText">
+				 	{p1.current.score === max_score ? p1.current.name : p2.current.name} won!
+				 	<div className="endButtons">
+					 	<button className="endButton" type="button" onClick={toLobby}>Lobby</button>
+						<button className="endButton" type="button" onClick={() => {navigate('/profile')}}>Profile</button>
+					</div>
+				</div>
+			</div>}
+		</>
 	)
 }
 
