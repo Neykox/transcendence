@@ -64,20 +64,36 @@ export class UsersService {
 
 	async getHistory(id: number) {
 		const user = await this.usersRepository.findOneBy({id});
+		console.log("history = ", user.gameHistory)
 		return user.gameHistory;
 	}
 
-	async addGameToHistory(id: number, lastGame: JSON): Promise<void> {
+	async addGameToHistory(id: number, lastGame: any): Promise<void> {
 		const user = await this.usersRepository.findOneBy({id});
-		let index;
+		let index = 0;
 		// const newHistory = [ ...user.gameHistory, ...lastGame ];
-		const newHistory = user.gameHistory;
-		for (index in newHistory)
-			;
-		newHistory[index] = lastGame;
+		let newHistory = user.gameHistory;
+		console.log("newHistory = ", newHistory)
+
+		// console.log("newHistory.game = ", newHistory.game)
+		if (newHistory === null)
+		{
+			// newHistory = { id: 0, opponent: "test", scores: "test", result: "test" }
+			newHistory[0] = lastGame;
+			// newHistory.push(lastGame);
+			this.usersRepository.update(id, { gameHistory: newHistory });
+			return;
+		}
+		// for (index in newHistory.id)
+		while (newHistory[index])
+		{
+			console.log("index = ", index, " | newHistory = ", newHistory);
+			index++;
+		}
+		newHistory[index] = lastGame;//{ id: lastGame.id, opponent: lastGame.opponent, scores: lastGame.scores, result: lastGame.result }
 		// newHistory[new Date(Date.now()).toLocaleString()] = lastGame;
 		// newHistory.push(lastGame);
-		console.log("newHistory = ", newHistory)
+		console.log("at end newHistory = ", newHistory)
 		// data = "|" + await JSON.stringify(user.gameHistory)
 		this.usersRepository.update(id, { gameHistory: newHistory });
 	}
@@ -116,4 +132,6 @@ export class UsersService {
 	// 	newFriends.push(login);
 	// 	this.usersRepository.update(id, { friend_list: newFriends.join(',') });
 	// }
+
+	// { id: number, opponent: string, scores: string, result: string }
 }

@@ -91,19 +91,31 @@ function Profile() {
 			});
 			// if (response.status != 200)
 			// 	return ;
-			let data = await response.text();
-			console.log("data = ",data)
+			let data = await response.json();
 			if (!data)
 				return ;
-			let matchsData: string[] = data.toString().split("}");
-			if (matchsData.length === 0)
-				return ;
-			let newMatchs = matchsData.map((match: any) => ({
-				id: match.id,
-				opponent: match.opponent,
-				score: match.score,
-				result: match.result,
-			}));
+			console.log("data = ",data)
+			// for (index in data)
+			// 	console.log("index = ", index)
+			let index = 0;
+			let newMatchs: Match[] = [];
+			while (data[index])
+			{
+				console.log("index = ", index, " | data = ", data[index]);
+				// newMatchs += { id: data[index].id, opponent: data[index].opponent, scores: data[index].scores, result: data[index].result };
+				newMatchs.push(data[index]);
+				console.log("newMatchs = ", newMatchs);
+				index++;
+			}
+			// let matchsData: string[] = data.toString().split("}");
+			// if (matchsData.length === 0)
+			// 	return ;
+			// let newMatchs = matchsData.map((match: any) => ({
+			// 	id: match.id,
+			// 	opponent: match.opponent,
+			// 	score: match.score,
+			// 	result: match.result,
+			// }));
 
 			setMatch(newMatchs);
 		};

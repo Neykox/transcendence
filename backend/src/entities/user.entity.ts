@@ -32,8 +32,11 @@ export class User {
   @Column({ nullable: true})
   image?: string;
 
-  @Column('json', {nullable: true, array: true })
-  gameHistory: Object[];
+  @Column({ type: 'jsonb', nullable: false, array: false, default: () => "'[]'", })
+  gameHistory: Array<{ id: number, opponent: string, scores: string, result: string }>;
+
+  // @Column({ type: 'jsonb', nullable: false, array: false, default: () => "'[]'", })
+  //   public users!: Array<{ id: string }>;
 }
 
 
