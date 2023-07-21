@@ -21,16 +21,6 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 	  return () => socket.off('newFrame', myEventHandler2);
 	}, [myEventHandler2]);
 
-	// socket.on('newFrame', (data) => {
-	// 	// console.log(data);
-	// 	p1 = data.p1;
-	// 	p2 = data.p2;
-	// 	ball = data.ball
-	// 	ball2 = data.ball2
-	// 	setScore({p1: p1.score, p2: p2.score});//maybe not change state everyframe
-	// 	resize.current = true;
-	// } );
-
 	const myEventHandler = useCallback(data => {
 		setEnded(true);
 		let score;
@@ -58,7 +48,6 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 
 	const handleKeyDown = event => {
 		event.preventDefault();
-		// console.log(p1, p2)
 		if (ended === false)//need to reword this condition
 		{
 			if (event.keyCode === 38)//up
@@ -113,23 +102,12 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 
 			//middle line
 			ctx.strokeStyle = "white";
-			ctx.lineWidth = 15;
-			ctx.setLineDash([15, 15]);
+			ctx.lineWidth = 5;
+			ctx.setLineDash([canvas.height, 1]);
 			ctx.beginPath();
 			ctx.moveTo(canvas.width/2, 0);
 			ctx.lineTo(canvas.width/2, canvas.height);
 			ctx.stroke();
-		}
-
-		const draw_boundingbox = () => {
-			const rx = canvas.width / 1200;
-			const ry = canvas.height / 800;
-			const scale = rx < ry ? rx : ry;
-			ctx.fillStyle = "purple";
-			ctx.fillRect(0, 0, 1, 800 * scale);
-			ctx.fillRect(0, 0, 1200 * scale, 1);
-			ctx.fillRect(1200 * scale - 1, 0, 1200 * scale, 800 * scale);
-			ctx.fillRect(0, 800 * scale - 1, 1200 * scale, 800 * scale);
 		}
 	
 		const draw_ball = (ball: Ball) => {
@@ -156,6 +134,13 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 				const rx = currentWidth / orignalWidth;
 				const ry = currentHeight / orignalHeight;
 				const scale = rx < ry ? rx : ry;
+				if (rx > ry) {
+					canvas.width = orignalWidth * rx;
+					canvas.height = orignalHeight * rx;
+				} else {
+					canvas.width = orignalWidth * ry;
+					canvas.height = orignalHeight * ry;
+				}
 
 				p1.current.x *= scale;
 				p1.current.y *= scale;
@@ -181,19 +166,10 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 			
 			window.requestAnimationFrame(animate);
 			draw_background();
-			draw_boundingbox();
 			draw_ball(ball.current);
 			draw_ball(ball2.current);
 			draw_paddle(p1.current);
 			draw_paddle(p2.current);
-
-			//write end screen / stop game
-			if (p1.current.score === max_score || p2.current.score === max_score)
-			{
-				ctx.font = "48px serif";
-				ctx.fillStyle = 'white';
-				ctx.fillText((p1.current.score === max_score ? p1.current.name : p2.current.name) + ' won!', canvas.width / 2, canvas.height / 2)
-			}
 		}
 
 		animate();
@@ -214,12 +190,12 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 				</div>
 				<canvas ref={canvasRef}></canvas>
 			</div>
-		 	:
-		 	<div className="endScreen">
-			 	<div className="endText">
-				 	{p1.current.score === max_score ? p1.current.name : p2.current.name} won!
-				 	<div className="endButtons">
-					 	<button className="endButton" type="button" onClick={toLobby}>Lobby</button>
+			:
+			<div className="endScreen">
+				<div className="endText">
+					{p1.current.score === max_score ? p1.current.name : p2.current.name} won!
+					<div className="endButtons">
+						<button className="endButton" type="button" onClick={toLobby}>Lobby</button>
 						<button className="endButton" type="button" onClick={() => {navigate('/profile')}}>Profile</button>
 					</div>
 				</div>
@@ -229,6 +205,3 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 }
 
 export default DoubleBall
-
-// ctx.fillRect(x, y, width, height)
-// ctx.arc(x, y, radius, startAngle, endAngle, counterclockwise);

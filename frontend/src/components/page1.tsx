@@ -121,14 +121,14 @@ export default function Page1() {
           // Stockage de la chaîne JSON dans le localStorage avec la clé "user"
           localStorage.setItem("user", userJSON);
           setDirection("/profile");
-        } else if (user && user.is2FaActive) {
-          setDirection("/page2");
         } else {
           await get_cookie(user);
           const userJSON = JSON.stringify(user);
           localStorage.setItem("user", userJSON);
           userContext.setUser(JSON.parse(userJSON));
           setDirection("/profile");
+          if (user.is2FaActive)
+            setDirection("/twofa");
         }
         if ( localStorage.getItem("42image") === null) {
           localStorage.setItem("42image", user_info.image.link);
@@ -141,7 +141,7 @@ export default function Page1() {
 
   useEffect(() => {
     if (redirect) {
-      navigate(direction);
+      navigate(direction, {state: { signin: true }});
     }
   }, [redirect, direction, navigate]);
 

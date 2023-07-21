@@ -8,7 +8,7 @@ import Chat from './components/User/Message/Chat/Chat';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Page1 from './components/page1';
-import Page2 from './components/page2';
+import TwoFa from './components/TwoFa/TwoFa';
 import Lobby from './components/Pong/Lobby';
 import { UserProvider } from './model/userContext';
 import { useState, useEffect } from 'react';
@@ -77,7 +77,7 @@ function App() {
           </Route>
           <Route path="/settings" element={<Settings />} />
           <Route path="/page1" element={<Page1 />} />
-          <Route path="/page2" element={<Page2 />} />
+          <Route path="/twofa" element={<TwoFa />} />
           <Route path='/lobby' element={<Lobby />} />
         </Routes>
       </div>

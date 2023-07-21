@@ -1,52 +1,63 @@
 .e {
-	position: relative;
-	background-color: orange; /*Optional*/
+    overflow: hidden;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+
+    canvas {
+        top: 0;
+        left: 0;
+        position: absolute;
+        width: 100vw;
+        height: 100vh;
+    }
 }
 
 .scoreboard {
-	position: absolute;
-	top: 0;
-	left: 0;
-	display: table;
-	width: 100%; /*Optional*/
-	table-layout: fixed; /*Optional*/
-	border-spacing: 10px; /*Optional*/
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: table;
+    width: 100%; /*Optional*/
+    table-layout: fixed; /*Optional*/
+    border-spacing: 10px; /*Optional*/
+    z-index: 1;
 }
 
 .cells {
-	display: table-cell;
-	color: white;
-	font-size: 1.5vw;
+    display: table-cell;
+    color: white;
+    font-size: 2vw;
 }
 
 .endScreen {
-	background-color: #1d0439;
-	height: 100vh;
-	color: #ecdefd;
-	position: relative;
+    background-color: #1d0439;
+    height: 100vh;
+    color: #ecdefd;
+    position: relative;
 }
 
 .endText {
-	border-radius: 10px;
-	width: 40%;
+    border-radius: 10px;
+    width: 40%;
 
-	padding: 10% 0;
-	font-size: 30px;
+    padding: 10% 0;
+    font-size: 30px;
 
-	background-color: #180330;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+    background-color: #180330;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .endButton{
-	color: black;
-	background-color: #a662f4;
-	border: 1px solid #1d0439;
-	box-shadow: #7e1aef 0px 3px 7px;
+    color: black;
+    background-color: #a662f4;
+    border: 1px solid #1d0439;
+    box-shadow: #7e1aef 0px 3px 7px;
 }
 
 .endButton:hover{
-	background-color: #ae70f5 + 30;
+    background-color: #ae70f5 + 30;
 }
