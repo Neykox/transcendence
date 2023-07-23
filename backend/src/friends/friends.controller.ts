@@ -86,6 +86,6 @@ export class FriendsController {
 		let user = request.user['User'];
 		if ( !user )
 			return; 
-		return this.friendsService.declineRequest(id, user['id']);
+		return this.friendsService.declineRequest(id, user['login']);
 	}
 }
