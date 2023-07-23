@@ -12,6 +12,7 @@ export class AuthController {
 	@Post('create_cookie')
 	async create_cookie(@Body() user: User, @Res({passthrough: true}) response: Response) {
 		const jwt = await this.authService.create_cookie(user);
+		console.log(jwt);
 		response.cookie('my_cooky', jwt, {httpOnly: true});
 		return {msg: "cooky sent?"};
 	}
