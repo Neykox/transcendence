@@ -14,6 +14,10 @@ interface HistoryProps {
 
 export default function FriendList({ friends, requests, onClick }: HistoryProps) {
 
+
+	const removefriend = (pseudo: string) => () => {
+		fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/' + pseudo, { credentials: 'include', method: 'DELETE' });
+	}
 	const friendAccept = (accept: boolean, id: number) => {
 		if (accept)
 			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/accept/' + id, { credentials: 'include', method: 'DELETE' });
@@ -32,6 +36,7 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 						<img src={userImg} alt="Avatar" />
 						<h2>{friend.pseudo.length > 10 ? `${friend.pseudo.slice(0, 10)}.` : friend.pseudo}</h2>
 						<div className={`${friend.status}`}></div>
+						<button onClick={removefriend(friend.pseudo)}></button>
 						<div className="message">
 							<div className="svg">
 								<Link to={"/"}>
