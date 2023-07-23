@@ -1,8 +1,8 @@
 import './FriendList.scss';
 import userImg from '../../../../asset/images/user.png';
 import { Link } from 'react-router-dom';
-import accept from '../../../asset/images/checkmark-circle.svg';
-import decline from '../../../asset/images/close-circle.svg';
+import accept from '../../../../asset/images/checkmark-circle.svg';
+import decline from '../../../../asset/images/close-circle.svg';
 
 import DuelButton from '../../../Pong/DuelButton';
 
