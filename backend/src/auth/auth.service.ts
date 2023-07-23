@@ -8,7 +8,6 @@ export class AuthService {
 	constructor ( private jwtService: JwtService, private configService: ConfigService) {}
 
 	async create_cookie(user: User) {
-		console.log(user);
 		const payload = { id: user.id, username: user.login };
 		return await this.jwtService.signAsync(payload, { secret: 'secret'/*await this.configService.get('JWT_SECRET')*/, expiresIn: '10h'/*'120s'*/});
 	}
