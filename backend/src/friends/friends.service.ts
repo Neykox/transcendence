@@ -17,7 +17,7 @@ export class FriendsService {
 	}
 
 	async acceptRequest(id: number, login: string): Promise<string> {
-		const request = await this.friendRequestRepository.findOneBy({id});
+		const request = await this.friendRequestRepository.findOne({ where: { id: id } });
 		if (request.receiver === login) {
 			let User = await this.usersService.findByLogin(request.sender);
 			await this.usersService.addFriend(User.id, request.receiver);
