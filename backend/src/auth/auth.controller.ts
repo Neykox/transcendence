@@ -34,7 +34,7 @@ export class AuthController {
 					client_id: process.env.REACT_APP_UID42,
 					client_secret: process.env.REACT_APP_SECRET42,
 					code: code.code,
-					redirect_uri: `http://${process.env.REACT_APP_POSTURL}:3000/page1`
+					redirect_uri: `http://${process.env.REACT_APP_POSTURL}/page1`
 					// "access_token":code.code
 					// "token_type":"bearer",
 					// "expires_in":7200,
