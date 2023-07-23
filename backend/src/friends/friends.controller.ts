@@ -74,7 +74,7 @@ export class FriendsController {
 	acceptRequest(@Param('id') id: number, @Req() request: Request) : Promise<string> {
 		
 		let user = request.user['login'];
-		console.log(user);
+		console.log(request.user);
 		if ( !user )
 			return; 
 		return this.friendsService.acceptRequest(id, user);
