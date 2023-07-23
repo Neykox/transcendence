@@ -9,7 +9,7 @@ const players: { name: string, color:string, gametype: string, room: string, soc
 const rooms: Room[] = [];
 let count = 0;
 const ballSpeed = 10;
-const max_score = 30;
+const max_score = 3;
 const connected: Socket [] = [];
 
 let _1v1 = 0;

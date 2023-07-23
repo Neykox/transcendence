@@ -90,9 +90,7 @@ export default function Page1() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({
-        User: user,
-      }),
+      body: JSON.stringify(user),
     };
     await fetch("http://localhost:5000/auth/create_cookie", requestOptions);
   };
