@@ -60,4 +60,8 @@ export class FriendsService {
 		await this.friendRequestRepository.save(request);
 		return 'Request sent';
 	}
+
+	async getRequest(to: string, from: string): Promise<FriendRequest> {
+		return this.friendRequestRepository.findOne({ where: { receiver: to, sender: from } });
+	}
 }

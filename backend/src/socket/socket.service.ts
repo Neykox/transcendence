@@ -543,7 +543,8 @@ export class SocketService {
 		let response = await this.friendsService.sendRequest(data.to, data.from);
 		if (response != 'Request sent')
 			return (response);
-		connected[data.to].emit('receiveFriend', {from: data.from});
+		let request = await this.friendsService.getRequest(data.to, data.from);
+		connected[data.to].emit('receiveFriend', {from: data.from, id: request.id});
 		return 'OK'
 	}
 
