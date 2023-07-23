@@ -75,6 +75,7 @@ export class FriendsController {
 		let user = request['user'];
 		if ( !user )
 			return; 
+		console.log(user['login']);
 		return this.friendsService.acceptRequest(id, user['login']);
 	}
 
