@@ -16,9 +16,9 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 
 	const friendAccept = (accept: boolean, id: number) => {
 		if (accept)
-			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/accept/' + id, { method: 'DELETE' });
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/accept/' + id, { credentials: 'include', method: 'DELETE' });
 		else
-			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/decline/' + id, { method: 'DELETE' });
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/decline/' + id, { credentials: 'include', method: 'DELETE' });
 	}
 
 	return (
