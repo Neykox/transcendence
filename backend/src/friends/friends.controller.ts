@@ -72,11 +72,11 @@ export class FriendsController {
 	@Delete('accept/:id')
 	acceptRequest(@Param('id') id: number, @Req() request: Request) : Promise<string> {
 		
-		let user = request['user'];
+		let user = request.user.login;
 		if ( !user )
 			return; 
-		console.log(user['login']);
-		return this.friendsService.acceptRequest(id, user['login']);
+		console.log(user);
+		return this.friendsService.acceptRequest(id, user);
 	}
 
 	@UseGuards(JwtGuard)
