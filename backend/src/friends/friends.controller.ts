@@ -4,6 +4,7 @@ import { FriendRequest } from '../entities/friend_request.entity';
 import { FriendsService } from './friends.service';
 import { UsersService } from '../users/users.service';
 import { JwtGuard } from '../guard/jwt.guard';
+import { Request } from 'express';
 
 @Controller('friends')
 export class FriendsController {
@@ -72,7 +73,7 @@ export class FriendsController {
 	@Delete('accept/:id')
 	acceptRequest(@Param('id') id: number, @Req() request: Request) : Promise<string> {
 		
-		let user = request.user.login;
+		let user = request.user['login'];
 		if ( !user )
 			return; 
 		console.log(user);
