@@ -64,9 +64,9 @@ export class FriendsController {
 	sendRequest(@Param('login') login: string, @Req() request: Request) : Promise<string> {
 		
 		let user = request.user;
+		console.log(user);
 		if ( !user )
 			return;
-		console.log(user);
 		return this.friendsService.sendRequest(user['login'], login);
 	}
 

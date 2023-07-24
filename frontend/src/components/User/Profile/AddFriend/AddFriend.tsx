@@ -18,27 +18,28 @@ interface Friends {
 export default function FriendList({ friends }: AddFriendProps) {
 	const [users, setUsers] = useState<Friends[]>([]);
 
-	// useEffect(() => {
+	useEffect(() => {
 		
-	// });
-	const fetchUsers = async (): Promise<Friends[]> => {
-		const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users');
-		const data = await response.json();
-		const friendsData: Friends[] = data.map((user: any) => ({
-			id: user.id,
-			pseudo: user.pseudo,
-			login: user.login,
-			status: user.status,
-		}));
-		return friendsData;
-	};
+		const fetchUsers = async (): Promise<Friends[]> => {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users');
+			const data = await response.json();
+			const friendsData: Friends[] = data.map((user: any) => ({
+				id: user.id,
+				pseudo: user.pseudo,
+				login: user.login,
+				status: user.status,
+			}));
+			return friendsData;
+		};
+	
+		const getUsers = async () => {
+			const fetchedUsers = await fetchUsers();
+			setUsers(fetchedUsers);
+		};
+	
+		getUsers();
+	});
 
-	const getUsers = async () => {
-		const fetchedUsers = await fetchUsers();
-		setUsers(fetchedUsers);
-	};
-
-	getUsers();
 	const sendFriend = (name: string) => {
 		let user = localStorage.getItem('user');
 		if (user === null)

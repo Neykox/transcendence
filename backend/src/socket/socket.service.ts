@@ -541,6 +541,7 @@ export class SocketService {
 		if (!data.to || !data.from)
 			return ('error');
 		
+			console.log(data);
 		let response = await this.friendsService.sendRequest(data.to, data.from);
 		if (response != 'Request sent')
 			return (response);
