@@ -28,10 +28,10 @@ export class FriendsController {
 		const friends = (await this.usersService.fetchFriends(user['id'])).split(',');
 		const response: UserResponse[] = [];
 
-		friends.forEach(( friend ) => {
-			const User = this.usersService.findByLogin(friend);
-			User.then((user) => {response.push({id: user.id, login: user.login, username: user.pseudo});})
-		})
+		for (const friend of friends) {
+			const User = await this.usersService.findByLogin(friend);
+			response.push({id: User.id, login: User.login, username: User.pseudo});
+		}
 		console.log("user", response);
 		return response;
 	}
