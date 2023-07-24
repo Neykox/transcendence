@@ -54,6 +54,7 @@ export class FriendsService {
 		if (await this.checkIfReqExists(sender, receiver)) {
 			return 'Request already exists';
 		}
+		console.log(sender, receiver);
 		const request = new FriendRequest();
 		request.sender = sender;
 		request.receiver = receiver;
