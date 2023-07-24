@@ -50,7 +50,8 @@ function Profile() {
 
 	interface Friends {
 		id: number;
-		pseudo: string;
+		login: string;
+		username: string;
 		status: string;
 	}
 
@@ -111,8 +112,9 @@ function Profile() {
 			if (friendsData.length === 0)
 				return;
 			let friends = friendsData.map((user: any) => ({
-				id: new Date().getTime(),
-				pseudo: user,
+				id: user.id,
+				login: user.login,
+				username: user.username,
 				status: "online"
 			}));
 

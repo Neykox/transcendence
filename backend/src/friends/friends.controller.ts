@@ -6,18 +6,31 @@ import { UsersService } from '../users/users.service';
 import { JwtGuard } from '../guard/jwt.guard';
 import { Request } from 'express';
 
+
+interface User {
+	id: number;
+	login: string;
+	username: string;
+}
+
 @Controller('friends')
 export class FriendsController {
 	constructor(private readonly friendsService: FriendsService, private readonly usersService: UsersService) {}
 
 	@UseGuards(JwtGuard)
 	@Get()
-	fetchFriends(@Req() request: Request): Promise<string> {
+	async fetchFriends(@Req() request: Request): Promise<User[]> {
 		
 		let user = request.user;
 		if ( !user )
 			return ; 
-		return this.usersService.fetchFriends(user['id']);
+		const friends = (await this.usersService.fetchFriends(user['id'])).split(',');
+		const response: User[] = [];
+		friends.map( async ( friend ) => {
+			const User = await this.usersService.findByLogin(friend);
+			response.push({id: User.id, login: User.login, username: User.pseudo});
+		})
+		return response;
 	}
 
 	@UseGuards(JwtGuard)
