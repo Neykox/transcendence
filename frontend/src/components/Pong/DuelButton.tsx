@@ -26,15 +26,21 @@ function DuelButton(login) {
 	}
 
 	const myEventHandler2 = useCallback(data => {
+		console.log("before = ", challenger.current)
 		challenger.current = data.challenger;
+		console.log("after = ", challenger.current)
 		gametype.current = data.gamemode;
 		time.current = data.time;
 
 		const send_answer = async (answer: boolean) => {
 			toast.dismiss("dup");
+			console.log("at send = ", challenger.current)
 			socket.emit("send_answer", { "challenger": challenger.current, "time": time.current, "answer": answer, "gametype": gametype.current });
 			if (answer === true)
+			{
+				console.log("at nav = ", challenger.current)
 				navigate('/lobby', {state: { "private_room": challenger.current + time.current, "gametype": gametype.current }});
+			}
 			else
 				toast("Match was declined");
 		}
@@ -47,7 +53,7 @@ function DuelButton(login) {
 										</div>
 									</div>
 								</div>, { autoClose: false, toastId: 'dup', closeButton: false, closeOnClick: false,})
-	}, [navigate, user.login]);
+	}, [navigate]);
 
 	useEffect(() => {
 		socket.on('invite_received', myEventHandler2);
