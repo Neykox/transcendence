@@ -60,8 +60,10 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 					id: number; from: string; to: string;
 				}) => (<div className="request">
 							<p className="username">{request.from}</p>
-							<a onClick={() => { friendAccept(true, request.id) }}><img src={accept} className="friendAccept friendIcon" /></a>
-							<a onClick={() => { friendAccept(false, request.id) }}><img src={decline} className="friendRefuse friendIcon" /></a>
+							<div className='requestButtons'>
+								<a onClick={() => { friendAccept(true, request.id) }}><img src={accept} className="friendAccept friendIcon" /></a>
+								<a onClick={() => { friendAccept(false, request.id) }}><img src={decline} className="friendRefuse friendIcon" /></a>
+							</div>
 						</div>) ) : <h2>No requests yet</h2>}
 			</div>
 			<button onClick={onClick}>Add</button>
