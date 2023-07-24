@@ -7,7 +7,7 @@ import { JwtGuard } from '../guard/jwt.guard';
 import { Request } from 'express';
 
 
-interface User {
+interface UserResponse {
 	id: number;
 	login: string;
 	username: string;
@@ -19,13 +19,13 @@ export class FriendsController {
 
 	@UseGuards(JwtGuard)
 	@Get()
-	async fetchFriends(@Req() request: Request): Promise<User[]> {
+	async fetchFriends(@Req() request: Request): Promise<UserResponse[]> {
 		
 		let user = request.user;
 		if ( !user )
 			return ; 
 		const friends = (await this.usersService.fetchFriends(user['id'])).split(',');
-		const response: User[] = [];
+		const response: UserResponse[] = [];
 		friends.map( async ( friend ) => {
 			const User = await this.usersService.findByLogin(friend);
 			response.push({id: User.id, login: User.login, username: User.pseudo});
