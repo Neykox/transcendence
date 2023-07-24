@@ -30,7 +30,7 @@ services:
       REACT_APP_POSTURL: ${REACT_APP_POSTURL}
       REACT_APP_UID42: ${REACT_APP_UID42}
       REACT_APP_SECRET42: ${REACT_APP_SECRET42}
-
+      JWT_SECRET: ${JWT_SECRET}
     networks:
       - backend_network
       - frontend_network

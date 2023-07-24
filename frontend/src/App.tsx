@@ -8,7 +8,7 @@ import Chat from './components/User/Message/Chat/Chat';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Page1 from './components/page1';
-import Page2 from './components/page2';
+import TwoFa from './components/TwoFa/TwoFa';
 import Lobby from './components/Pong/Lobby';
 import { UserProvider } from './model/userContext';
 import { useState, useEffect } from 'react';

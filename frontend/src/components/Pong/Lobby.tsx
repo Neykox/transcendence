@@ -57,8 +57,8 @@ import { useLocation } from 'react-router-dom'
 
 function Lobby() {
 	const location = useLocation()
-	const challenger = location.state ? location.state.challenger : undefined;
-	console.log("chall = ", challenger)
+	const private_room = location.state ? location.state.private_room : undefined;
+	console.log("chall = ", private_room)
 	const private_gamemode: string = location.state ? location.state.gametype : "1v1";
 
 	const { user } = useContext(UserContext);
@@ -66,7 +66,7 @@ function Lobby() {
 	const [color, setColor] = useState("white");
 	const colors = ["red", "lightgreen", "skyblue", "pink", "orange", "purple"];
 
-	const [gamemode, setGamemode] = useState(challenger ? "private" : "select");
+	const [gamemode, setGamemode] = useState(private_room ? "private" : "select");
 	console.log(gamemode);
 
 	const [paddle1, setPaddle1] = useState({});
@@ -110,16 +110,18 @@ function Lobby() {
 
 	const private_match = async () => {
 		setGamemode("matchmaking");
-		socket.emit("private_match", {pseudo: user.pseudo, color: color, gametype: private_gamemode, room: challenger});
+		socket.emit("private_match", {pseudo: user.pseudo, color: color, gametype: private_gamemode, room: private_room});
 	}
 
 	const listItems = colors.map((colory) =>
 		<button className="square" style={{ background: colory, border: "2px solid black", "box-shadow": colory + " 0px 5px 15px",}} onClick={() => {setColor(colory);}}></button>
 	);
 
-	const _1v1 = <Pong paddle1={paddle1} paddle2={paddle2} newBall={ball} max_score={maxScore}/>;
+	const toLobby = () => {setGamemode("select")};
+
+	const _1v1 = <Pong paddle1={paddle1} paddle2={paddle2} newBall={ball} max_score={maxScore} toLobby={toLobby}/>;
 	// const _1v3 = <Pong4 paddle1={paddle1} paddle2={paddle2} paddle3={paddle3} paddle4={paddle4} newBall={ball} max_score={maxScore}/>;
-	const _2balls = <DoubleBall paddle1={paddle1} paddle2={paddle2} newBall={ball} newBall2={ball2} max_score={maxScore}/>;
+	const _2balls = <DoubleBall paddle1={paddle1} paddle2={paddle2} newBall={ball} newBall2={ball2} max_score={maxScore} toLobby={toLobby}/>;
 
 	return (
 		<>

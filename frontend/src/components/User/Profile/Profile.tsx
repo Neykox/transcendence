@@ -28,7 +28,7 @@ function randomName() {
 function Profile() {
 
 	// Set les wins et loses avec la db;
-	const [wins, setWins] = useState(5);
+	const [wins, setWins] = useState(0);
 	const [loses, setLoses] = useState(0);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -54,20 +54,7 @@ function Profile() {
 		status: string;
 	}
 
-	interface Request {
-		id: number;
-		from: string;
-		to: string;
-		date: string;
-	}
-
-	const [matchs, setMatch] = useState<Match[]>([
-		{ id: 1, opponent: "test", scores: "3/2", result: "matchWin" },
-		{ id: 2, opponent: "test", scores: "3/2", result: "matchWin" },
-		{ id: 3, opponent: "test", scores: "3/2", result: "matchWin" },
-		{ id: 4, opponent: "test", scores: "3/2", result: "matchWin" },
-		{ id: 5, opponent: "test", scores: "3/2", result: "matchWin" }
-	]);
+	const [matchs, setMatch] = useState<Match[]>([]);
 
 	const [friends, setFriends] = useState<Friends[]>([]);
 	const [requests, setRequests] = useState<Request[]>([]);
@@ -150,36 +137,37 @@ function Profile() {
 			setRequests(requests);
 		};
 
-
-		//getUsers();
 		fetchFriends();
 		fetchRequest();
+
+		const fetchMatchs = async () => {
+			const response = await fetch('http://localhost:5000/users/history', {
+				method: "POST",
+				credentials: 'include'
+			});
+			let data = await response.json();
+			if (!data)
+				return ;
+			let index = 0;
+			let newMatchs: Match[] = [];
+			let win = 0;
+			let lose = 0;
+			while (data[index])
+			{
+				newMatchs.unshift(data[index]);
+				// newMatchs.push(data[index]);
+				if (data[index].result === "matchLose")
+					lose++;
+				else
+					win++;
+				index++;
+			}
+			setLoses(lose);
+			setWins(win);
+			setMatch(newMatchs);
+		};
+		fetchMatchs();
 	}, []);
-
-
-
-	const matchList = () => {
-		const id = new Date().getTime();
-		const opponent = "Test";
-		const scores = "2/3";
-		// const result = "matchWin";
-		const result = "matchLose";
-		const matchToAdd = { id, opponent, scores, result };
-
-		// 1. Copy du state
-		const matchCopy = [...matchs];
-
-
-		// 2. Manipuler mon state
-		matchCopy.unshift(matchToAdd);
-
-		// 3. Modifier mon state
-		setMatch(matchCopy);
-		if (result === "matchLose")
-			setLoses(loses + 1);
-		else
-			setWins(wins + 1)
-	};
 
 	const friendsList = () => {
 		// const id = new Date().getTime();
@@ -226,7 +214,7 @@ function Profile() {
 			<div className="profile">
 				<PlayerInfo wins={wins} loses={loses} />
 				<div className="grid">
-					<History matchs={matchs} onClick={matchList} />
+					<History matchs={matchs}/>
 					<FriendList friends={friends} requests={requests} onClick={handleModalOpen} />
 				</div>
 				<div>

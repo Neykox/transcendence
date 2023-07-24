@@ -93,17 +93,15 @@ export default function Page1() {
 
 
 
-	const get_cookie = async (user) => {
-		const requestOptions = {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-			body: JSON.stringify({
-				User: user,
-			}),
-		};
-		await fetch("http://" + process.env.REACT_APP_POSTURL + ":5000/auth/create_cookie", requestOptions);
-	};
+  const get_cookie = async (user) => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(user),
+    };
+    await fetch("http://" + process.env.REACT_APP_POSTURL + ":5000/auth/create_cookie", requestOptions);
+  };
 
 
 	useEffect(() => {
@@ -123,29 +121,32 @@ export default function Page1() {
 					userContext.setUser(prevUser => ({ ...prevUser, image: user_info.image.link }));
 					userContext.setUser(prevUser => ({ ...prevUser, pseudo: user_info.login }));
 
-					// Conversion de l'objet en chaîne JSON
-					const userJSON = JSON.stringify(newUser);
+          // Stockage de la chaîne JSON dans le localStorage avec la clé "user"
+          localStorage.setItem("user", userJSON);
+          setDirection("/profile");
+        } else {
+          await get_cookie(user);
+          const userJSON = JSON.stringify(user);
+          localStorage.setItem("user", userJSON);
+          userContext.setUser(JSON.parse(userJSON));
+          setDirection("/profile");
+          if (user.is2FaActive)
+            setDirection("/twofa");
+        }
+        if ( localStorage.getItem("42image") === null) {
+          localStorage.setItem("42image", user_info.image.link);
+        }
+        setRedirect(true);
+      }
+    };
+    test();
+  }, []);
 
-					// Stockage de la chaîne JSON dans le localStorage avec la clé "user"
-					localStorage.setItem("user", userJSON);
-					setDirection("/profile");
-				} else if (user && user.is2FaActive) {
-					setDirection("/page2");
-				} else {
-					await get_cookie(user);
-					const userJSON = JSON.stringify(user);
-					localStorage.setItem("user", userJSON);
-					userContext.setUser(JSON.parse(userJSON));
-					setDirection("/profile");
-				}
-				if (localStorage.getItem("42image") === null) {
-					localStorage.setItem("42image", user_info.image.link);
-				}
-				setRedirect(true);
-			}
-		};
-		test();
-	}, []);
+  useEffect(() => {
+    if (redirect) {
+      navigate(direction, {state: { signin: true }});
+    }
+  }, [redirect, direction, navigate]);
 
 	useEffect(() => {
 		if (redirect) {

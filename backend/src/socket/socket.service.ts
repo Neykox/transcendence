@@ -9,8 +9,8 @@ import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interfac
 const players: { name: string, color:string, gametype: string, room: string, socket: Socket}[] = [] ;
 const rooms: Room[] = [];
 let count = 0;
-const ballSpeed = 1;
-const max_score = 100;
+const ballSpeed = 10;
+const max_score = 3;
 
 let _1v1 = 0;
 let _2balls = 0;
@@ -144,8 +144,8 @@ export class SocketService {
 		delete players[p2.id];
 
 		let ball = {
-			x: 500,
-			y: 500,
+			x: 600,
+			y: 600,
 			radius: 20,
 			dx: ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1),
 			dy: ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1),
@@ -153,8 +153,8 @@ export class SocketService {
 		}
 
 		let ball2 = {
-			x: 500,
-			y: 500,
+			x: 600,
+			y: 600,
 			radius: 20,
 			dx: -ball.dx,
 			dy: ballSpeed * (Math.floor(Math.random() * 2) ? 1 : -1),
@@ -263,6 +263,7 @@ export class SocketService {
 				p1.dc = true;
 				p2.dc = true;
 				this.server.to(room).emit('newFrame', {p1, p2, ball});
+				this.server.to(room).emit('score', {p1, p2});
 				delete rooms[room];
 				console.log(rooms);
 				clearInterval(interval);
@@ -405,6 +406,7 @@ export class SocketService {
 				p1.dc = true;
 				p2.dc = true;
 				this.server.to(room).emit('newFrame', {p1, p2, ball, ball2});
+				this.server.to(room).emit('score', {p1, p2});
 				delete rooms[room];
 				console.log(rooms);
 				clearInterval(interval);
@@ -434,7 +436,7 @@ export class SocketService {
 				// skip = true;
 			}
 		}
-		console.log("skip = ", skip)
+		// console.log("skip = ", skip)
 		if (skip === false)
 		{
 			players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
@@ -471,11 +473,11 @@ export class SocketService {
 				// skip = true;
 			}
 		}
-		console.log("skip = ", skip)
+		// console.log("skip = ", skip)
 		if (skip === false)
 		{
 			players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: data.room, socket: client }
-			console.log(players)
+			// console.log(players)
 
 			let num = 0;
 
@@ -496,31 +498,30 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("send_invite")
-	send_invite(@MessageBody() {challenger, gamemode}, @ConnectedSocket() client: Socket) {
-		
+	send_invite(@MessageBody() {challenger, time, gamemode}, @ConnectedSocket() client: Socket) {
+
 		for (const id in connected)
 		{
 			if (connected[id].id != client.id)
 			{
-				this.server.to(connected[id].id).emit("invite_received", { "challenger": challenger, "gamemode": gamemode});
+				this.server.to(connected[id].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gamemode});
 				break;
 			}
 		}
 	}
 	
 	@SubscribeMessage("send_answer")
-	send_answer(@MessageBody() {challenger, answer}, @ConnectedSocket() client: Socket) {
-		
+	send_answer(@MessageBody() {challenger, time, answer, gametype}, @ConnectedSocket() client: Socket) {
+
 		for (const id in connected)
 		{
 			if (connected[id].id != client.id)
 			{
 				console.log("send_aanswer");
-				this.server.to(connected[id].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined"});
+				this.server.to(connected[id].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "time": time, "gametype": gametype});
 				break;
 			}
 		}
-		// this.server.to(client.id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined"});
 	}
 	
 	// TAG FRIEND LIST
