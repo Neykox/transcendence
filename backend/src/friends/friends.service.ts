@@ -54,6 +54,7 @@ export class FriendsService {
 		if (await this.checkIfReqExists(sender, receiver)) {
 			return 'Request already exists';
 		}
+		console.log(sender, receiver);
 		const request = new FriendRequest();
 		request.sender = sender;
 		request.receiver = receiver;
@@ -62,6 +63,6 @@ export class FriendsService {
 	}
 
 	async getRequest(to: string, from: string): Promise<FriendRequest> {
-		return this.friendRequestRepository.findOne({ where: { receiver: to, sender: from } });
+	return this.friendRequestRepository.findOne({ where: { receiver: to, sender: from } });
 	}
 }

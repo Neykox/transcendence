@@ -541,10 +541,13 @@ export class SocketService {
 		if (!data.to || !data.from)
 			return ('error');
 		
-		let response = await this.friendsService.sendRequest(data.to, data.from);
+			console.log(data);
+		let response = await this.friendsService.sendRequest(data.from, data.to);
+		console.log(response)
 		if (response != 'Request sent')
 			return (response);
 		let request = await this.friendsService.getRequest(data.to, data.from);
+		console.log(request);
 		connected[data.to].emit('receiveFriend', {from: data.from, id: request.id});
 		return 'OK'
 	}

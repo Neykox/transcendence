@@ -116,7 +116,7 @@ function TwoFactor(){
 		body: JSON.stringify({ TwoFaCode: text })
 		};
 
-		const response = await fetch('http://localhost:5000/two_fa/turn-on', requestOptions);
+		const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/two_fa/turn-on', requestOptions);
 		if (response.status === 200)
 		{
 			toast("ok");
@@ -134,7 +134,7 @@ function TwoFactor(){
 	// 	credentials: 'include',
 	// 	};
 
-	// 	await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
+	// 	await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/two_fa/turn-off', requestOptions);
 	// };
 
 	// const clearCookie = async () => {
@@ -144,7 +144,7 @@ function TwoFactor(){
 	// 	credentials: 'include',
 	// 	};
 
-	// 	await fetch('http://localhost:5000/auth/clear_cookie', requestOptions);
+	// 	await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/clear_cookie', requestOptions);
 	// };
 
 	useEffect(() => {
@@ -155,7 +155,7 @@ function TwoFactor(){
 			method: 'Get',
 			credentials: 'include',
 			};
-			const response = await fetch('http://localhost:5000/two_fa/generate_qrcode', requestOptions);
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/two_fa/generate_qrcode', requestOptions);
 			const data = await response.json();
 			setqrcode(data.otpauthUrl);
 		};

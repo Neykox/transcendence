@@ -11,6 +11,7 @@ interface AddFriendProps {
 interface Friends {
 	id: number;
 	pseudo: string;
+	login: string;
 	status: string;
 }
 
@@ -18,22 +19,24 @@ export default function FriendList({ friends }: AddFriendProps) {
 	const [users, setUsers] = useState<Friends[]>([]);
 
 	useEffect(() => {
+		
 		const fetchUsers = async (): Promise<Friends[]> => {
 			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users');
 			const data = await response.json();
 			const friendsData: Friends[] = data.map((user: any) => ({
 				id: user.id,
 				pseudo: user.pseudo,
+				login: user.login,
 				status: user.status,
 			}));
 			return friendsData;
 		};
-
+	
 		const getUsers = async () => {
 			const fetchedUsers = await fetchUsers();
 			setUsers(fetchedUsers);
 		};
-
+	
 		getUsers();
 	});
 
@@ -42,7 +45,8 @@ export default function FriendList({ friends }: AddFriendProps) {
 		if (user === null)
 			return;
 		let data = JSON.parse(user);
-		socket.emit('sendFriend', { to: name, from: data.login }, (data: string) => console.log(data))
+		console.log(data['login'], data.login)
+		socket.emit('sendFriend', { to: name, from: data['login'] }, (data: string) => console.log(data))
 	}
 	return (
 		<div className="friend-list">
@@ -50,7 +54,7 @@ export default function FriendList({ friends }: AddFriendProps) {
 				<div className="friend" key={user.id}>
 					<div className="friend-avatar"><img src={userImg} /></div>
 					<div className="friend-pseudo">{user.pseudo}</div>
-					<img className="add-button" src={addButton} alt="add" onClick={() => sendFriend(user.pseudo)} />
+					<img className="add-button" src={addButton} alt="add" onClick={() => sendFriend(user.login)} />
 				</div>
 			))}
 		</div>

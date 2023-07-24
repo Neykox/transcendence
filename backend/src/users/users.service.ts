@@ -69,9 +69,14 @@ export class UsersService {
 
 	async addFriend(id: number, login: string): Promise<void> {
 		const user = await this.usersRepository.findOneBy({id});
-		const newFriends = user.friend_list.split(',');
-		newFriends.push(login);
-		this.usersRepository.update(id, { friend_list: newFriends.join(',') });
+		var newFriends = user.friend_list.split(',');
+		console.log(user.friend_list.length);
+		if (user.friend_list.length == 0)
+			this.usersRepository.update(id, { friend_list: login });
+		else {
+			newFriends.push(login);
+			this.usersRepository.update(id, { friend_list: newFriends.join(',') });
+		}
 	}
 
 	async removeFriend(id: number, login: string): Promise<void> {
