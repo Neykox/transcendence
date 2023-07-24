@@ -55,7 +55,7 @@ export default function Page1() {
 		// );
 		// return response.json();
 
-		const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/auth`, {method: "POST", body: JSON.stringify({code: code})})
+		const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/auth/${code}`)
 		return await response.json();
 	};
 
