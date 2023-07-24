@@ -542,7 +542,7 @@ export class SocketService {
 			return ('error');
 		
 			console.log(data);
-		let response = await this.friendsService.sendRequest(data.to, data.from);
+		let response = await this.friendsService.sendRequest(data.from, data.to);
 		console.log(response)
 		if (response != 'Request sent')
 			return (response);
