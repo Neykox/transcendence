@@ -41,12 +41,15 @@ export class FriendsController {
 
 	@UseGuards(JwtGuard)
 	@Delete(':login')
-	deleteFriend(@Param('login') login: string, @Req() request: Request) {
+	async deleteFriend(@Param('login') login: string, @Req() request: Request) {
 		
 		let user = request.user;
 		if ( !user )
 			return 'Error'; 
-		return this.usersService.removeFriend(user['id'], login);
+		this.usersService.removeFriend(user['id'], login);
+
+		const oUser = await this.usersService.findOneByLogin(login);
+		this.usersService.removeFriend(oUser.id, user['login']);
 	}
 
 	@UseGuards(JwtGuard)
