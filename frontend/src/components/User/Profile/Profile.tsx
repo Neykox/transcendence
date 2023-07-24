@@ -145,8 +145,8 @@ function Profile() {
 				method: "POST",
 				credentials: 'include'
 			});
-			//let data = await response.json();
-			let data = ""
+			let data = await response.json();
+			// let data = ""
 			if (!data)
 				return;
 			let index = 0;
