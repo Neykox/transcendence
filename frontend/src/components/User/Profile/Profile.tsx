@@ -145,7 +145,8 @@ function Profile() {
 				method: "POST",
 				credentials: 'include'
 			});
-			let data = await response.json();
+			//let data = await response.json();
+			let data = ""
 			if (!data)
 				return ;
 			let index = 0;
@@ -169,24 +170,24 @@ function Profile() {
 		fetchMatchs();
 	}, []);
 
-	const friendsList = () => {
-		// const id = new Date().getTime();
-		// const pseudo = randomName();
-		// const status = Math.random() < 0.5 ? "online" : "offline";
-		// const friendsToAdd = { id, pseudo, status };
+	// const friendsList = () => {
+	// 	// const id = new Date().getTime();
+	// 	// const pseudo = randomName();
+	// 	// const status = Math.random() < 0.5 ? "online" : "offline";
+	// 	// const friendsToAdd = { id, pseudo, status };
 
 
-		// // 1. Copy du state
-		// const friendsCopy = [...friends];
+	// 	// // 1. Copy du state
+	// 	// const friendsCopy = [...friends];
 
 
-		// // 2. Manipuler mon state
-		// friendsCopy.unshift(friendsToAdd);
+	// 	// // 2. Manipuler mon state
+	// 	// friendsCopy.unshift(friendsToAdd);
 
-		// 3. Modifier mon state
-		let friends = fetchFriends();
-		setFriends(friends);
-	};
+	// 	// 3. Modifier mon state
+	// 	let friends = fetchFriends();
+	// 	setFriends(friends);
+	// };
 
 	const friendAccept = (accept: boolean, id: number) => {
 		if (accept)
