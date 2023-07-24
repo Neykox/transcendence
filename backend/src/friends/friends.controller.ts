@@ -65,7 +65,8 @@ export class FriendsController {
 		
 		let user = request.user;
 		if ( !user )
-			return; 
+			return;
+		console.log(user);
 		return this.friendsService.sendRequest(user['login'], login);
 	}
 
