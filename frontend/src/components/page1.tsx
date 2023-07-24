@@ -120,27 +120,27 @@ export default function Page1() {
 					userContext.setUser(user_info);
 					userContext.setUser(prevUser => ({ ...prevUser, image: user_info.image.link }));
 					userContext.setUser(prevUser => ({ ...prevUser, pseudo: user_info.login }));
-
-          // Stockage de la chaîne JSON dans le localStorage avec la clé "user"
-          localStorage.setItem("user", userJSON);
-          setDirection("/profile");
-        } else {
-          await get_cookie(user);
-          const userJSON = JSON.stringify(user);
-          localStorage.setItem("user", userJSON);
-          userContext.setUser(JSON.parse(userJSON));
-          setDirection("/profile");
-          if (user.is2FaActive)
-            setDirection("/twofa");
-        }
-        if ( localStorage.getItem("42image") === null) {
-          localStorage.setItem("42image", user_info.image.link);
-        }
-        setRedirect(true);
-      }
-    };
-    test();
-  }, []);
+					const userJSON = JSON.stringify(newUser);
+					// Stockage de la chaîne JSON dans le localStorage avec la clé "user"
+					localStorage.setItem("user", userJSON);
+					setDirection("/profile");
+				} else {
+					await get_cookie(user);
+					const userJSON = JSON.stringify(user);
+					localStorage.setItem("user", userJSON);
+					userContext.setUser(JSON.parse(userJSON));
+					setDirection("/profile");
+					if (user.is2FaActive)
+						setDirection("/twofa");
+				}
+				if ( localStorage.getItem("42image") === null) {
+					localStorage.setItem("42image", user_info.image.link);
+				}
+        		setRedirect(true);
+			}
+		};
+    	test();
+	}, []);
 
   useEffect(() => {
     if (redirect) {
