@@ -56,7 +56,7 @@ export class FriendsService {
 		}
 		const user = await this.usersService.findByLogin(sender);
 		const friend_list = user.friend_list.split(',');
-		if (friend_list.findIndex(friend => friend === receiver) === -1)
+		if (friend_list.findIndex(friend => friend == receiver) != -1)
 			return 'You are already friend with this person !';
 		console.log(sender, receiver);
 		const request = new FriendRequest();
