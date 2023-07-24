@@ -91,12 +91,14 @@
 // export default Page2;
 
 
-import { React, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { React, useState, useEffect, useContext, } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { QRCodeCanvas } from 'qrcode.react';
 import { toast } from "react-toastify";
 import './TwoFa.scss';
 import { useLocation } from 'react-router-dom';
+import UserContext from '../../model/userContext';
+import { UserInfo } from '../../model/userInfo';
 
 function TwoFactor(){
 
@@ -105,6 +107,8 @@ function TwoFactor(){
 	const [text, setText] = useState("");
 	const [qrcode, setqrcode] = useState("")
 	const navigate = useNavigate();
+	let { user } = useContext<UserInfo>(UserContext);
+	// const userContext = useContext(UserContext);
 	// let ball: Ball = useRef(newBall);
 
 	const turnOn = async (e) => {
@@ -120,8 +124,15 @@ function TwoFactor(){
 		if (response.status === 200)
 		{
 			toast("ok");
-			// if (signin === true)
+			if (signin === true)
 				navigate("/profile");
+			else
+			{
+				user = {...user, is2FaActive: true};
+				// setUser(prevUser => ({ ...prevUser, is2FaActive: true }));
+				localStorage.setItem("user", await JSON.stringify(user));
+				navigate("/settings");
+			}
 		}
 		else
 			toast("not ok");

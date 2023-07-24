@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useContext } from 'react';
+import React, { useState, ChangeEvent, useContext, useEffect } from 'react';
 import './Settings.scss';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
@@ -21,11 +21,14 @@ import vert from '../../../asset/images/vert.jpg';
 import UserContext from '../../../model/userContext';
 import { UserInfo } from '../../../model/userInfo';
 
+import { useNavigate } from 'react-router-dom';
+
 
 
 
 const Settings = () => {
-  const { user, setUser } = useContext<UserInfo>(UserContext);
+  let { user, setUser } = useContext<UserInfo>(UserContext);
+  // const userContext = useContext(UserContext);
   //const [username, setUsername] = useState(user.username);
   const [pseudo, setPseudo] = useState(user.pseudo);
   const [darkMode, setDarkMode] = useState(false);
@@ -37,6 +40,7 @@ const Settings = () => {
   const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState("");
   const [doubleAuthEnabled, setDoubleAuthEnabled] = useState(false);
   //const [userId, setUserId] = useState(user.id);
+  const navigate = useNavigate();
 
   /*
   evenements de changement de nom d'utilisateur
@@ -103,8 +107,25 @@ const Settings = () => {
   evenements de changement de double authentification
   */
 
-  const doubleAuthhandleSoundToggle = () => {
-    setDoubleAuthEnabled(!doubleAuthEnabled);
+  const doubleAuthhandleSoundToggle = async (e) => {
+    setDoubleAuthEnabled(e.target.checked);
+    if (e.target.checked === false)
+    {
+      const turnOff = async () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+          };
+
+        await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
+      };
+      user = {...user, is2FaActive: false};
+      localStorage.setItem("user", await JSON.stringify(user));
+      await turnOff();
+    }
+    else
+      navigate("/twofa");
   };
 
   /*
@@ -156,6 +177,16 @@ const Settings = () => {
     //}
   };
   var image42:string = localStorage.getItem('42image') as string;
+
+   useEffect(() => {
+    // const test = () => {
+    //   console.log(user.is2FaActive)
+    //   userContext.setUser(prevUser => ({ ...prevUser, is2FaActive: !is2FaActive }));
+    // };
+    // test();
+    setDoubleAuthEnabled(user.is2FaActive);
+  }, [user]);
+
   return (
 
      
