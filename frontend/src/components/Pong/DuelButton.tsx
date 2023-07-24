@@ -25,9 +25,6 @@ function DuelButton() {
 	}
 
 	const myEventHandler2 = useCallback(data => {
-		challenger.current = data.challenger;
-		gametype.current = data.gamemode;
-		time.current = data.time;
 
 		const send_answer = async (answer: boolean) => {
 			toast.dismiss("dup");
@@ -37,6 +34,11 @@ function DuelButton() {
 			else
 				toast("Match was declined");
 		}
+
+		send_answer(false);
+		challenger.current = data.challenger;
+		gametype.current = data.gamemode;
+		time.current = data.time;
 
 		toast(({ closeToast }) => <div>
 									<div >{challenger.current} challenged you to a {gametype.current === "1v1" ? "Classic" : "2 Balls"} duel!
