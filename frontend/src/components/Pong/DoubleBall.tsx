@@ -34,7 +34,7 @@ function DoubleBall({paddle1, paddle2, newBall, newBall2, max_score, toLobby}) {
 			credentials: "include",
 			body: JSON.stringify({ "score": score }),
 		};
-		fetch("http://localhost:5000/users/addGameToHistory", requestOptions);
+		fetch("http://" + process.env.REACT_APP_POSTURL + ":5000/users/addGameToHistory", requestOptions);
 	}, []);
 
 	useEffect(() => {
