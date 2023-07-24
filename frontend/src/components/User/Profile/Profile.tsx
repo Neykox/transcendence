@@ -137,7 +137,7 @@ function Profile() {
 			setRequests(requests);
 		};
 
-		// fetchFriends();
+		fetchFriends();
 		// fetchRequest();
 
 		const fetchMatchs = async () => {
