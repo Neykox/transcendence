@@ -54,6 +54,10 @@ export class FriendsService {
 		if (await this.checkIfReqExists(sender, receiver)) {
 			return 'Request already exists';
 		}
+		const user = await this.usersService.findByLogin(sender);
+		const friend_list = user.friend_list.split(',');
+		if (friend_list.findIndex(friend => friend === receiver) === -1)
+			return 'You are already friend with this person !';
 		console.log(sender, receiver);
 		const request = new FriendRequest();
 		request.sender = sender;
