@@ -32,7 +32,6 @@ export class FriendsController {
 			const User = await this.usersService.findByLogin(friend);
 			response.push({id: User.id, login: User.login, username: User.pseudo});
 		}
-		console.log("user", response);
 		return response;
 	}
 

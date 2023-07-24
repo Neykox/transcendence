@@ -105,13 +105,13 @@ function Profile() {
 			});
 			if (response.status != 200)
 				return;
-			let data = await response.text();
+			let data = response;
 			if (!data)
 				return;
-			let friendsData: string[] = data.toString().split(",");
+			let friendsData: Friends[] = await data.json();
 			if (friendsData.length === 0)
 				return;
-			let friends = friendsData.map((user: any) => ({
+			let friends = friendsData.map((user: {id:number, login:string, username: string}) => ({
 				id: user.id,
 				login: user.login,
 				username: user.username,
