@@ -62,6 +62,6 @@ export class FriendsService {
 	}
 
 	async getRequest(to: string, from: string): Promise<FriendRequest> {
-		return this.friendRequestRepository.findOne({ where: { receiver: to, sender: from } });
+	return this.friendRequestRepository.findOne({ where: { receiver: to, sender: from } });
 	}
 }
