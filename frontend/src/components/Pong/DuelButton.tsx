@@ -27,24 +27,18 @@ function DuelButton(login) {
 	}
 
 	const myEventHandler2 = useCallback(data => {
-		console.log("before = ", challenger.current)
-		challenger.current = data.challenger;
-		console.log("after = ", challenger.current)
-		gametype.current = data.gamemode;
-		time.current = data.time;
-
 		const send_answer = async (answer: boolean) => {
 			toast.dismiss("dup");
-			console.log("at send = ", challenger.current)
 			socket.emit("send_answer", { "challenger": challenger.current, "time": time.current, "answer": answer, "gametype": gametype.current });
 			if (answer === true)
-			{
-				console.log("at nav = ", challenger.current)
 				navigate('/lobby', {state: { "private_room": challenger.current + time.current, "gametype": gametype.current }});
-			}
 			else
 				toast("Match was declined");
 		}
+		send_answer(false);
+		challenger.current = data.challenger;
+		gametype.current = data.gamemode;
+		time.current = data.time;
 
 		toast(({ closeToast }) => <div>
 									<div >{challenger.current} challenged you to a {gametype.current === "1v1" ? "Classic" : "2 Balls"} duel!
