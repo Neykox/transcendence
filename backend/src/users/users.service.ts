@@ -70,6 +70,7 @@ export class UsersService {
 	async addFriend(id: number, login: string): Promise<void> {
 		const user = await this.usersRepository.findOneBy({id});
 		var newFriends = user.friend_list.split(',');
+		console.log(newFriends)
 		if (newFriends.length === 0)
 			this.usersRepository.update(id, { friend_list: login });
 		else {
