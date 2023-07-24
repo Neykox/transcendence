@@ -19,6 +19,7 @@ export class FriendsController {
 
 	@UseGuards(JwtGuard)
 	@Get()
+
 	async fetchFriends(@Req() request: Request): Promise<UserResponse[]> {
 		
 		let user = request.user;
@@ -26,9 +27,10 @@ export class FriendsController {
 			return ; 
 		const friends = (await this.usersService.fetchFriends(user['id'])).split(',');
 		const response: UserResponse[] = [];
-		friends.map( async ( friend ) => {
-			const User = await this.usersService.findByLogin(friend);
-			response.push({id: User.id, login: User.login, username: User.pseudo});
+
+		friends.forEach(( friend ) => {
+			const User = this.usersService.findByLogin(friend);
+			User.then((user) => {response.push({id: user.id, login: user.login, username: user.pseudo});})
 		})
 		console.log(response);
 		return response;
