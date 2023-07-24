@@ -1,16 +1,29 @@
 import './FriendList.scss';
 import userImg from '../../../../asset/images/user.png';
 import { Link } from 'react-router-dom';
+import accept from '../../../../asset/images/checkmark-circle.svg';
+import decline from '../../../../asset/images/close-circle.svg';
 
 import DuelButton from '../../../Pong/DuelButton';
 
 interface HistoryProps {
 	friends: Array<{ id: number; pseudo: string; status: string; }>;
-	requests: Array<{ id: number; from: string; to: string, date: string }>;
+	requests: Array<{ id: number; from: string; to: string }>;
 	onClick: () => void;
 }
 
 export default function FriendList({ friends, requests, onClick }: HistoryProps) {
+
+
+	const removefriend = (pseudo: string) => () => {
+		fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/' + pseudo, { credentials: 'include', method: 'DELETE' });
+	}
+	const friendAccept = (accept: boolean, id: number) => {
+		if (accept)
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/accept/' + id, { credentials: 'include', method: 'DELETE' });
+		else
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/decline/' + id, { credentials: 'include', method: 'DELETE' });
+	}
 
 	return (
 		<div className="friends">
@@ -23,6 +36,7 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 						<img src={userImg} alt="Avatar" />
 						<h2>{friend.pseudo.length > 10 ? `${friend.pseudo.slice(0, 10)}.` : friend.pseudo}</h2>
 						<div className={`${friend.status}`}></div>
+						<button onClick={removefriend(friend.pseudo)}></button>
 						<div className="message">
 							<div className="svg">
 								<Link to={"/"}>
@@ -42,8 +56,12 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 			<div className="requests">
 				<h1>Requests</h1>
 				{requests.length ? requests.map((request: {
-					id: number; pseudo: string;
-				}) => (<p>request</p>) ) : <h2>No requests yet</h2>}
+					id: number; from: string; to: string;
+				}) => (<div className="request">
+							<p className="username">{request.from}</p>
+							<a onClick={() => { friendAccept(true, request.id) }}><img src={accept} className="friendAccept friendIcon" /></a>
+							<a onClick={() => { friendAccept(false, request.id) }}><img src={decline} className="friendRefuse friendIcon" /></a>
+						</div>) ) : <h2>No requests yet</h2>}
 			</div>
 			<button onClick={onClick}>Add</button>
 		</div>

@@ -4,6 +4,7 @@ import { FriendRequest } from '../entities/friend_request.entity';
 import { FriendsService } from './friends.service';
 import { UsersService } from '../users/users.service';
 import { JwtGuard } from '../guard/jwt.guard';
+import { Request } from 'express';
 
 @Controller('friends')
 export class FriendsController {
@@ -13,7 +14,7 @@ export class FriendsController {
 	@Get()
 	fetchFriends(@Req() request: Request): Promise<string> {
 		
-		let user = request['user'];
+		let user = request.user['User'];
 		if ( !user )
 			return ; 
 		return this.usersService.fetchFriends(user['id']);
@@ -23,7 +24,7 @@ export class FriendsController {
 	@Get('exists/:login')
 	checkIfReqExists(@Param('login') login: string, @Req() request: Request): Promise<boolean> {
 		
-		let user = request['user'];
+		let user = request.user['User'];
 		if ( !user )
 			return; 
 		return this.friendsService.checkIfReqExists(user['login'], login);
@@ -32,27 +33,27 @@ export class FriendsController {
 	@Put('add')
 	addFriend(@Body() body : FriendRequest, @Req() request: Request) {
 		
-		let user = request['user'];
+		let user = request.user['User'];
 		if ( !user )
 			return 'Error'; 
 		return this.usersService.addFriend(user['id'], body['login']);
 	}
 
 	@UseGuards(JwtGuard)
-	@Delete('delete')
-	deleteFriend(@Body() body : FriendRequest, @Req() request: Request) {
+	@Delete(':login')
+	deleteFriend(@Param('login') login: string, @Req() request: Request) {
 		
-		let user = request['user'];
+		let user = request.user['User'];
 		if ( !user )
 			return 'Error'; 
-		return this.usersService.removeFriend(user['id'], body['login']);
+		return this.usersService.removeFriend(user['id'], login);
 	}
 
 	@UseGuards(JwtGuard)
 	@Get('requests')
 	fetchRequests(@Req() request: Request): Promise<FriendRequest[]> {
 		
-		let user = request['user'];
+		let user = request.user['User'];
 		if ( !user )
 			return; 
 		return this.friendsService.fetchRequests(user['login']);
@@ -62,7 +63,7 @@ export class FriendsController {
 	@Put('send/:login')
 	sendRequest(@Param('login') login: string, @Req() request: Request) : Promise<string> {
 		
-		let user = request['user'];
+		let user = request.user['User'];
 		if ( !user )
 			return; 
 		return this.friendsService.sendRequest(user['login'], login);
@@ -72,7 +73,7 @@ export class FriendsController {
 	@Delete('accept/:id')
 	acceptRequest(@Param('id') id: number, @Req() request: Request) : Promise<string> {
 		
-		let user = request['user'];
+		let user = request.user['User'];
 		if ( !user )
 			return; 
 		return this.friendsService.acceptRequest(id, user['login']);
@@ -82,9 +83,9 @@ export class FriendsController {
 	@Delete('decline/:id')
 	declineRequest(@Param('id') id: number, @Req() request: Request) : Promise<string>{
 		
-		let user = request['user'];
+		let user = request.user['User'];
 		if ( !user )
 			return; 
-		return this.friendsService.declineRequest(id, user['id']);
+		return this.friendsService.declineRequest(id, user['login']);
 	}
 }

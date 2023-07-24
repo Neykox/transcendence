@@ -143,9 +143,8 @@ function Profile() {
 				return;
 			let requests = data.map((req: any) => ({
 				id: req.id,
-				from: req.from,
-				to: req.to,
-				date: req.date
+				from: req.sender,
+				to: req.receiver,
 			}));
 
 			setRequests(requests);
@@ -203,9 +202,9 @@ function Profile() {
 
 	const friendAccept = (accept: boolean, id: number) => {
 		if (accept)
-			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/accept/' + id, { method: 'DELETE' });
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/accept/' + id, { credentials: 'include', method: 'DELETE' });
 		else
-			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/decline/' + id, { method: 'DELETE' });
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/decline/' + id, { credentials: 'include', method: 'DELETE' });
 	}
 
 	const Test = () => { socket.emit('testreq') }
