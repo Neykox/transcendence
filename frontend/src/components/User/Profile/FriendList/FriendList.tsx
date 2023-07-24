@@ -33,10 +33,11 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 					id: number; pseudo: string; status: string;
 				}) => (
 					<div className="friendsList" key={friend.id}>
-						<img src={userImg} alt="Avatar" />
+						<div className='friendRemove'>
+							<a onClick={removefriend(friend.pseudo)}><img src={decline} /></a>
+						</div>
 						<h2>{friend.pseudo.length > 10 ? `${friend.pseudo.slice(0, 10)}.` : friend.pseudo}</h2>
 						<div className={`${friend.status}`}></div>
-						<button onClick={removefriend(friend.pseudo)}></button>
 						<div className="message">
 							<div className="svg">
 								<Link to={"/"}>
