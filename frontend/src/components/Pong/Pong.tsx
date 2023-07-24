@@ -33,7 +33,7 @@ function Pong({ paddle1, paddle2, newBall, max_score, toLobby }) {
 			credentials: "include",
 			body: JSON.stringify({ "score": score }),
 		};
-		fetch("http://:5000/users/addGameToHistory", requestOptions);
+		fetch("http://"+ process.env.REACT_APP_POSTURL + ":5000/users/addGameToHistory", requestOptions);
 	}, []);
 
 	useEffect(() => {
