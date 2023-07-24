@@ -138,7 +138,7 @@ function Profile() {
 		};
 
 		fetchFriends();
-		// fetchRequest();
+		fetchRequest();
 
 		const fetchMatchs = async () => {
 			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users/history', {
