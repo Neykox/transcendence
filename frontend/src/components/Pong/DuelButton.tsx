@@ -21,6 +21,7 @@ function DuelButton(login) {
 
 	const sendInvite = async () => {
 		setStatus("waitingForAnswer");
+		console.log(login);
 		time.current = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
 		socket.emit("send_invite", { "challenger": user.login, "time": time.current, "gamemode": gametype.current, "challenged": login });
 	}
