@@ -8,7 +8,7 @@ import accept from '../../asset/images/checkmark-circle.svg';
 import decline from '../../asset/images/close-circle.svg';
 import UserContext from '../../model/userContext';
 
-function DuelButton() {
+function DuelButton(login) {
 
 	const navigate = useNavigate();
 	const [show, setShow] = useState(false);
@@ -22,7 +22,7 @@ function DuelButton() {
 	const sendInvite = async () => {
 		setStatus("waitingForAnswer");
 		time.current = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
-		socket.emit("send_invite", { "challenger": user.login, "time": time.current, "gamemode": gametype.current });
+		socket.emit("send_invite", { "challenger": user.login, "time": time.current, "gamemode": gametype.current, "challenged": login });
 	}
 
 	const myEventHandler2 = useCallback(data => {

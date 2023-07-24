@@ -498,30 +498,15 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("send_invite")
-	send_invite(@MessageBody() {challenger, time, gamemode}, @ConnectedSocket() client: Socket) {
+	send_invite(@MessageBody() {challenger, time, gamemode, challenged}, @ConnectedSocket() client: Socket) {
 
-		for (const id in connected)
-		{
-			if (connected[id].id != client.id)
-			{
-				this.server.to(connected[id].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gamemode});
-				break;
-			}
-		}
+				this.server.to(connected[challenged].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gamemode});
 	}
 	
 	@SubscribeMessage("send_answer")
 	send_answer(@MessageBody() {challenger, time, answer, gametype}, @ConnectedSocket() client: Socket) {
 
-		for (const id in connected)
-		{
-			if (connected[id].id != client.id)
-			{
-				console.log("send_aanswer");
-				this.server.to(connected[id].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "challenger": challenger, "time": time, "gametype": gametype});
-				break;
-			}
-		}
+				this.server.to(connected[challenger].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "challenger": challenger, "time": time, "gametype": gametype});
 	}
 	
 	// TAG FRIEND LIST
