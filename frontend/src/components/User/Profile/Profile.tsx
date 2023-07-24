@@ -141,20 +141,19 @@ function Profile() {
 		fetchRequest();
 
 		const fetchMatchs = async () => {
-			const response = await fetch('http://localhost:5000/users/history', {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users/history', {
 				method: "POST",
 				credentials: 'include'
 			});
 			//let data = await response.json();
 			let data = ""
 			if (!data)
-				return ;
+				return;
 			let index = 0;
 			let newMatchs: Match[] = [];
 			let win = 0;
 			let lose = 0;
-			while (data[index])
-			{
+			while (data[index]) {
 				newMatchs.unshift(data[index]);
 				// newMatchs.push(data[index]);
 				if (data[index].result === "matchLose")
@@ -215,7 +214,7 @@ function Profile() {
 			<div className="profile">
 				<PlayerInfo wins={wins} loses={loses} />
 				<div className="grid">
-					<History matchs={matchs}/>
+					<History matchs={matchs} />
 					<FriendList friends={friends} requests={requests} onClick={handleModalOpen} />
 				</div>
 				<div>
