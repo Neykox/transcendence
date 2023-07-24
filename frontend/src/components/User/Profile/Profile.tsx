@@ -166,7 +166,7 @@ function Profile() {
 			setWins(win);
 			setMatch(newMatchs);
 		};
-		fetchMatchs();
+		//fetchMatchs();
 	}, []);
 
 	// const friendsList = () => {
@@ -214,7 +214,7 @@ function Profile() {
 			<div className="profile">
 				<PlayerInfo wins={wins} loses={loses} />
 				<div className="grid">
-					{ /*<History matchs={matchs} /> */}
+				<History matchs={matchs} />
 					<FriendList friends={friends} requests={requests} onClick={handleModalOpen} />
 				</div>
 				<div>
