@@ -120,7 +120,7 @@ const Settings = () => {
             credentials: 'include',
           };
 
-        await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
+        await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/two_fa/turn-off`, requestOptions);
       };
       user = {...user, is2FaActive: false};
       localStorage.setItem("user", await JSON.stringify(user));
@@ -150,7 +150,7 @@ const Settings = () => {
       user.image = selectedDefaultAvatar;
     
      setUser(prevUser => ({ ...prevUser, Image }));
-     fetch(`http://localhost:5000/users/changeAvatar`, {
+     fetch(`http://${process.env.REACT_APP_POSTURL}:5000/users/changeAvatar`, {
      method: 'PUT',
      credentials: 'include',
      headers: {
