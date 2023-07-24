@@ -11,6 +11,7 @@ interface AddFriendProps {
 interface Friends {
 	id: number;
 	pseudo: string;
+	login: string;
 	status: string;
 }
 
@@ -24,6 +25,7 @@ export default function FriendList({ friends }: AddFriendProps) {
 			const friendsData: Friends[] = data.map((user: any) => ({
 				id: user.id,
 				pseudo: user.pseudo,
+				login: user.login,
 				status: user.status,
 			}));
 			return friendsData;
@@ -50,7 +52,7 @@ export default function FriendList({ friends }: AddFriendProps) {
 				<div className="friend" key={user.id}>
 					<div className="friend-avatar"><img src={userImg} /></div>
 					<div className="friend-pseudo">{user.pseudo}</div>
-					<img className="add-button" src={addButton} alt="add" onClick={() => sendFriend(user.pseudo)} />
+					<img className="add-button" src={addButton} alt="add" onClick={() => sendFriend(user.login)} />
 				</div>
 			))}
 		</div>
