@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useContext } from 'react';
+import React, { useState, ChangeEvent, useContext, useEffect } from 'react';
 import './Settings.scss';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
@@ -21,29 +21,36 @@ import vert from '../../../asset/images/vert.jpg';
 import UserContext from '../../../model/userContext';
 import { UserInfo } from '../../../model/userInfo';
 
+import { useNavigate } from 'react-router-dom';
+
 
 
 
 const Settings = () => {
-	const { user, setUser } = useContext<UserInfo>(UserContext);
-	//const [username, setUsername] = useState(user.username);
-	const [pseudo, setPseudo] = useState(user.pseudo);
-	const [darkMode, setDarkMode] = useState(false);
-	const [soundEnabled, setSoundEnabled] = useState(false);
-	const [profilePhoto, setProfilePhoto] = useState('');
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isModal2Open, setIsModal2Open] = useState(false);
-	const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
-	const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState("");
-	const [doubleAuthEnabled, setDoubleAuthEnabled] = useState(false);
-	//const [userId, setUserId] = useState(user.id);
 
-	/*
-	evenements de changement de nom d'utilisateur
-	*/
-	const handlePseudoChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setPseudo(event.target.value);
-	};
+  let { user, setUser } = useContext<UserInfo>(UserContext);
+  // const userContext = useContext(UserContext);
+  //const [username, setUsername] = useState(user.username);
+  const [pseudo, setPseudo] = useState(user.pseudo);
+  const [darkMode, setDarkMode] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModal2Open, setIsModal2Open] = useState(false);
+  const [isDefaultModalOpen, setIsDefaultModalOpen] = useState(false);
+  const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState("");
+  const [doubleAuthEnabled, setDoubleAuthEnabled] = useState(false);
+  //const [userId, setUserId] = useState(user.id);
+  const navigate = useNavigate();
+
+  /*
+  evenements de changement de nom d'utilisateur
+  */
+  const handlePseudoChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPseudo(event.target.value);
+    user = {...user, pseudo: event.target.value};
+    localStorage.setItem("user", JSON.stringify(user));
+  };
 
 	const handleModalOpen = () => {
 		setIsModalOpen(true);
@@ -102,10 +109,26 @@ const Settings = () => {
 	/* 
 	evenements de changement de double authentification
 	*/
+  const doubleAuthhandleSoundToggle = async (e) => {
+    setDoubleAuthEnabled(e.target.checked);
+    if (e.target.checked === false)
+    {
+      const turnOff = async () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+          };
 
-	const doubleAuthhandleSoundToggle = () => {
-		setDoubleAuthEnabled(!doubleAuthEnabled);
-	};
+        await fetch('http://localhost:5000/two_fa/turn-off', requestOptions);
+      };
+      user = {...user, is2FaActive: false};
+      localStorage.setItem("user", await JSON.stringify(user));
+      await turnOff();
+    }
+    else
+      navigate("/twofa");
+  };
 
 	/*
 	evenements de changement de photo de profil
@@ -121,41 +144,48 @@ const Settings = () => {
 
 	const handleSave = () => {
 
-		if (profilePhoto)
-			user.image = profilePhoto;
-		else if (selectedDefaultAvatar)
-			user.image = selectedDefaultAvatar;
+    if (profilePhoto) 
+       user.image = profilePhoto;
+    else if (selectedDefaultAvatar) 
+      user.image = selectedDefaultAvatar;
+    
+     setUser(prevUser => ({ ...prevUser, Image }));
+     fetch(`http://localhost:5000/users/changeAvatar`, {
+     method: 'PUT',
+     credentials: 'include',
+     headers: {
+       'Content-Type': 'application/json',
+     },
+     body: JSON.stringify({ Image: user.image }),
+      })
+     .then(response => {
+       if (response.ok) {
+         toast.success('Avatar mis à jour avec succès');
+       } else {
+         toast.error('Une erreur est survenue lors de la mise à jour de l\'avatar');
+       }
+     })
+     .catch(error => {
+       console.error('Erreur lors de la mise à jour du l\'avatar', error);
+       toast.error('Une erreur est survenue lors de la mise à jour du l\'avatar');
+     });
 
-		setUser(prevUser => ({ ...prevUser, Image }));
-		fetch(`http://${process.env.REACT_APP_POSTURL}:5000/users/changeAvatar`, {
-			method: 'PUT',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ Image: user.image }),
-		})
-			.then(response => {
-				if (response.ok) {
-					toast.success('Avatar mis à jour avec succès');
-				} else {
-					toast.error('Une erreur est survenue lors de la mise à jour de l\'avatar');
-				}
-			})
-			.catch(error => {
-				console.error('Erreur lors de la mise à jour du l\'avatar', error);
-				toast.error('Une erreur est survenue lors de la mise à jour du l\'avatar');
-			});
+    //if (profilePhoto) {
+    //  user.avatar = profilePhoto;
+    //  toast.success('Photo de profil enregistrée avec succès');
+    //} else if (selectedDefaultAvatar) {
+    //  user.avatar = selectedDefaultAvatar;
+    //  toast.success('Avatar par défaut enregistré avec succès');
+    //}
+    // user = {...user, image: false};
+    localStorage.setItem("user", JSON.stringify(user));
+  };
+  var image42:string = localStorage.getItem('42image') as string;
 
-		//if (profilePhoto) {
-		//  user.avatar = profilePhoto;
-		//  toast.success('Photo de profil enregistrée avec succès');
-		//} else if (selectedDefaultAvatar) {
-		//  user.avatar = selectedDefaultAvatar;
-		//  toast.success('Avatar par défaut enregistré avec succès');
-		//}
-	};
-	var image42: string = localStorage.getItem('42image') as string;
+  useEffect(() => {
+    setDoubleAuthEnabled(user.is2FaActive);
+  }, [user]);
+
 	return (
 
 
