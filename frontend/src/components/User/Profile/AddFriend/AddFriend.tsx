@@ -44,7 +44,8 @@ export default function FriendList({ friends }: AddFriendProps) {
 		if (user === null)
 			return;
 		let data = JSON.parse(user);
-		socket.emit('sendFriend', { to: name, from: data.login }, (data: string) => console.log(data))
+		console.log(data['login'], data.login)
+		socket.emit('sendFriend', { to: name, from: data['login'] }, (data: string) => console.log(data))
 	}
 	return (
 		<div className="friend-list">
