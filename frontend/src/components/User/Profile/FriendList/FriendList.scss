@@ -90,7 +90,14 @@
 	.request {
 		display: flex;
 		justify-content: space-between;
-		height: 50px;
+		width: 80%;
+		margin: auto;
+		align-items: center;
+		flex-direction: column;
+		gap: 10px;
+		max-height: 370px;
+   		overflow-y: auto;
+		overflow-x: hidden;
 	}
 }
 
