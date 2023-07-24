@@ -32,7 +32,7 @@ export class FriendsController {
 			const User = this.usersService.findByLogin(friend);
 			User.then((user) => {response.push({id: user.id, login: user.login, username: user.pseudo});})
 		})
-		console.log(response);
+		console.log("user", response);
 		return response;
 	}
 
