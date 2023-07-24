@@ -137,8 +137,8 @@ function Profile() {
 			setRequests(requests);
 		};
 
-		fetchFriends();
-		fetchRequest();
+		// fetchFriends();
+		// fetchRequest();
 
 		const fetchMatchs = async () => {
 			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users/history', {
@@ -166,7 +166,7 @@ function Profile() {
 			setWins(win);
 			setMatch(newMatchs);
 		};
-		//fetchMatchs();
+		fetchMatchs();
 	}, []);
 
 	// const friendsList = () => {
