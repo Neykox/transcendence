@@ -78,7 +78,9 @@ function DuelButton() {
 
 	return (
 		<>
-			<div className='svg'><a onClick={() => {setShow(!show)}}><img className="" src={duel}/></a></div>
+			<div className='svg'>
+				<a onClick={() => {setShow(!show)}}>
+					<img className="" src={duel}/></a></div>
 			{show === true
 			? <>
 				{status === "setting-up"
