@@ -33,7 +33,7 @@ function DuelButton() {
 			toast.dismiss("dup");
 			socket.emit("send_answer", { "challenger": challenger.current, "time": time.current, "answer": answer, "gametype": gametype.current });
 			if (answer === true)
-				navigate('/lobby', {state: { "private_room": user.login + time.current, "gametype": gametype.current }});
+				navigate('/lobby', {state: { "private_room": challenger.current + time.current, "gametype": gametype.current }});
 			else
 				toast("Match was declined");
 		}
@@ -58,7 +58,7 @@ function DuelButton() {
 		setShow(false);
 		if (data.answer === "accepted")
 		{
-			navigate('/lobby', {state: { "private_room": user.login + data.time, "gametype": data.gametype }});
+			navigate('/lobby', {state: { "private_room": data.challenger + data.time, "gametype": data.gametype }});
 		}
 		else
 			toast("Match was declined");
