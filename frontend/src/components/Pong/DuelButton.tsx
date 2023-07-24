@@ -2,6 +2,7 @@ import { useState, useContext, useCallback, useEffect, useRef } from 'react';
 import { toast } from "react-toastify";
 import { socket } from '../Socket/socketInit';
 import { useNavigate } from "react-router-dom";
+import duel from "../../asset/images/duel.svg"
 import './DuelButton.scss'
 import accept from '../../asset/images/checkmark-circle.svg';
 import decline from '../../asset/images/close-circle.svg';
@@ -71,7 +72,7 @@ function DuelButton() {
 
 	return (
 		<>
-			<button className="" type="button" onClick={() => {setShow(!show)}}>DUEL</button>
+			<a onClick={() => {setShow(!show)}}><img className="duelButton" src={duel}/></a>
 			{show === true
 			? <>
 				{status === "setting-up"
