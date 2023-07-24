@@ -36,7 +36,7 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 						<div className='friendRemove'>
 							<a onClick={removefriend(friend.login)}><img src={decline} /></a>
 						</div>
-						<h2>{friend.login.length > 10 ? `${friend.username.slice(0, 10)}.` : friend.username}</h2>
+						<h2>{friend.username.length > 10 ? `${friend.username.slice(0, 10)}.` : friend.username}</h2>
 						<div className={`${friend.status}`}></div>
 						<div className="message">
 							<div className="svg">
