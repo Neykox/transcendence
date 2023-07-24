@@ -88,7 +88,7 @@ function App() {
 					</Route>
 					<Route path="/settings" element={<Settings />} />
 					<Route path="/page1" element={<Page1 />} />
-					<Route path="/page2" element={<Page2 />} />
+					<Route path="/twofa" element={<TwoFa />} />
 					<Route path='/lobby' element={<Lobby />} />
 				</Routes>
 			</div>
