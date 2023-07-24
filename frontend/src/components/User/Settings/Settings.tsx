@@ -47,6 +47,8 @@ const Settings = () => {
   */
   const handlePseudoChange = (event: ChangeEvent<HTMLInputElement>) => {
     setPseudo(event.target.value);
+    user = {...user, pseudo: event.target.value};
+    localStorage.setItem("user", JSON.stringify(user));
   };
 
   const handleModalOpen = () => {
@@ -175,6 +177,8 @@ const Settings = () => {
     //  user.avatar = selectedDefaultAvatar;
     //  toast.success('Avatar par défaut enregistré avec succès');
     //}
+    // user = {...user, image: false};
+    localStorage.setItem("user", JSON.stringify(user));
   };
   var image42:string = localStorage.getItem('42image') as string;
 
