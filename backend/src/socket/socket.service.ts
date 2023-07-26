@@ -39,7 +39,6 @@ export class SocketService {
 
 	handleConnection(client: Socket){
 		console.log('client connected: ', client.id);
-		connected[client.id] = client;
 	}
 
 	handleDisconnect(client: Socket){
@@ -52,9 +51,18 @@ export class SocketService {
 			if (rooms[id].p2.socketId === client.id)
 				rooms[id].p2.dc = true;
 		}
-		console.log(rooms);
-		console.log('client disconnected: ', client.id);
-		delete connected[client.id];
+
+		for (const key in connected) {
+			if (connected[key] == client)
+			{
+				delete connected[key];
+				connected[key] = undefined;
+				console.log(key, "disconnected !");
+				break ;
+			}
+		}
+		// console.log(rooms);
+		// console.log('client disconnected: ', client.id);
 	}
 
 	// @SubscribeMessage('message')
@@ -540,5 +548,13 @@ export class SocketService {
 	@SubscribeMessage('testreq')
 	async handleTest(@MessageBody() data, @ConnectedSocket() client: Socket) {
 		client.emit('receiveFriend', {from: "royal"})
+	}
+
+	@SubscribeMessage('isConnected')
+	async isConnected(@MessageBody() data, @ConnectedSocket() client: Socket) {
+		if (!data.who || connected[data.who] === undefined)
+			return 'offline';
+		console.log(data.who, "connected");
+		return 'online';
 	}
 }
