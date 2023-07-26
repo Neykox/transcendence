@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FriendRequest } from 'src/entities/friend_request.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from '../users/users.service';
+import { SocketService } from 'src/socket/socket.service';
 
 @Injectable()
 export class FriendsService {
 	constructor(
 		@InjectRepository(FriendRequest)
 		private friendRequestRepository: Repository<FriendRequest>,
-		private readonly usersService: UsersService
+		private readonly usersService: UsersService,
+		@Inject(forwardRef(() => SocketService)) private readonly socketService: SocketService
 	) {}
 
 	async fetchRequests(login: string): Promise<FriendRequest[]> {
@@ -68,5 +70,9 @@ export class FriendsService {
 
 	async getRequest(to: string, from: string): Promise<FriendRequest> {
 	return this.friendRequestRepository.findOne({ where: { receiver: to, sender: from } });
+	}
+
+	async isConnected(who: string): Promise<string> {
+		return this.socketService.isConnected(who);
 	}
 }

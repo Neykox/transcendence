@@ -35,7 +35,8 @@ function DuelButton(login) {
 			else
 				toast("Match was declined");
 		}
-		send_answer(false);
+		if( toast.isActive("dup"))
+			send_answer(false);
 		challenger.current = data.challenger;
 		gametype.current = data.gamemode;
 		time.current = data.time;

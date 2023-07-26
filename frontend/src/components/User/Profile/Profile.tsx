@@ -82,7 +82,7 @@ function Profile() {
 	// 	getUsers();
 	// });
 
-	useEffect(async () => {
+	useEffect( () => {
 		// const fetchUsers = async (): Promise<Friends[]> => {
 		// 	const response = await fetch('http://+'process.env.REACT_APP_POSTURL'+:5000/users');
 		// 	const data = await response.json();
@@ -117,15 +117,13 @@ function Profile() {
 			// 	username: user.username,
 			// 	status: 'offline'
 			// }));
+			let friends = friendsData.map((user: {id: number, login: string, username: string, status: string}) => ({
+				id: user.id,
+				login: user.login,
+				username: user.username,
+				status: user.status
+			}))
 
-			for (let friend in friendsData) {
-				let status: string = "offline";
-				let x = {id: friendsData[friend].id, login: friendsData[friend].login, username: friendsData[friend].username, status: status}
-				socket.emit('isConnected', {who: friendsData[friend].login}, (response: string) => {x.status = response})
-				friends.push(x)
-			}
-
-			console.log(friends);
 			setFriends(friends);
 		};
 
@@ -147,9 +145,7 @@ function Profile() {
 			setRequests(requests);
 		};
 
-		await fetchFriends();
-		await fetchRequest();
-
+		
 		const fetchMatchs = async () => {
 			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users/history', {
 				method: "POST",
@@ -158,7 +154,7 @@ function Profile() {
 			let data = await response.json();
 			// let data = ""
 			if (!data)
-				return;
+			return;
 			let index = 0;
 			let newMatchs: Match[] = [];
 			let win = 0;
@@ -167,16 +163,19 @@ function Profile() {
 				newMatchs.unshift(data[index]);
 				// newMatchs.push(data[index]);
 				if (data[index].result === "matchLose")
-					lose++;
+				lose++;
 				else
-					win++;
+				win++;
 				index++;
 			}
 			setLoses(lose);
 			setWins(win);
 			setMatch(newMatchs);
 		};
-		await fetchMatchs();
+
+		fetchFriends();
+		fetchRequest();
+		fetchMatchs();
 	}, []);
 
 	// const friendsList = () => {

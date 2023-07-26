@@ -24,7 +24,6 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 		else
 			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/decline/' + id, { credentials: 'include', method: 'DELETE' });
 	}
-	console.log(friends.length, friends);
 	return (
 		<div className="friends">
 			<h1>Friends list</h1>

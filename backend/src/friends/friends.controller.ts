@@ -11,6 +11,7 @@ interface UserResponse {
 	id: number;
 	login: string;
 	username: string;
+	status: string;
 }
 
 @Controller('friends')
@@ -30,7 +31,7 @@ export class FriendsController {
 
 		for (const friend of friends) {
 			const User = await this.usersService.findByLogin(friend);
-			response.push({id: User.id, login: User.login, username: User.pseudo});
+			response.push({id: User.id, login: User.login, username: User.pseudo, status: await this.friendsService.isConnected(User.login)});
 		}
 		return response;
 	}

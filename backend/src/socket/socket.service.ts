@@ -2,6 +2,7 @@ import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody, Conne
 import { Server, Socket } from 'socket.io';
 import { PlayerDto } from '../dto/player.dto'
 import { FriendsService } from "src/friends/friends.service";
+import { Injectable, Inject, forwardRef } from '@nestjs/common'
 
 
 import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interface'
@@ -30,9 +31,10 @@ var connected = {};
 		// },https://socket.io/docs/v4/connection-state-recovery
 })
 
+@Injectable()
 export class SocketService {
 
-	constructor(private readonly friendsService: FriendsService) {}
+	constructor(@Inject(forwardRef(() => FriendsService)) private readonly friendsService: FriendsService) {}
 
 	@WebSocketServer()
 	server: Server;
@@ -520,7 +522,7 @@ export class SocketService {
 	// TAG FRIEND LIST
 
 	@SubscribeMessage('register')
-	handleRegister(@MessageBody() {login}, @ConnectedSocket() client: Socket) : string {
+	async handleRegister(@MessageBody() {login}, @ConnectedSocket() client: Socket) {
 		console.log('received : ', login)
 		if (!login)
 			return('error');
@@ -550,11 +552,9 @@ export class SocketService {
 		client.emit('receiveFriend', {from: "royal"})
 	}
 
-	@SubscribeMessage('isConnected')
-	async isConnected(@MessageBody() data, @ConnectedSocket() client: Socket) {
-		if (!data.who || connected[data.who] === undefined)
+	async isConnected(who: string) {
+		if (connected[who] === undefined)
 			return 'offline';
-		console.log(data.who, "connected");
 		return 'online';
 	}
 }
