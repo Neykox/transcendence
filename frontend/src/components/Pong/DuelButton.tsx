@@ -33,7 +33,7 @@ function DuelButton(login) {
 			if (answer === true)
 				navigate('/lobby', {state: { "private_room": challenger.current + time.current, "gametype": gametype.current }});
 			else
-				toast("Match was declined");
+				toast("Match was declined", {toastId: 'matchDeclined'});
 		}
 		if( toast.isActive("dup"))
 			send_answer(false);
@@ -60,11 +60,9 @@ function DuelButton(login) {
 		setStatus("setting-up");
 		setShow(false);
 		if (data.answer === "accepted")
-		{
 			navigate('/lobby', {state: { "private_room": data.challenger + data.time, "gametype": data.gametype }});
-		}
 		else
-			toast("Match was declined");
+			toast("Match was declined", {toastId: 'matchDeclined'});
 	}, [navigate, user.login]);
 
 	useEffect(() => {
