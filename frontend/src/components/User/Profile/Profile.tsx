@@ -214,9 +214,24 @@ function Profile() {
 				<a onClick={() => { friendAccept(true, data.id) }}><img src={accept} className="friendAccept friendIcon" /></a>
 				<a onClick={() => { friendAccept(false, data.id) }}><img src={decline} className="friendRefuse friendIcon" /></a>
 			</div>
-		</div>, { autoClose: 5000, toastId: "stopdup" }
+		</div>, { autoClose: 5000, toastId: "stopdupsuccess" }
 	)
 	)
+
+	socket.on('success', (data) => toast.success(({ closeToast }) =>
+		<div>
+			<p>{data.text}</p>
+		</div>, { autoClose: 5000, toastId: "stopduperror" }
+	)
+	)
+
+	socket.on('error', (data) => toast.error(({ closeToast }) =>
+		<div>
+			<p>{data.text}</p>
+		</div>, { autoClose: 5000, toastId: "stopduperror" }
+	)
+	)
+
 	return (
 		<div>
 			<NavBar />

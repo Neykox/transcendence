@@ -22,6 +22,8 @@ export class FriendsService {
 		const request = await this.friendRequestRepository.findOne({ where: { id: id } });
 		if (request.receiver === login) {
 			let User = await this.usersService.findByLogin(request.sender);
+			if (User.friend_list.indexOf(request.receiver) != -1)
+				return 'Already friends';
 			await this.usersService.addFriend(User.id, request.receiver);
 			User = await this.usersService.findByLogin(request.receiver);
 			await this.usersService.addFriend(User.id, request.sender);
@@ -53,8 +55,8 @@ export class FriendsService {
 		if (sender === receiver) {
 			return 'You cannot send request to yourself';
 		}
-		if (await this.checkIfReqExists(sender, receiver)) {
-			return 'Request already exists';
+		if (await this.checkIfReqExists(sender, receiver) || await this.checkIfReqExists(receiver, sender)) {
+			return 'You already have sent/receive a request from this person';
 		}
 		const user = await this.usersService.findByLogin(sender);
 		const friend_list = user.friend_list.split(',');

@@ -534,16 +534,20 @@ export class SocketService {
 	@SubscribeMessage('sendFriend')
 	async handleFriendSent(@MessageBody() data, @ConnectedSocket() client: Socket) {
 		if (!data.to || !data.from)
+		{
+			client.emit('error', {text: "Something went wrong"});
 			return ('error');
-		
-			console.log(data);
+		}		
 		let response = await this.friendsService.sendRequest(data.from, data.to);
-		console.log(response)
 		if (response != 'Request sent')
+		{
+			client.emit('error', {text: response});
 			return (response);
+		}
 		let request = await this.friendsService.getRequest(data.to, data.from);
-		console.log(request);
-		connected[data.to].emit('receiveFriend', {from: data.from, id: request.id});
+		if (connected[data.to] !== undefined)
+			connected[data.to].emit('receiveFriend', {from: data.from, id: request.id});
+		client.emit('success', {text: response + '!'})
 		return 'OK'
 	}
 
