@@ -55,10 +55,16 @@ function Profile() {
 		status: string;
 	}
 
-	const [matchs, setMatch] = useState<Match[]>([]);
+	interface FriendRequest {
+		id: number;
+		to: string;
+		from: string;
+		fromUsername: string;
+	}
 
+	const [matchs, setMatch] = useState<Match[]>([]);
 	const [friends, setFriends] = useState<Friends[]>([]);
-	const [requests, setRequests] = useState<Request[]>([]);
+	const [requests, setRequests] = useState<FriendRequest[]>([]);
 
 
 	// Écouter les événements de mise à jour
@@ -140,6 +146,7 @@ function Profile() {
 				id: req.id,
 				from: req.sender,
 				to: req.receiver,
+				fromUsername: req.senderUsername
 			}));
 
 			setRequests(requests);

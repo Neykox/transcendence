@@ -6,6 +6,12 @@ import { UsersService } from '../users/users.service';
 import { JwtGuard } from '../guard/jwt.guard';
 import { Request } from 'express';
 
+interface FriendRequestResponse {
+	id: number;
+	sender: string;
+	receiver: string;
+	senderUsername: string;
+}
 
 interface UserResponse {
 	id: number;
@@ -70,12 +76,18 @@ export class FriendsController {
 
 	@UseGuards(JwtGuard)
 	@Get('requests')
-	fetchRequests(@Req() request: Request): Promise<FriendRequest[]> {
+	async fetchRequests(@Req() request: Request): Promise<FriendRequestResponse[]> {
 		
 		let user = request.user;
 		if ( !user )
-			return; 
-		return this.friendsService.fetchRequests(user['login']);
+			return;
+		let requests = await this.friendsService.fetchRequests(user['login']);
+		let requestsResponse : FriendRequestResponse[] = [];
+		for (let r of requests) {
+			let user = await this.usersService.findByLogin(r.sender);
+			requestsResponse.push({id: r.id, sender: r.sender, receiver: r.receiver, senderUsername: user.pseudo})
+		}
+		return requestsResponse;
 	}
 
 	@UseGuards(JwtGuard)

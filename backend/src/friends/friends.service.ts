@@ -56,7 +56,7 @@ export class FriendsService {
 			return 'You cannot send request to yourself';
 		}
 		if (await this.checkIfReqExists(sender, receiver) || await this.checkIfReqExists(receiver, sender)) {
-			return 'You already have sent/receive a request from this person';
+			return 'You already have sent/receive a request to/from this person';
 		}
 		const user = await this.usersService.findByLogin(sender);
 		const friend_list = user.friend_list.split(',');

@@ -8,7 +8,7 @@ import DuelButton from '../../../Pong/DuelButton';
 
 interface HistoryProps {
 	friends: Array<{ id: number; login: string; username:string; status: string }>;
-	requests: Array<{ id: number; from: string; to: string }>;
+	requests: Array<{ id: number; from: string; to: string; fromUsername: string }>;
 	onClick: () => void;
 }
 
@@ -58,7 +58,7 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 				{requests.length ? requests.map((request: {
 					id: number; from: string; to: string;
 				}) => (<div className="request">
-							<p className="username">{request.from}</p>
+							<p className="username">{request.fromUsername}</p>
 							<div className='requestButtons'>
 								<a onClick={() => { friendAccept(true, request.id) }}><img src={accept} className="friendAccept friendIcon" /></a>
 								<a onClick={() => { friendAccept(false, request.id) }}><img src={decline} className="friendRefuse friendIcon" /></a>

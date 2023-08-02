@@ -546,7 +546,7 @@ export class SocketService {
 		}
 		let request = await this.friendsService.getRequest(data.to, data.from);
 		if (connected[data.to] !== undefined)
-			connected[data.to].emit('receiveFriend', {from: data.from, id: request.id});
+			connected[data.to].emit('receiveFriend', {from: data.fromUsername, id: request.id});
 		client.emit('success', {text: response + '!'})
 		return 'OK'
 	}
