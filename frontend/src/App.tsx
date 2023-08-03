@@ -26,20 +26,21 @@ function App() {
 
     await fetch('http://localhost:5000/auth/clear_cookie', requestOptions);
   };
-  
+
   const handleStorageChange = (event: StorageEvent) => {
-    console.log(event);
-    if (event.key === 'user') {
-      if (event.newValue === null) {
-        clearCookie();
-        setConnected(false);
-        console.log('localStorage has been cleared');
-      } else {
-        setConnected(true);
-        console.log("connected");
-      }
+    if (storage === null) {
+      clearCookie();
+      setConnected(false);
+      console.log('disconnected');
+    } else {
+      setConnected(true);
+      console.log("connected");
     }
   };
+
+  //useEffect(() => {
+  //  handleStorageChange(storage);
+  //}, [storage])
 
   useEffect(() => {
     window.addEventListener('storage', handleStorageChange);
@@ -65,7 +66,7 @@ function App() {
           {connected ? (
             <Route path="/" element={<Navigate to="/profile" />} />
           ) : (
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Login setStorage={setStorage} />} />
           )}
           <Route
             path="/profile"

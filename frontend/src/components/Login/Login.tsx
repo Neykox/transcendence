@@ -1,9 +1,15 @@
 import './Login.scss';
 import { useEffect, useRef } from 'react';
 
-function Login() {
-	const canvasRef = useRef<HTMLCanvasElement>(null);
+//const [storage, setStorage] = useState(localStorage.getItem("user"));
 
+interface LoginProps {
+	setStorage: (value: string) => void;
+}
+
+function Login({ setStorage }: LoginProps) {
+	const canvasRef = useRef<HTMLCanvasElement>(null);
+	setStorage(localStorage.getItem("user"));
 	useEffect(() => {
 		const canvas = canvasRef.current!;
 		if (!canvas) {
