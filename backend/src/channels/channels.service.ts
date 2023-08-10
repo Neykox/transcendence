@@ -4,7 +4,7 @@ import { UpdateChannelDto } from './dto/update-channel.dto';
 import * as argon from 'argon2';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from './entities/channel.entity';
-import { QueryFailedError, Repository, TypeORMError } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { DatabaseError } from 'pg-protocol';
 
 @Injectable()
@@ -57,10 +57,13 @@ export class ChannelsService {
   }
 
   async findOne(id: number) {
-    // must add if not found try/catch
     const chan = await this.channelRepository.findOneBy({
       id,
     });
+
+    if (!chan) {
+      throw new ForbiddenException(`Channel with id #${id} doesn't exist`);
+    }
 
     delete(chan.password);
     return chan;
@@ -104,6 +107,6 @@ export class ChannelsService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} channel`;
+    return this.channelRepository.delete(id);
   }
 }

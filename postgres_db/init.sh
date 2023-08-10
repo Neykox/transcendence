@@ -21,4 +21,36 @@ CREATE TABLE channel (
   type channel_type_enum NOT NULL,
   password VARCHAR(255)
 );
+
+CREATE TABLE chan_user (
+  id SERIAL PRIMARY KEY,
+  "user" INTEGER NOT NULL,
+  channel INTEGER NOT NULL
+);
+
+CREATE TABLE message (
+  id SERIAL PRIMARY KEY,
+  creator INTEGER NOT NULL,
+  channel INTEGER NOT NULL,
+  content TEXT
+);
+
+CREATE TABLE chan_admins (
+  id SERIAL PRIMARY KEY,
+  channel INTEGER NOT NULL,
+  "user" INTEGER NOT NULL
+);
+
+CREATE TABLE muted_user (
+  id SERIAL PRIMARY KEY,
+  channel INTEGER NOT NULL,
+  "user" INTEGER NOT NULL,
+  until DATE
+);
+
+CREATE TABLE ban_user (
+  id SERIAL PRIMARY KEY,
+  channel INTEGER NOT NULL,
+  "user" INTEGER NOT NULL
+);
 EOF
