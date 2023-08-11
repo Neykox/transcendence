@@ -32,9 +32,12 @@ export class FriendsController {
 		let user = request.user;
 		if ( !user )
 			return ; 
-		const friends = (await this.usersService.fetchFriends(user['id'])).split(',');
+		const f = await this.usersService.fetchFriends(user['id']);
 		const response: UserResponse[] = [];
-
+		if (f.length === 0)
+			return response;
+		const friends = f.split(',');
+		console.log(friends);
 		for (const friend of friends) {
 			const User = await this.usersService.findByLogin(friend);
 			response.push({id: User.id, login: User.login, username: User.pseudo, status: await this.friendsService.isConnected(User.login)});

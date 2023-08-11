@@ -5,12 +5,19 @@ import { UserCreationDto } from '../dto/user_creation.dto';
 import { JwtGuard } from '../guard/jwt.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { SocketService } from 'src/socket/socket.service';
 
-
+interface profileResponse {
+	id: number;
+	login: string;
+	username?: string;
+	status: string;
+	gamehistory: Array<{ id: number, opponent: string, scores: string, result: string }>;
+}
 
 @Controller('users')
 export class UsersController {
-	constructor(private readonly usersService: UsersService) {}
+	constructor(private readonly usersService: UsersService, private readonly socketService: SocketService) {}
 
 	@Get()
 	findAll(): Promise<User[]> {
@@ -25,6 +32,16 @@ export class UsersController {
 		} else {
 			return user;
 		}
+	}
+
+	@Get(':login/profile')
+	async findOneProfile(@Param('login') login: string): Promise<profileResponse> { 
+		const user = await this.usersService.findOneByLogin(login);
+		if (!user) {
+			throw new NotFoundException('User does not exist!');
+		}
+		console.log('test');
+		return ({id: user.id, login: user.login, username: user.pseudo, gamehistory: user.gameHistory, status: await this.socketService.isConnected(user.login)})
 	}
 
 	@Post('create')
