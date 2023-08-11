@@ -31,7 +31,8 @@ function Profile() {
 	const [wins, setWins] = useState(0);
 	const [loses, setLoses] = useState(0);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-
+	const Param = new URLSearchParams(window.location.search);
+	const login = Param.get('login');
 	const handleModalOpen = () => {
 		setIsModalOpen(true);
 	};
