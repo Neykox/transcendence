@@ -43,7 +43,6 @@ export class UsersController {
 		if (!user) {
 			throw new NotFoundException('User does not exist!');
 		}
-		console.log('test');
 		return ({id: user.id, login: user.login, username: user.pseudo, gamehistory: user.gameHistory, status: await this.socketService.isConnected(user.login)})
 	}
 
