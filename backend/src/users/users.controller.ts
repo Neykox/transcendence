@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Body, NotFoundException, UseGuards, Put, Req } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, NotFoundException, ForbiddenException, UseGuards, Put, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../entities/user.entity';
 import { UserCreationDto } from '../dto/user_creation.dto';
@@ -24,12 +24,15 @@ export class UsersController {
 		return this.usersService.findAll();
 	}
 
+	@UseGuards(JwtGuard)
 	@Get(':login')
-	async findOneByLogin(@Param('login') login: string): Promise<User> { 
+	async findOneByLogin(@Param('login') login: string, @Req() request: Request): Promise<User> { 
 		const user = await this.usersService.findOneByLogin(login);
 		if (!user) {
 			throw new NotFoundException('User does not exist!');
-		} else {
+		} else if (request['user']['login'] != login) {
+			throw new ForbiddenException('You are not allowed to access this user');
+		}else {
 			return user;
 		}
 	}
