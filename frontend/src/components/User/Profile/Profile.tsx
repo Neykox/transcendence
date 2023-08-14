@@ -10,6 +10,7 @@ import accept from '../../../asset/images/checkmark-circle.svg';
 import decline from '../../../asset/images/close-circle.svg';
 import Modal from 'react-modal';
 import AddFriend from './AddFriend/AddFriend';
+import { useParams } from 'react-router-dom';
 
 // import io from 'socket.io-client';
 
@@ -31,8 +32,8 @@ function Profile() {
 	const [wins, setWins] = useState(0);
 	const [loses, setLoses] = useState(0);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const Param = new URLSearchParams(window.location.search);
-	const login = Param.get('login');
+	const [profile, setProfile] = useState(undefined);
+	const { login } = useParams();
 	const handleModalOpen = () => {
 		setIsModalOpen(true);
 	};
@@ -153,16 +154,7 @@ function Profile() {
 			setRequests(requests);
 		};
 
-		
-		const fetchMatchs = async () => {
-			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users/history', {
-				method: "POST",
-				credentials: 'include'
-			});
-			let data = await response.json();
-			// let data = ""
-			if (!data)
-			return;
+		const process_matches = (data: any) => {
 			let index = 0;
 			let newMatchs: Match[] = [];
 			let win = 0;
@@ -179,11 +171,40 @@ function Profile() {
 			setLoses(lose);
 			setWins(win);
 			setMatch(newMatchs);
+		}
+		
+		const fetchMatchs = async () => {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users/history', {
+				method: "POST",
+				credentials: 'include'
+			});
+			let data = await response.json();
+			// let data = ""
+			if (!data)
+			return;
+			process_matches(data);
 		};
 
-		fetchFriends();
-		fetchRequest();
-		fetchMatchs();
+
+		const fetchProfile = async (login: string) => {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + `:5000/${login}/profile`, {
+				method: "POST",
+				credentials: 'include'
+			});
+
+			let data = await response.json();
+			if (!data || !data['login']) 
+				return ;
+			process_matches(data['gamehistory']);
+			setProfile(data);
+		}
+		if (login != undefined)
+			fetchProfile(login);
+		else {
+			fetchFriends();
+			fetchRequest();
+			fetchMatchs();
+		}
 	}, []);
 
 	// const friendsList = () => {
@@ -244,10 +265,10 @@ function Profile() {
 		<div>
 			<NavBar />
 			<div className="profile">
-				<PlayerInfo wins={wins} loses={loses} />
+				<PlayerInfo wins={wins} loses={loses} profile={profile}/>
 				<div className="grid">
 				<History matchs={matchs} />
-					<FriendList friends={friends} requests={requests} onClick={handleModalOpen} />
+					{profile == undefined ? <FriendList friends={friends} requests={requests} onClick={handleModalOpen} /> : ''}
 				</div>
 				<div>
 					<Modal isOpen={isModalOpen} >
@@ -257,7 +278,6 @@ function Profile() {
 					</Modal>
 				</div>
 			</div>
-			<button onClick={Test} />
 		</div>
 	);
 }
