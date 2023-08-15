@@ -1,7 +1,8 @@
 import './FriendListMessage.scss';
 import userImg from '../../../../asset/images/user.png';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+
 
 
 interface HistoryProps {
@@ -10,10 +11,20 @@ interface HistoryProps {
 
 function FriendListMessage({ friends }: HistoryProps) {
 	const [selectedFriendId, setSelectedFriendId] = useState<number | null>(null);
+	const { id } = useParams<{ id?: any }>();
+
+	useEffect(() => {
+		if (!id) {
+			const friendList = document.querySelector(".friendList");
+
+			friendList?.classList.remove("is-disbaled");
+		}
+	}, [id]);
 
 	const handleSelectMessage = (id: number) => {
 		setSelectedFriendId(id);
 	}
+
 
 	return (
 		<div className="friendList">
@@ -27,6 +38,7 @@ function FriendListMessage({ friends }: HistoryProps) {
 				</Link>
 			))}
 		</div>
+
 	);
 }
 

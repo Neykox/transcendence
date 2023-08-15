@@ -1,0 +1,18 @@
+.whole {
+	background: white;
+	box-shadow: rgba(74, 74, 74, 0.52) 0px 5px 15px;
+
+	border-radius: 10px;
+	padding: 20px;
+	width: 25%;
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.qrcode {
+	padding-bottom: 10px;
+}

@@ -4,15 +4,18 @@ nav {
 
 	background: rgb(255, 255, 255);
 	height: 100vh;
-	width: 80px;
+	width: 10%;
+	max-width: 80px;
 	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
 	display: flex;
 	flex-direction: column;
 	align-content: center;
 
+	transition: all 0.5s ease-in-out;
+
 	div {
-		height: 75px;
+		// height: 75px;
 
 		img {
 			width: 100%;
@@ -22,12 +25,22 @@ nav {
 			width: 110%;
 		}
 
+		
 	}
 
+	.selectedLink {
+		background-color: #22A7F0;
+		border-radius: 90deg;
+	}
+	
 	.line {
 		background: rgb(0, 0, 0);
 		height: 1px;
 		width: 100%;
-		margin: 10px 0 5px;
+		//margin: 5px 0 5px;
+	}
+	.set {
+		position: absolute;
+		bottom: 50px;
 	}
 }

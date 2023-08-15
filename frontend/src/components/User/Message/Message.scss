@@ -8,3 +8,12 @@
 		display: flex;
 	}
 }
+
+@media (max-width: 900px) {
+
+	.message {
+		overflow: hidden;
+		margin: 0 10%;
+		width: calc(100% - 10%);
+	}
+}

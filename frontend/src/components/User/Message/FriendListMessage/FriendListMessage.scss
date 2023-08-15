@@ -1,12 +1,19 @@
+// .friendBase {
+// 	display: flex;
+// 	flex-direction: row-reverse;
+// 	align-items: start;
+// }
+
 .friendList {
-	width: 25%;
-	min-width: 270px;
-	max-width: 450px;
+	width: 20%;
+	min-width: 250px;
+	max-width: 350px;
 	height: 100vh;
 	overflow: hidden;
 	box-shadow: rgba(169, 169, 169, 0.52) 0px 5px 15px;
 	text-transform: capitalize;
-	font-size: small;
+	// font-size: small;
+	font-size: clamp(8px, 1vw, 12px);
 
 	a {
 		text-decoration: none;
@@ -53,6 +60,26 @@
 			border: 5px solid rgba(255, 0, 0, 0.7);
 			border-radius: 50%;
 		}
+	}
+}
+
+.is-disbaled {
+	margin-left: -200px;
+	z-index: -10;
+}
+
+
+@media (max-width: 900px) {
+
+	.hamburger {
+		display: block;
+	}
+
+	.friendList {
+		transition: all 0.4s ease-in;
+		width: 10%;
+		min-width: 200px;
+		max-width: 350px;
 	}
 
 }
