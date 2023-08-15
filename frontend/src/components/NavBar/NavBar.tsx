@@ -25,7 +25,7 @@ function NavBar() {
 				</Link>
 			</div>
 			<div>
-				<Link to={"/message"}>
+				<Link to={"/channel"}>
 					<img src={crowdImg} alt="" />
 				</Link>
 			</div>
