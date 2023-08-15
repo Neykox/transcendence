@@ -37,8 +37,8 @@ function NavBar() {
 					<img src={userImg} alt="" />
 				</Link>
 			</div>
-			<div className={active.active === "friends" ? "selectedLink" : ""}>
-				<Link to={"/message"} onClick={() => active.setActive("message")}>
+			<div>
+				<Link to={"/channel"}>
 					<img src={crowdImg} alt="" />
 				</Link>
 			</div>

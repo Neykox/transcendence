@@ -12,6 +12,8 @@ import TwoFa from './components/TwoFa/TwoFa';
 import Lobby from './components/Pong/Lobby';
 import { UserProvider } from './model/userContext';
 import { useState, useEffect } from 'react';
+import Channel from './components/User/Channel/Channel';
+import ChannelChat from './components/User/Channel/ChannelChat/ChannelChat';
 
 function App() {
   const [connected, setConnected] = useState(false);
@@ -79,6 +81,9 @@ function App() {
           <Route path="/page1" element={<Page1 />} />
           <Route path="/twofa" element={<TwoFa />} />
           <Route path='/lobby' element={<Lobby />} />
+          <Route path='/channel' element={<Channel />}>
+          <Route path="/channel/:id" element={<ChannelChat />} />
+        </Route>
         </Routes>
       </div>
     </UserProvider>
