@@ -11,8 +11,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 
 import { SocketModule } from './socket/socket.module';
-import { ChannelsModule } from './channels/channels.module';
-import { Channel } from './channels/entities/channel.entity';
+// import { ChannelsModule } from './channels/channels.module';
+// import { Channel } from './channels/entities/channel.entity';
 
 @Module({
 	imports: [
@@ -29,7 +29,7 @@ import { Channel } from './channels/entities/channel.entity';
 				username: config.get('POSTGRES_USER'),
 				password: config.get('POSTGRES_PASSWORD'),
 				database: config.get('POSTGRES_DB'),
-				entities: [User, Channel],
+				entities: [User],
 				synchronize: true,
 			}),
 			inject: [ConfigService],
@@ -38,8 +38,7 @@ import { Channel } from './channels/entities/channel.entity';
 		UsersModule,
 		AuthModule,
 		TwoFaModule,
-		SocketModule,
-		ChannelsModule],
+		SocketModule,],
 	// controllers: [AppController],
 	// providers: [AppService],
 })
