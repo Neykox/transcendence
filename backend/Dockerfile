@@ -3,7 +3,6 @@ FROM node:20.2.0
 WORKDIR /usr/src/app
 
 COPY package.json  ./
-COPY package-lock.json  ./
 COPY tsconfig.json ./
 COPY nest-cli.json ./
 COPY .prettierrc ./
