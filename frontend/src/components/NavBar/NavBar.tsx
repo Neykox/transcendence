@@ -43,6 +43,11 @@ function NavBar() {
 				</Link>
 			</div>
 			<div>
+				<Link to={"/channel"}>
+					<img src={crowdImg} alt="" />
+				</Link>
+			</div>
+			<div>
 				<Link to={"/lobby"} /*state={{ "challenger": "bob" }}*/>
 					<img src={paddle} alt="" />
 				</Link>
