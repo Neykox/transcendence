@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useContext } from 'react';
 import './PlayerInfo.scss';
 //import {userInfo} from '../../../../model/userInfo'; 
 import UserContext from '../../../../model/userContext';
+import { lookup } from 'dns';
 
 interface PlayerInfoProps {
 	wins: number;
@@ -21,21 +22,36 @@ function PlayerInfo({ wins, loses}: PlayerInfoProps) {
 			const winBar = winBarRef.current;
 			const lossBar = lossBarRef.current;
 
+			winBar.style.display = "flex";
+			lossBar.style.display = "flex";
+
 			winBar.style.width = `calc((100% / ${wins + loses}) * ${wins})`;
 			winBar.querySelector('.label')!.textContent = `${wins}`;
 
 			lossBar.style.width = `calc((100% / ${wins + loses}) * ${loses})`;
 			lossBar.style.left = winBar.style.width;
 			lossBar.querySelector('.label')!.textContent = `${loses}`;
-			if (lossBar.offsetWidth === 0)
+
+			if (lossBar.offsetWidth === 0) {
+				lossBar.style.display = "none";
 				winBar.style.borderRadius = '10px';
-			else if (lossBar.offsetWidth === 100) {
+			} else if (lossBar.offsetWidth >= 100) {
+				winBar.style.display = "none";
 				lossBar.style.borderRadius = '10px';
 			} else if (lossBar.offsetWidth !== 100 && lossBar.offsetWidth !== 0) {
 				winBar.style.borderRadius = '10px 0 0 10px';
 				lossBar.style.borderRadius = '0 10px 10px 0';
 			}
 
+			if (wins === 0 && loses === 0) {
+				winBar.style.borderRadius = '10px 0 0 10px';
+				winBar.style.display = "flex";
+				winBar.style.width = `calc(50%)`;
+				lossBar.style.borderRadius = '0 10px 10px 0';
+				lossBar.style.display = "flex";
+				lossBar.style.width = `calc(50%)`;
+				lossBar.style.left = `calc(50%)`;
+			}
 		}
 	}, [wins, loses]);
 

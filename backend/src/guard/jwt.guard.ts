@@ -21,7 +21,7 @@ export class JwtGuard implements CanActivate {
     if (!token) {
       throw new BadRequestException('yoken doesnt exist');
     }
-    const payload = await this.jwtService.verifyAsync(token, {secret: 'secret'/*this.configService.get('JWT_SECRET')*/});
+    const payload = await this.jwtService.verifyAsync(token, {secret: await this.configService.get('JWT_SECRET')});
 
     if (!payload)
       throw new BadRequestException('token verification failled');

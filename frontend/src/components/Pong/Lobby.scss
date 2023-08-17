@@ -1,0 +1,54 @@
+.menu{
+	color: #ecdefd;
+	padding: 20px;
+	background-color: #1d0439;
+	text-align: center;
+	height: 100vh;
+}
+
+.colors{
+	padding-top: 15px;
+	padding-bottom: 15px;
+	border-radius: 10px;
+	width: 80%;
+/*	box-shadow: pink 0px 5px 15px;*/
+	margin: auto;
+	margin-bottom: 20px;
+	background-color: #180330;
+	text-align: center;
+}
+
+.square{
+	margin: 10px;
+	height: 40px;
+	width: 30px;
+	border-radius: 10px;
+}
+
+.currentColor{
+	text-align: center;
+}
+
+.gamemodes{
+	padding-top: 15px;
+	padding-bottom: 15px;
+	text-align: center;
+	font-size: 30px;
+	display: flow;
+	margin: auto;
+	border-radius: 10px;
+	width: 80%;
+	background-color: #180330;
+	vertical-align: middle;
+}
+
+.queue{
+	color: black;
+	background-color: #a662f4;
+	border: 1px solid #1d0439;
+	box-shadow: #7e1aef 0px 3px 7px;
+}
+
+.queue:hover{
+	background-color: #ae70f5 + 30;
+}
