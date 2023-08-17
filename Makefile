@@ -7,11 +7,12 @@ build :
 	docker-compose up --build
 
 down :
-	docker-compose down -v
+	docker-compose down -v 
 
 prune: down
-	docker system prune -a -f
+#ajouter les commandes
 
-re : down all
+re : #clean
+#	docker-compose -f ./srcs/docker-compose.yml up --build
 
 .PHONY: all up down clean prune re
