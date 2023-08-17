@@ -5,14 +5,10 @@ import { TwoFaModule } from './two_fa/two_fa.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { UsersService } from './users/users.service';
-import { UsersController } from './users/users.controller';
-import { ChannelsModule } from './channels/channels.module';
-import { Channel } from './channels/entities/channel.entity';
+// import { AppController } from './app.controller';
+// import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
-
-import { SocketModule } from './socket/socket.module'
 
 @Module({
 	imports: [
@@ -29,7 +25,7 @@ import { SocketModule } from './socket/socket.module'
 				username: config.get('POSTGRES_USER'),
 				password: config.get('POSTGRES_PASSWORD'),
 				database: config.get('POSTGRES_DB'),
-				entities: [User, Channel],
+				entities: [User],
 				synchronize: true,
 			}),
 			inject: [ConfigService],
@@ -37,9 +33,7 @@ import { SocketModule } from './socket/socket.module'
 		TypeOrmModule.forFeature([User]),
 		UsersModule,
 		AuthModule,
-		TwoFaModule,
-		SocketModule,
-		ChannelsModule,],
+		TwoFaModule],
 	// controllers: [AppController],
 	// providers: [AppService],
 })

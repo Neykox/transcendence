@@ -5,7 +5,7 @@ interface HistoryProps {
 	onClick: () => void;
 }
 
-function History({ matchs }: HistoryProps) {
+function History({ matchs, onClick }: HistoryProps) {
 	// State (état, données)
 
 	// Comportement
@@ -23,6 +23,7 @@ function History({ matchs }: HistoryProps) {
 					</div>
 				))}
 			</div>
+			<button onClick={onClick}>Add</button>
 		</div>
 	);
 }

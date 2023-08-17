@@ -8,12 +8,9 @@ import Chat from './components/User/Message/Chat/Chat';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Page1 from './components/page1';
-import TwoFa from './components/TwoFa/TwoFa';
-import Lobby from './components/Pong/Lobby';
+import Page2 from './components/page2';
 import { UserProvider } from './model/userContext';
 import { useState, useEffect } from 'react';
-import Channel from './components/User/Channel/Channel';
-import ChannelChat from './components/User/Channel/ChannelChat/ChannelChat';
 
 function App() {
   const [connected, setConnected] = useState(false);
@@ -80,11 +77,7 @@ function App() {
           </Route>
           <Route path="/settings" element={<Settings />} />
           <Route path="/page1" element={<Page1 />} />
-          <Route path="/twofa" element={<TwoFa />} />
-          <Route path='/lobby' element={<Lobby />} />
-          <Route path='/channel' element={<Channel />}>
-          <Route path="/channel/:id" element={<ChannelChat />} />
-        </Route>
+          <Route path="/page2" element={<Page2 />} />
         </Routes>
       </div>
     </UserProvider>
