@@ -64,8 +64,8 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
                     Rejoindre un canal
                 </button>
 
-                {/* revoir le CSS des Modal qui ne fonctionne pas */}
-                <Modal isOpen={isModalOpen} onRequestClose={handleModalClose}>
+                { }
+                <Modal className="Modal" isOpen={isModalOpen} onRequestClose={handleModalClose}>
                     <h2>Ajouter un nouveau canal</h2>
                     <input
                         type="text"
