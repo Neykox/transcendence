@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../model/userContext";
-import { get } from "http";
+// import { get } from "http";
 
 export default function Page1() {
   const [redirect, setRedirect] = useState(false);
@@ -17,25 +17,25 @@ export default function Page1() {
     navigate(-1);
   };
 
-  const get_access_token = async () => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        grant_type: "authorization_code",
-        client_id: process.env.REACT_APP_UID42,
-        client_secret: process.env.REACT_APP_SECRET42,
-        code,
-        redirect_uri: "http://localhost:3000/page1",
-      }),
-    };
-    const response = await fetch(
-      "https://api.intra.42.fr/oauth/token",
-      requestOptions
-    );
-    const data = await response.json();
-    return data.access_token;
-  };
+  // const get_access_token = async () => {
+  //   const requestOptions = {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       grant_type: "authorization_code",
+  //       client_id: process.env.REACT_APP_UID42,
+  //       client_secret: process.env.REACT_APP_SECRET42,
+  //       code,
+  //       redirect_uri: "http://localhost:3000/page1",
+  //     }),
+  //   };
+  //   const response = await fetch(
+  //     "https://api.intra.42.fr/oauth/token",
+  //     requestOptions
+  //   );
+  //   const data = await response.json();
+  //   return data.access_token;
+  // };
 
 
 
@@ -97,6 +97,26 @@ export default function Page1() {
 
 
   useEffect(() => {
+    const get_access_token = async () => {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          grant_type: "authorization_code",
+          client_id: process.env.REACT_APP_UID42,
+          client_secret: process.env.REACT_APP_SECRET42,
+          code,
+          redirect_uri: "http://localhost:3000/page1",
+        }),
+      };
+      const response = await fetch(
+        "https://api.intra.42.fr/oauth/token",
+        requestOptions
+      );
+      const data = await response.json();
+      return data.access_token;
+    };
+
     const test = async () => {
       if (code) {
         const access_token = await get_access_token();
@@ -107,8 +127,8 @@ export default function Page1() {
         if (user === null) {
           // localStorage.removeItem("user");
           await create_user(user_info.login, user_info.image);
-          await get_cookie(user);
           const newUser = await get_user(user_info.login);
+          await get_cookie(newUser);
           userContext.setUser(user_info);
           userContext.setUser(prevUser => ({ ...prevUser, image: user_info.image.link }));
           userContext.setUser(prevUser => ({ ...prevUser, pseudo: user_info.login }));
@@ -135,7 +155,7 @@ export default function Page1() {
       }
     };
     test();
-  }, []);
+  }, [code, userContext]);
 
   useEffect(() => {
     if (redirect) {
