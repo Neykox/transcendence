@@ -41,8 +41,8 @@ function DuelButton() {
 		toast(({ closeToast }) => <div>
 									<div >{challenger.current} challenged you to a {gametype.current === "1v1" ? "Classic" : "2 Balls"} duel!
 										<div >
-											<a onClick={() => {send_answer(true)}}><img src={accept} className="friendAccept friendIcon"/></a>
-											<a onClick={() => {send_answer(false)}}><img src={decline} className="friendRefuse friendIcon"/></a>
+											<a onClick={() => {send_answer(true)}} href="/#"><img src={accept} alt="accept" className="friendAccept friendIcon"/></a>
+											<a onClick={() => {send_answer(false)}} href="/#"><img src={decline} alt="decline" className="friendRefuse friendIcon"/></a>
 										</div>
 									</div>
 								</div>, { autoClose: false, toastId: 'dup', closeButton: false, closeOnClick: false,})

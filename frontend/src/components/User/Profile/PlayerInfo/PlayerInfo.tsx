@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useContext } from 'react';
 import './PlayerInfo.scss';
 //import {userInfo} from '../../../../model/userInfo'; 
 import UserContext from '../../../../model/userContext';
-import { lookup } from 'dns';
+// import { lookup } from 'dns';
 
 interface PlayerInfoProps {
 	wins: number;
