@@ -30,28 +30,38 @@ function App() {
     await fetch('http://localhost:5000/auth/clear_cookie', requestOptions);
   };
 
-  const handleStorageChange = (event: StorageEvent) => {
-    if (storage === null) {
-      clearCookie();
-      setConnected(false);
-      console.log('disconnected');
-    } else {
-      setConnected(true);
-      console.log("connected");
-    }
-  };
+  // const handleStorageChange = (event: StorageEvent) => {
+  //   if (storage === null) {
+  //     clearCookie();
+  //     setConnected(false);
+  //     console.log('disconnected');
+  //   } else {
+  //     setConnected(true);
+  //     console.log("connected");
+  //   }
+  // };
 
   //useEffect(() => {
   //  handleStorageChange(storage);
   //}, [storage])
 
   useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (storage === null) {
+        clearCookie();
+        setConnected(false);
+        console.log('disconnected');
+      } else {
+        setConnected(true);
+        console.log("connected");
+      }
+    };
     window.addEventListener('storage', handleStorageChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [storage]);
 
   useEffect(() => {
     if (storage != null) {
