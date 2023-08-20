@@ -3,11 +3,14 @@ import homePageImg from '../../asset/images/home-page.png';
 import messageImg from '../../asset/images/message.png';
 import userImg from '../../asset/images/user.png';
 import crowdImg from '../../asset/images/crowd.png';
-import settings from '../../asset/images/settings.png';
-import paddle from '../../asset/images/pngwing.com.png';
+import settings from '../../asset/images/settings_logo.png';
+//import paddle from '../../asset/images/pngwing.com.png';
+import pingPongImg from '../../asset/images/ping-pong_logo.png';
+import shutdown from '../../asset/images/shutdown_logo.png';
+
 import { Link } from 'react-router-dom';
 class active {
-	static setActive(name : string) {
+	static setActive(name: string) {
 		active.active = name;
 	}
 
@@ -42,9 +45,9 @@ function NavBar() {
 					<img src={crowdImg} alt="" />
 				</Link>
 			</div>
-			<div>
+			<div className="pong">
 				<Link to={"/lobby"} /*state={{ "challenger": "bob" }}*/>
-					<img src={paddle} alt="" />
+					<img src={pingPongImg} alt="" />
 				</Link>
 			</div>
 			<div className={active.active === "settings" ? "set selectedLink" : "set"}>
@@ -52,6 +55,12 @@ function NavBar() {
 					<img src={settings} alt="" />
 				</Link>
 			</div>
+			<div className={active.active === "shutdown" ? "set selectedLink" : "set2"}>
+				<Link to={"/shutdown"} onClick={() => active.setActive("shutdown")}>
+					<img src={shutdown} alt="" />
+				</Link>
+			</div>
+
 		</nav>
 	)
 }
