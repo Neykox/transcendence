@@ -27,14 +27,15 @@ function Channel() {
 
 	const addChannel = async (newChannel) => {
 		console.log("newChannel = ", newChannel)
-		await fetch('http://localhost:5000/channels/create',
+		const response = await fetch('http://localhost:5000/channels/create',
 			{
 				method: "POST",
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',
 				body: JSON.stringify(newChannel),
 			});
-		setChannels(prevChannels => [...prevChannels, newChannel]);
+		const data = await response.json();
+		setChannels(prevChannels => [...prevChannels, data]);
 	};
 
 	useEffect(() => {

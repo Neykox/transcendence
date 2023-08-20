@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import './ChannelList.scss';
 
 import UserContext from '../../../../model/userContext';
+import { socket } from '../Socket/socketInit';
 
 interface HistoryProps {
     channels: Array<{ owner: string; name: string; type: string; password: string }>;
@@ -36,18 +37,41 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
                 owner: user.login,
                 name: newChannelName,
                 type: newChannelType,
-                password: null,
+                password: newChannelPassword,
             };
 
             addChannel(newChannel);
             setNewChannelName('');
+            setNewChannelPassword('');
             setIsModalOpen(false);
         }
     }
 
     const handleJoinChannel = () => {
-        // associé le channel a l'user 
+        // associé le channel a l'user
+        // socket.emit("updatePlayer", {"p":{dir: -1, room:p1.current.room, socketId:p1.current.socketId}});
     }
+
+    // const myEventHandler = useCallback(data => {
+    //     setEnded(true);
+    //     let score;
+    //     if (data.p1.socketId === socket.id)
+    //         score = { id: Date().toLocaleString(), opponent: data.p2.name, scores: data.p1.score + "/" + data.p2.score, result: data.p1.score > data.p2.score ? "matchWin" : "matchLose" };
+    //     else
+    //         score = { id: Date().toLocaleString(), opponent: data.p1.name, scores: data.p2.score + "/" + data.p1.score, result: data.p2.score > data.p1.score ? "matchWin" : "matchLose" };
+    //     const requestOptions = {
+    //         method: "POST",
+    //         headers: { "Content-Type": "application/json" },
+    //         credentials: "include",
+    //         body: JSON.stringify({ "score": score }),
+    //     };
+    //     fetch("http://localhost:5000/users/addGameToHistory", requestOptions);
+    // }, []);
+
+    // useEffect(() => {
+    //     socket.on('score', myEventHandler);
+    //     return () => socket.off('score', myEventHandler)
+    // }, [myEventHandler]);
 
     return (
         <div className="channelList">

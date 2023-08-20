@@ -1,7 +1,9 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody, ConnectedSocket } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io';
 import { PlayerDto } from '../dto/player.dto'
-
+import { BannedService } from '../banned/banned.service';
+import { MutedService } from '../muted/muted.service';
+import { MessageService } from '../message/message.service';
 
 import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interface'
 
@@ -31,6 +33,12 @@ let _2balls = 0;
 })
 
 export class SocketService {
+
+	constructor (
+		private readonly bannedService: BannedService,
+		private readonly mutedService: MutedService,
+		private readonly messageService: MessageService,
+	) {}
 
 	@WebSocketServer()
 	server: Server;
