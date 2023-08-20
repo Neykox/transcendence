@@ -94,7 +94,7 @@ export default function Chat() {
             <div className="channelInfo">
                 <h2>{channel.name}</h2>
                 <button onClick={deleteChannel} >delete</button>
-                <div className={`${channel.status}`}></div>
+                <div className={`${channel.type}`}></div>
             </div>
             <div className="chatBox">
                 <div className="chatMessage">

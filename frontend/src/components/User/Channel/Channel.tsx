@@ -27,12 +27,12 @@ function Channel() {
 	const addChannel = async (newChannel) => {
 		console.log("newChannel = ", newChannel)
 		await fetch('http://localhost:5000/channels/create',
-		{
-			method: "POST",
-			headers: { 'Content-Type': 'application/json' },
-			credentials: 'include',
-			body: JSON.stringify(newChannel),
-		});
+			{
+				method: "POST",
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: JSON.stringify(newChannel),
+			});
 		setChannels(prevChannels => [...prevChannels, newChannel]);
 	};
 
@@ -41,12 +41,11 @@ function Channel() {
 			const response = await fetch('http://localhost:5000/channels', { method: "GET" });
 			let data = await response.json();
 			if (!data)
-				return ;
+				return;
 			console.log("channels = ", data);
 			let index = 0;
 			let newChannels: Channels[] = [];
-			while (data[index])
-			{
+			while (data[index]) {
 				newChannels.unshift(data[index]);
 				index++;
 			}

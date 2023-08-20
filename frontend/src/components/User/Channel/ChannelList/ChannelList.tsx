@@ -6,15 +6,16 @@ import './ChannelList.scss';
 import UserContext from '../../../../model/userContext';
 
 interface HistoryProps {
-    channels: Array<{ id: number; name: string; status: string }>;
-    addChannel: (newChannel: { id: number; name: string; status: string }) => void;
+    channels: Array<{ id: number; name: string; type: string; password: string }>;
+    addChannel: (newChannel: { id: number; name: string; type: string; password: string }) => void;
 }
 
 function ChannelList({ channels, addChannel }: HistoryProps) {
     const [selectedChannelId, setSelectedChannelId] = useState<number | null>(null);
     const [newChannelName, setNewChannelName] = useState<string>('');
-    const [newChannelStatus, setNewChannelStatus] = useState<string>('offline');
+    const [newChannelType, setNewChannelType] = useState<string>('public');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [newChannelPassword, setNewChannelPassword] = useState('');
     const { user } = useContext(UserContext);
 
     const handleSelectMessage = (id: number) => {
@@ -34,7 +35,7 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
             const newChannel = {
                 owner: user.login,
                 name: newChannelName,
-                type: newChannelStatus,
+                type: newChannelType,
                 password: null,
             };
 
@@ -54,7 +55,7 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
                 <Link to={`/channel/${channel.id}`} state={{ channel: channel }} key={channel.id}>
                     <div className={`channel ${selectedChannelId === channel.id ? 'selected' : ''}`} onClick={() => handleSelectMessage(channel.id)}>
                         <h2>{channel.name}</h2>
-                        <div className={`${channel.status}`}></div>
+                        <div className={`${channel.type}`}></div>
                     </div>
                 </Link>
             ))}
@@ -76,10 +77,26 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
                         value={newChannelName}
                         onChange={(e) => setNewChannelName(e.target.value)}
                     />
-                    <select value={newChannelStatus} onChange={(e) => setNewChannelStatus(e.target.value)}>
+                    <select value={newChannelType} onChange={(e) => setNewChannelType(e.target.value)}>
                         <option value="private">privé</option>
                         <option value="public">public</option>
                     </select>
+                    {newChannelType === "private" ? (
+                        <input
+                            type="password"
+                            placeholder="Mot de passe du canal"
+                            value={newChannelPassword}
+                            onChange={(e) => setNewChannelPassword(e.target.value)}
+                        />
+                    ) : (
+                        <input
+                            type="password"
+                            placeholder="Mot de passe du canal"
+                            value={newChannelPassword}
+                            onChange={() => { }}
+                            disabled
+                        />
+                    )}
                     <button onClick={handleModalSubmit}>Ajouter</button>
                     <button onClick={handleModalClose}>Annuler</button>
                 </Modal>
