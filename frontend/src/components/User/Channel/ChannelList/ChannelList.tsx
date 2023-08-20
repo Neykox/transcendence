@@ -6,20 +6,20 @@ import './ChannelList.scss';
 import UserContext from '../../../../model/userContext';
 
 interface HistoryProps {
-    channels: Array<{ id: number; name: string; type: string; password: string }>;
-    addChannel: (newChannel: { id: number; name: string; type: string; password: string }) => void;
+    channels: Array<{ owner: string; name: string; type: string; password: string }>;
+    addChannel: (newChannel: { owner: string; name: string; type: string; password: string }) => void;
 }
 
 function ChannelList({ channels, addChannel }: HistoryProps) {
-    const [selectedChannelId, setSelectedChannelId] = useState<number | null>(null);
+    const [selectedChannelOwner, setSelectedChannelOwner] = useState<string | null>(null);
     const [newChannelName, setNewChannelName] = useState<string>('');
     const [newChannelType, setNewChannelType] = useState<string>('public');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [newChannelPassword, setNewChannelPassword] = useState('');
     const { user } = useContext(UserContext);
 
-    const handleSelectMessage = (id: number) => {
-        setSelectedChannelId(id);
+    const handleSelectMessage = (owner: string) => {
+        setSelectedChannelOwner(string);
     }
 
     const handleAddChannel = () => {
@@ -52,8 +52,8 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
     return (
         <div className="channelList">
             {channels.map((channel) => (
-                <Link to={`/channel/${channel.id}`} state={{ channel: channel }} key={channel.id}>
-                    <div className={`channel ${selectedChannelId === channel.id ? 'selected' : ''}`} onClick={() => handleSelectMessage(channel.id)}>
+                <Link to={`/channel/${channel.owner}`} state={{ channel: channel }} key={channel.owner}>
+                    <div className={`channel ${selectedChannelOwner === channel.owner ? 'selected' : ''}`} onClick={() => handleSelectMessage(channel.owner)}>
                         <h2>{channel.name}</h2>
                         <div className={`${channel.type}`}></div>
                     </div>

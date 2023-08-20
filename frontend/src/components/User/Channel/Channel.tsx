@@ -23,6 +23,7 @@ function Channel() {
 
 
 	const [channels, setChannels] = useState<Channels[]>([]);
+	const channelsNoPrivate = channels.filter(channel => channel.type !== "private");
 
 	const addChannel = async (newChannel) => {
 		console.log("newChannel = ", newChannel)
@@ -60,7 +61,7 @@ function Channel() {
 		<div className="message">
 			<NavBar />
 			<div className="content">
-				<ChannelList channels={channels} addChannel={addChannel} />
+				<ChannelList channels={channelsNoPrivate} addChannel={addChannel} />
 				<Outlet></Outlet>
 			</div>
 		</div>

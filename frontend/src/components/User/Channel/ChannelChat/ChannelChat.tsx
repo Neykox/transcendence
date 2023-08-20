@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 
 
 type ChatMessage = {
-    conversationId: number;
+    conversationOwner: string;
     who: string;
     author: string;
     message: string;
@@ -24,14 +24,14 @@ export default function Chat() {
     ]);
 
     useEffect(() => {
-        const message = allMesage.filter(message => message.conversationId === channel.id);
+        const message = allMesage.filter(message => message.conversationOwner === channel.owner);
         //console.log("1");
         if (message.length > 0) {
             setMessages(message);
         } else {
             setMessages([]);
         }
-    }, [channel.id]);
+    }, [channel.owner]);
 
     useEffect(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,7 +49,7 @@ export default function Chat() {
         }
 
         const newMessage: ChatMessage = {
-            conversationId: channel.id,
+            conversationOwner: channel.owner,
             who: 'me',
             author: 'Vous',
             message: inputValue.trim(),
@@ -63,7 +63,7 @@ export default function Chat() {
 
     const contactSendMessage = () => {
         const newMessage: ChatMessage = {
-            conversationId: channel.id,
+            conversationOwner: channel.owner,
             who: 'contact',
             author: `${channel.name}`,
             message: "Coucou"
@@ -73,7 +73,7 @@ export default function Chat() {
     }
 
     const deleteChannel = () => {
-        const response = fetch(`http://localhost:5000/channels/${channel.id}`, { method: "DELETE" });
+        const response = fetch(`http://localhost:5000/channels/${channel.owner}`, { method: "DELETE" });
     }
 
     const getTime = () => {
