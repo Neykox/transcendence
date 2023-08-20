@@ -19,7 +19,7 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
     const { user } = useContext(UserContext);
 
     const handleSelectMessage = (owner: string) => {
-        setSelectedChannelOwner(string);
+        setSelectedChannelOwner(owner);
     }
 
     const handleAddChannel = () => {
