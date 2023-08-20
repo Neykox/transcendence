@@ -78,25 +78,18 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
                         onChange={(e) => setNewChannelName(e.target.value)}
                     />
                     <select value={newChannelType} onChange={(e) => setNewChannelType(e.target.value)}>
-                        <option value="private">privé</option>
                         <option value="public">public</option>
+                        <option value="private">privé</option>
+                        <option value="protected">protégé</option>
                     </select>
-                    {newChannelType === "private" ? (
+                    {newChannelType === "private" || newChannelType === "protected" ? (
                         <input
                             type="password"
                             placeholder="Mot de passe du canal"
                             value={newChannelPassword}
                             onChange={(e) => setNewChannelPassword(e.target.value)}
                         />
-                    ) : (
-                        <input
-                            type="password"
-                            placeholder="Mot de passe du canal"
-                            value={newChannelPassword}
-                            onChange={() => { }}
-                            disabled
-                        />
-                    )}
+                    ) : null}
                     <button onClick={handleModalSubmit}>Ajouter</button>
                     <button onClick={handleModalClose}>Annuler</button>
                 </Modal>
