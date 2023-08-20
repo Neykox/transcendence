@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Modal from 'react-modal';
 import './ChannelList.scss';
 
+import UserContext from '../../../../model/userContext';
 
 interface HistoryProps {
     channels: Array<{ id: number; name: string; status: string }>;
@@ -14,6 +15,7 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
     const [newChannelName, setNewChannelName] = useState<string>('');
     const [newChannelStatus, setNewChannelStatus] = useState<string>('offline');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const { user } = useContext(UserContext);
 
     const handleSelectMessage = (id: number) => {
         setSelectedChannelId(id);
@@ -29,10 +31,11 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
 
     const handleModalSubmit = () => {
         if (newChannelName.trim() !== '') {
-            const newChannel: { id: number; name: string; status: string } = {
-                id: channels.length + 1,
+            const newChannel = {
+                owner: user.login,
                 name: newChannelName,
-                status: newChannelStatus,
+                type: newChannelStatus,
+                password: null,
             };
 
             addChannel(newChannel);
@@ -74,7 +77,7 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
                         onChange={(e) => setNewChannelName(e.target.value)}
                     />
                     <select value={newChannelStatus} onChange={(e) => setNewChannelStatus(e.target.value)}>
-                        <option value="privé">privé</option>
+                        <option value="private">privé</option>
                         <option value="public">public</option>
                     </select>
                     <button onClick={handleModalSubmit}>Ajouter</button>

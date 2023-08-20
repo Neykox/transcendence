@@ -1,11 +1,11 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { channelTypesDto } from "./channelTypes.dto";
-import { Transform } from "class-transformer";
+// import { Transform } from "class-transformer";
 
 export class CreateChannelDto {
     @IsNotEmpty()
-    @Transform(({ value }) => parseInt(value))
-    owner: number;
+    // @Transform(({ value }) => parseInt(value))
+    owner: string;
 
     @IsNotEmpty()
     @IsString()

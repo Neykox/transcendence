@@ -72,6 +72,10 @@ export default function Chat() {
         setMessages((prevMessages) => [...prevMessages, newMessage]);
     }
 
+    const deleteChannel = () => {
+        const response = fetch(`http://localhost:5000/channels/${channel.id}`, { method: "DELETE" });
+    }
+
     const getTime = () => {
         const date = new Date();
 
@@ -89,6 +93,7 @@ export default function Chat() {
         <div className='chat'>
             <div className="channelInfo">
                 <h2>{channel.name}</h2>
+                <button onClick={deleteChannel} >delete</button>
                 <div className={`${channel.status}`}></div>
             </div>
             <div className="chatBox">
