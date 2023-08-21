@@ -135,14 +135,24 @@ export class ChannelsService {
   async removeUser(channelId: number, newUser: any) {
     const channel = await this.findOne(channelId);
     let index = 0;
-    let newUsers = channel.users;
+    let n = 0;
+    let users = channel.users;
+    let newUsers = [];
 
-    while (newUsers[index])
+    while (users[index])
     {
-      if (newUsers[index].id === newUser.id)
-        delete(newUsers[index]);
+      if (users[index].id !== newUser.id)
+        {
+          newUsers[n] = users[index];
+          n++;
+        }
       index++;
     }
     this.channelRepository.update(channelId, { users: newUsers });
+  }
+
+  async getMembers(channelId: number) {
+    const channel = await this.findOne(channelId);
+    return channel.users;
   }
 }

@@ -41,4 +41,10 @@ export class ChannelsController {
   async removeUser(@Body() {channelId, newUser}) {
     await this.channelsService.removeUser(channelId, newUser);
   }
+
+  @Post('getMembers')
+  async getMembers(@Body() {channelId}) {
+    return await this.channelsService.getMembers(channelId);
+  }
+
 }

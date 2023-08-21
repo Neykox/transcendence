@@ -4,7 +4,6 @@ import Modal from 'react-modal';
 import './ChannelList.scss';
 
 import UserContext from '../../../../model/userContext';
-import { socket } from '../../../Socket/socketInit';
 
 interface HistoryProps {
     channels: Array<{ owner: string; name: string; type: string; password: string }>;
@@ -47,42 +46,6 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
         }
     }
 
-/////////////////////////////////////////////////////////////////////
-                //maybe need to move this two in channelchat
-
-    const handleJoinChannel = async () => {
-        // associé le channel a l'user
-        const response = await fetch('http://localhost:5000/channels/addUser',
-            {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    channelId: 24,//channel.id,
-                    newUser: { id: user.id, login: user.login }
-                }),
-            });
-        // console.log(await response.json())
-        socket.emit("joinChannel", { channelId: 24/*channel.id*/});
-        // socket.join(24/*channel.id*/);
-    }
-
-    const handleLeaveChannel = async () => {
-        await fetch('http://localhost:5000/channels/removeUser',
-            {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    channelId: 24,//channel.id,
-                    newUser: { id: user.id, login: user.login }
-            }),
-        });
-        socket.emit("leaveChannel", { channelId: 24/*channel.id*/});
-        // socket.leave(24/*channel.id*/);
-    }//quit / kick button
-////////////////////////////////////////////////////////////////////////
-
     return (
         <div className="channelList">
             {channels.map((channel) => (
@@ -97,13 +60,6 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
             <div className="button-container">
                 <button className="add-channel-button" onClick={handleAddChannel}>
                     Ajouter un canal
-                </button>
-                <button className="join-channel-button" onClick={handleJoinChannel}>
-                    Rejoindre un canal
-                </button>
-
-                <button className="join-channel-button" onClick={handleLeaveChannel}>
-                    Leave un canal
                 </button>
 
                 { }

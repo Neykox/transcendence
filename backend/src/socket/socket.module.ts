@@ -4,7 +4,6 @@ import { BannedModule } from '../banned/banned.module';
 import { MutedModule } from '../muted/muted.module';
 import { MessageModule } from '../message/message.module';
 
-
 @Module({
   imports: [BannedModule, MutedModule, MessageModule, ],
   providers: [SocketService],

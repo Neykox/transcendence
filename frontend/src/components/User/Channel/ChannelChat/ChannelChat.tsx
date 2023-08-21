@@ -1,9 +1,10 @@
 import './ChannelChat.scss';
-
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useLocation } from "react-router-dom";
 import { socket } from '../../../Socket/socketInit';
-
+import UserContext from '../../../../model/userContext';
+import { useEffect, useRef, useState, useContext, useCallback } from 'react';
+import { useLocation } from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type ChatMessage = {
     conversationOwner: string;
@@ -12,12 +13,23 @@ type ChatMessage = {
     message: string;
 };
 
+type member = {
+    id: number;
+    login: string;
+}
+
 const allMesage: ChatMessage[] = [];
 
 export default function Chat() {
+    const { user } = useContext(UserContext);
     const location = useLocation();
     const channel = location.state.channel;
     const lastMessageRef = useRef<HTMLDivElement>(null);
+    const [showModal, setShowModal] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [passwordInput, setPasswordInput] = useState('');
+    const [channelMembers, setChannelMembers] = useState<member[]>([]);
+    const [currentUser, setCurrentUser] = useState<string>('');
 
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -37,6 +49,14 @@ export default function Chat() {
     useEffect(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    const openModal = () => {
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(event.target.value);
@@ -89,8 +109,86 @@ export default function Chat() {
     }, [myEventHandler2]);
 
     const deleteChannel = () => {
-        const response = fetch(`http://localhost:5000/channels/${channel.owner}`, { method: "DELETE" });
+        const response = fetch(`http://localhost:5000/channels/${channel.id}`, { method: "DELETE" });
     }
+
+    const joinChannel = async () => {
+        if (channel.type === 'protected') {
+            setShowPasswordModal(true);
+        } else {
+            const newUser = user.pseudo;
+            // setChannelMembers((prevMembers) => [...prevMembers, newUser]);
+        }
+        const response = await fetch('http://localhost:5000/channels/addUser',
+            {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    channelId: channel.id,
+                    newUser: { id: socket.id, login: socket.id/*user.login*/ }
+                }),
+            });
+        // console.log(await response.json())
+        socket.emit("joinChannel", { channelId: channel.id});
+    }
+
+    const handleLeaveChannel = async () => {
+        await fetch('http://localhost:5000/channels/removeUser',
+            {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    channelId: channel.id,
+                    newUser: { id: socket.id, login: socket.id/*user.login*/ }
+            }),
+        });
+        socket.emit("leaveChannel", { channelId: channel.id});
+    }//quit / kick button
+
+    async function handleKick(target) {
+        console.log({target})
+        // socket.emit("kick", { channelId: channel.id, userId: target.id});
+    }
+
+    // const getMembers = async () => {
+    //     const response = await fetch('http://localhost:5000/channels/getMembers',
+    //         {
+    //             method: "GET",
+    //             headers: { 'Content-Type': 'application/json' },
+    //             credentials: 'include',
+    //             body: JSON.stringify({ channelId: channel.id }),
+    //         });
+    //     console.log(await response.json())
+    // }
+
+    const getMembersEvent = useCallback( async () => {
+        // console.log(data);
+        // contactSendMessage(data);
+        const response = await fetch('http://localhost:5000/channels/getMembers',
+            {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ channelId: channel.id }),
+            });
+        const data = await response.json();
+        let index = 0;
+        let newMatchs: member[] = [];
+        while (data[index])
+        {
+            // newMatchs.unshift(data[index]);
+            newMatchs.push(data[index]);
+            index++;
+        }
+        setChannelMembers(newMatchs)
+    }, [channel.id]);
+
+    useEffect(() => {
+      socket.on('getMembers', getMembersEvent);
+      return () => socket.off('getMembers', getMembersEvent);
+    }, [getMembersEvent]);
 
     const getTime = () => {
         const date = new Date();
@@ -104,12 +202,40 @@ export default function Chat() {
         return (formattedDate);
     }
 
+    const handlePasswordInputChange = (event) => {
+        setPasswordInput(event.target.value);
+    };
+
+    const handlePasswordSubmit = () => {
+        // trouve bine le channel.name mais channel.password indefini
+        const correctPassword = channel.password;
+        console.log(correctPassword);
+        console.log(channel.name);
+        if (passwordInput === correctPassword) {
+            toast.success('Mot de passe correct !');
+            setShowPasswordModal(false);
+            const newUser = user.pseudo;
+            setChannelMembers((prevMembers) => [...prevMembers, newUser]);
+            setPasswordInput('');
+        } else {
+            toast.error('Mot de passe incorrect. Veuillez réessayer.');
+            setShowPasswordModal(false);
+        }
+    };
 
     return (
         <div className='chat'>
             <div className="channelInfo">
                 <h2>{channel.name}</h2>
+                {// ici pas besoin de rajouter si public et protected car les privé ne sont pas visible mais plus securisé ? 
+                }
+                {(channel.type === 'public' || channel.type === 'protected') && (
+                    <button onClick={joinChannel}>Rejoindre</button>
+                )}
+
+                <button onClick={handleLeaveChannel}>Leave un canal</button>
                 <button onClick={deleteChannel} >delete</button>
+                <button onClick={openModal}>Membres</button>
                 <div className={`${channel.type}`}></div>
             </div>
             <div className="chatBox">
@@ -138,6 +264,36 @@ export default function Chat() {
                 </form>
                 <button onClick={contactSendMessage}>Contact Send</button>
             </div>
+            {showPasswordModal && (
+                <div className="passwordModal">
+                    <h3>Entrez le mot de passe :</h3>
+                    <input
+                        type="password"
+                        value={passwordInput}
+                        onChange={handlePasswordInputChange}
+                    />
+                    <button onClick={handlePasswordSubmit}>Valider</button>
+                </div>
+            )}
+            {showModal && (
+                <div className="modal">
+                    <h3>Liste des membres</h3>
+                    <ul>
+                        {channelMembers.map((user, index) => (
+                            <li key={index}>
+                                <div className="user-name">{user.login}</div>
+                                <div className="button-container">
+                                    <button>ban</button>
+                                    <button onClick={() => handleKick(user)}>kick</button>
+                                    <button>mute</button>
+                                </div>
+                            </li>
+
+                        ))}
+                        <button onClick={closeModal}>Close</button>
+                    </ul>
+                </div>
+            )}
         </div>
     );
 }
