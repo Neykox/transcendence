@@ -546,8 +546,8 @@ export class SocketService {
 		this.server.to(channelId).emit("newMessage", newMessage);//check if muted first
 	}
 
-	// @SubscribeMessage("kick")
-	// kick(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
-	// 	this.server.to(channelId).emit("newMessage", newMessage);
-	// }
+	@SubscribeMessage("kick")
+	kick(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
+		// this.server.to(connected[user].id).emit("kicked", { "channelId": channelId });
+	}
 }

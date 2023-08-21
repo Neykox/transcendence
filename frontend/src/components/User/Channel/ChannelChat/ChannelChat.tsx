@@ -109,7 +109,7 @@ export default function Chat() {
     }, [myEventHandler2]);
 
     const deleteChannel = () => {
-        const response = fetch(`http://localhost:5000/channels/${channel.id}`, { method: "DELETE" });
+        fetch(`http://localhost:5000/channels/${channel.id}`, { method: "DELETE" });
     }
 
     const joinChannel = async () => {
@@ -119,7 +119,7 @@ export default function Chat() {
             const newUser = user.pseudo;
             // setChannelMembers((prevMembers) => [...prevMembers, newUser]);
         }
-        const response = await fetch('http://localhost:5000/channels/addUser',
+        await fetch('http://localhost:5000/channels/addUser',
             {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -133,7 +133,7 @@ export default function Chat() {
         socket.emit("joinChannel", { channelId: channel.id});
     }
 
-    const handleLeaveChannel = async () => {
+    const handleLeaveChannel = useCallback( async () => {
         await fetch('http://localhost:5000/channels/removeUser',
             {
                 method: "POST",
@@ -145,27 +145,22 @@ export default function Chat() {
             }),
         });
         socket.emit("leaveChannel", { channelId: channel.id});
-    }//quit / kick button
+    }, [channel.id]);//quit / kick button
 
     async function handleKick(target) {
-        console.log({target})
-        // socket.emit("kick", { channelId: channel.id, userId: target.id});
+        socket.emit("kick", { channelId: channel.id, user: target.login});
     }
 
-    // const getMembers = async () => {
-    //     const response = await fetch('http://localhost:5000/channels/getMembers',
-    //         {
-    //             method: "GET",
-    //             headers: { 'Content-Type': 'application/json' },
-    //             credentials: 'include',
-    //             body: JSON.stringify({ channelId: channel.id }),
-    //         });
-    //     console.log(await response.json())
-    // }
+    const onKick = useCallback( () => {
+        handleLeaveChannel();
+    }, [handleLeaveChannel]);
+
+    useEffect(() => {
+      socket.on('kicked', onKick);
+      return () => socket.off('kicked', onKick);
+    }, [onKick]);
 
     const getMembersEvent = useCallback( async () => {
-        // console.log(data);
-        // contactSendMessage(data);
         const response = await fetch('http://localhost:5000/channels/getMembers',
             {
                 method: "POST",
