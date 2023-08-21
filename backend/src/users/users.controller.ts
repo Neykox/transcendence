@@ -24,17 +24,11 @@ export class UsersController {
 		return this.usersService.findAll();
 	}
 
-	@UseGuards(JwtGuard)
+	// @UseGuards(JwtGuard)
 	@Get(':login')
 	async findOneByLogin(@Param('login') login: string, @Req() request: Request): Promise<User> { 
 		const user = await this.usersService.findOneByLogin(login);
-		if (!user) {
-			throw new NotFoundException('User does not exist!');
-		} else if (request['user']['login'] != login) {
-			throw new ForbiddenException('You are not allowed to access this user');
-		}else {
-			return user;
-		}
+		return user;
 	}
 
 	@Get(':login/profile')
