@@ -1,8 +1,9 @@
 import './ChannelChat.scss';
-
-import { useEffect, useRef, useState } from 'react';
+import UserContext from '../../../../model/userContext';
+import { useEffect, useRef, useState, useContext } from 'react';
 import { useLocation } from "react-router-dom";
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type ChatMessage = {
     conversationOwner: string;
@@ -14,9 +15,15 @@ type ChatMessage = {
 const allMesage: ChatMessage[] = [];
 
 export default function Chat() {
+    const { user } = useContext(UserContext);
     const location = useLocation();
     const channel = location.state.channel;
     const lastMessageRef = useRef<HTMLDivElement>(null);
+    const [showModal, setShowModal] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [passwordInput, setPasswordInput] = useState('');
+    const [channelMembers, setChannelMembers] = useState<string[]>([]);
+    const [currentUser, setCurrentUser] = useState<string>('');
 
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -36,6 +43,14 @@ export default function Chat() {
     useEffect(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    const openModal = () => {
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(event.target.value);
@@ -76,6 +91,15 @@ export default function Chat() {
         const response = fetch(`http://localhost:5000/channels/${channel.owner}`, { method: "DELETE" });
     }
 
+    const joinChannel = () => {
+        if (channel.type === 'protected') {
+            setShowPasswordModal(true);
+        } else {
+            const newUser = user.pseudo;
+            setChannelMembers((prevMembers) => [...prevMembers, newUser]);
+        }
+    }
+
     const getTime = () => {
         const date = new Date();
 
@@ -88,12 +112,39 @@ export default function Chat() {
         return (formattedDate);
     }
 
+    const handlePasswordInputChange = (event) => {
+        setPasswordInput(event.target.value);
+    };
+
+    const handlePasswordSubmit = () => {
+        // trouve bine le channel.name mais channel.password indefini
+        const correctPassword = channel.password;
+        console.log(correctPassword);
+        console.log(channel.name);
+        if (passwordInput === correctPassword) {
+            toast.success('Mot de passe correct !');
+            setShowPasswordModal(false);
+            const newUser = user.pseudo;
+            setChannelMembers((prevMembers) => [...prevMembers, newUser]);
+            setPasswordInput('');
+        } else {
+            toast.error('Mot de passe incorrect. Veuillez réessayer.');
+            setShowPasswordModal(false);
+        }
+    };
+
 
     return (
         <div className='chat'>
             <div className="channelInfo">
                 <h2>{channel.name}</h2>
+                {// ici pas besoin de rajouter si public et protected car les privé ne sont pas visible mais plus securisé ? 
+                }
+                {(channel.type === 'public' || channel.type === 'protected') && (
+                    <button onClick={joinChannel}>Rejoindre</button>
+                )}
                 <button onClick={deleteChannel} >delete</button>
+                <button onClick={openModal}>Membres</button>
                 <div className={`${channel.type}`}></div>
             </div>
             <div className="chatBox">
@@ -122,6 +173,36 @@ export default function Chat() {
                 </form>
                 <button onClick={contactSendMessage}>Contact Send</button>
             </div>
+            {showPasswordModal && (
+                <div className="passwordModal">
+                    <h3>Entrez le mot de passe :</h3>
+                    <input
+                        type="password"
+                        value={passwordInput}
+                        onChange={handlePasswordInputChange}
+                    />
+                    <button onClick={handlePasswordSubmit}>Valider</button>
+                </div>
+            )}
+            {showModal && (
+                <div className="modal">
+                    <h3>Liste des membres</h3>
+                    <ul>
+                        {channelMembers.map((user, index) => (
+                            <li key={index}>
+                                <div className="user-name">{user}</div>
+                                <div className="button-container">
+                                    <button>ban</button>
+                                    <button>kick</button>
+                                    <button>mute</button>
+                                </div>
+                            </li>
+
+                        ))}
+                        <button onClick={closeModal}>Close</button>
+                    </ul>
+                </div>
+            )}
         </div>
     );
 }

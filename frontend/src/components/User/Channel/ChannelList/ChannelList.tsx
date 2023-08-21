@@ -88,9 +88,10 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
                 <button className="add-channel-button" onClick={handleAddChannel}>
                     Ajouter un canal
                 </button>
-                <button className="join-channel-button" onClick={handleJoinChannel}>
-                    Rejoindre un canal
-                </button>
+                {//<button className="join-channel-button" onClick={handleJoinChannel}>
+                    //Rejoindre un canal
+                    //</button>
+                }
 
                 { }
                 <Modal className="Modal" isOpen={isModalOpen} onRequestClose={handleModalClose}>
