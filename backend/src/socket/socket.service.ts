@@ -528,4 +528,21 @@ export class SocketService {
 			}
 		}
 	}
+
+	@SubscribeMessage("joinChannel")
+	joinChannel(@MessageBody() {channelId}, @ConnectedSocket() client: Socket) {
+		client.join(channelId);
+	}
+
+	@SubscribeMessage("leaveChannel")
+	leaveChannel(@MessageBody() {channelId}, @ConnectedSocket() client: Socket) {
+		client.leave(channelId);
+	}
+
+	@SubscribeMessage("send_message")
+	send_message(@MessageBody() {channelId, newMessage}, @ConnectedSocket() client: Socket) {
+
+		// console.log(newMessage);
+		this.server.to(channelId).emit("newMessage", newMessage);
+	}
 }

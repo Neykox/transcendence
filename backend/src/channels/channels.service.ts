@@ -109,4 +109,40 @@ export class ChannelsService {
   remove(id: number) {
     return this.channelRepository.delete(id);
   }
+
+  async addUser(channelId: number, newUser: any) {
+    const channel = await this.findOne(channelId);
+    let index = 0;
+    let newUsers = channel.users;
+
+    if (newUsers === null)
+    {
+      newUsers[0] = newUser;
+      this.channelRepository.update(channelId, { users: newUsers });
+      return;
+    }
+    while (newUsers[index])
+    {
+      if (newUsers[index].id === newUser.id)
+        return {msg: "already in channel"};
+      index++;
+    }
+    newUsers[index] = newUser;
+    this.channelRepository.update(channelId, { users: newUsers });
+    return {msg: "user added"};
+  }
+
+  async removeUser(channelId: number, newUser: any) {
+    const channel = await this.findOne(channelId);
+    let index = 0;
+    let newUsers = channel.users;
+
+    while (newUsers[index])
+    {
+      if (newUsers[index].id === newUser.id)
+        delete(newUsers[index]);
+      index++;
+    }
+    this.channelRepository.update(channelId, { users: newUsers });
+  }
 }

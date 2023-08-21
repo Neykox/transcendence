@@ -1,7 +1,8 @@
 import './ChannelChat.scss';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useLocation } from "react-router-dom";
+import { socket } from '../../../Socket/socketInit';
 
 
 type ChatMessage = {
@@ -58,19 +59,34 @@ export default function Chat() {
         allMesage.push(newMessage);
 
         setMessages((prevMessages) => [...prevMessages, newMessage]);
+        socket.emit("send_message", { channelId: channel.id, newMessage: newMessage });
         setInputValue('');
     };
 
-    const contactSendMessage = () => {
-        const newMessage: ChatMessage = {
-            conversationOwner: channel.owner,
-            who: 'contact',
-            author: `${channel.name}`,
-            message: "Coucou"
-        };
+    const contactSendMessage = (data) => {
+        // const newMessage: ChatMessage = {
+        //     conversationOwner: channel.owner,
+        //     who: 'contact',
+        //     author: `${channel.name}`,
+        //     message: "Coucou"
+        // };
+        
+        data.who = 'contact';
+        data.author = `${channel.name}`;
+        const newMessage: ChatMessage = data;
 
         setMessages((prevMessages) => [...prevMessages, newMessage]);
     }
+
+    const myEventHandler2 = useCallback(data => {
+        // console.log(data);
+        contactSendMessage(data);
+    }, []);
+
+    useEffect(() => {
+      socket.on('newMessage', myEventHandler2);
+      return () => socket.off('newMessage', myEventHandler2);
+    }, [myEventHandler2]);
 
     const deleteChannel = () => {
         const response = fetch(`http://localhost:5000/channels/${channel.owner}`, { method: "DELETE" });

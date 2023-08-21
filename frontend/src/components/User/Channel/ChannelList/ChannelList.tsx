@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import './ChannelList.scss';
 
 import UserContext from '../../../../model/userContext';
-import { socket } from '../Socket/socketInit';
+import { socket } from '../../../Socket/socketInit';
 
 interface HistoryProps {
     channels: Array<{ owner: string; name: string; type: string; password: string }>;
@@ -47,31 +47,41 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
         }
     }
 
-    const handleJoinChannel = () => {
+/////////////////////////////////////////////////////////////////////
+                //maybe need to move this two in channelchat
+
+    const handleJoinChannel = async () => {
         // associé le channel a l'user
-        // socket.emit("updatePlayer", {"p":{dir: -1, room:p1.current.room, socketId:p1.current.socketId}});
+        const response = await fetch('http://localhost:5000/channels/addUser',
+            {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    channelId: 24,//channel.id,
+                    newUser: { id: user.id, login: user.login }
+                }),
+            });
+        // console.log(await response.json())
+        socket.emit("joinChannel", { channelId: 24/*channel.id*/});
+        // socket.join(24/*channel.id*/);
     }
 
-    // const myEventHandler = useCallback(data => {
-    //     setEnded(true);
-    //     let score;
-    //     if (data.p1.socketId === socket.id)
-    //         score = { id: Date().toLocaleString(), opponent: data.p2.name, scores: data.p1.score + "/" + data.p2.score, result: data.p1.score > data.p2.score ? "matchWin" : "matchLose" };
-    //     else
-    //         score = { id: Date().toLocaleString(), opponent: data.p1.name, scores: data.p2.score + "/" + data.p1.score, result: data.p2.score > data.p1.score ? "matchWin" : "matchLose" };
-    //     const requestOptions = {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         credentials: "include",
-    //         body: JSON.stringify({ "score": score }),
-    //     };
-    //     fetch("http://localhost:5000/users/addGameToHistory", requestOptions);
-    // }, []);
-
-    // useEffect(() => {
-    //     socket.on('score', myEventHandler);
-    //     return () => socket.off('score', myEventHandler)
-    // }, [myEventHandler]);
+    const handleLeaveChannel = async () => {
+        await fetch('http://localhost:5000/channels/removeUser',
+            {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    channelId: 24,//channel.id,
+                    newUser: { id: user.id, login: user.login }
+            }),
+        });
+        socket.emit("leaveChannel", { channelId: 24/*channel.id*/});
+        // socket.leave(24/*channel.id*/);
+    }//quit / kick button
+////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="channelList">
@@ -90,6 +100,10 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
                 </button>
                 <button className="join-channel-button" onClick={handleJoinChannel}>
                     Rejoindre un canal
+                </button>
+
+                <button className="join-channel-button" onClick={handleLeaveChannel}>
+                    Leave un canal
                 </button>
 
                 { }

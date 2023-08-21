@@ -31,4 +31,14 @@ export class ChannelsController {
   remove(@Param('id') id: string) {
     return this.channelsService.remove(+id);
   }
+
+  @Post('addUser')
+  async addUser(@Body() {channelId, newUser}) {
+    return await this.channelsService.addUser(channelId, newUser);
+  }
+
+  @Post('removeUser')
+  async removeUser(@Body() {channelId, newUser}) {
+    await this.channelsService.removeUser(channelId, newUser);
+  }
 }
