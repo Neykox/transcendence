@@ -4,6 +4,7 @@ import { PlayerDto } from '../dto/player.dto'
 import { BannedService } from '../banned/banned.service';
 import { MutedService } from '../muted/muted.service';
 import { MessageService } from '../message/message.service';
+import { ChannelsService } from '../channels/channels.service';
 
 import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interface'
 
@@ -38,6 +39,7 @@ export class SocketService {
 		private readonly bannedService: BannedService,
 		private readonly mutedService: MutedService,
 		private readonly messageService: MessageService,
+		private readonly channelsService: ChannelsService,
 	) {}
 
 	@WebSocketServer()
@@ -530,13 +532,15 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("joinChannel")
-	joinChannel(@MessageBody() {channelId}, @ConnectedSocket() client: Socket) {
+	async joinChannel(@MessageBody() {channelId, newUser}, @ConnectedSocket() client: Socket) {
+		await this.channelsService.addUser(channelId, newUser);
 		client.join(channelId);//check if banned first
 		this.server.to(channelId).emit("getMembers");
 	}
 
 	@SubscribeMessage("leaveChannel")
-	leaveChannel(@MessageBody() {channelId}, @ConnectedSocket() client: Socket) {
+	async leaveChannel(@MessageBody() {channelId, newUser}, @ConnectedSocket() client: Socket) {
+		await this.channelsService.removeUser(channelId, newUser);
 		this.server.to(channelId).emit("getMembers");
 		client.leave(channelId);
 	}

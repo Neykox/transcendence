@@ -119,32 +119,32 @@ export default function Chat() {
             const newUser = user.pseudo;
             // setChannelMembers((prevMembers) => [...prevMembers, newUser]);
         }
-        await fetch('http://localhost:5000/channels/addUser',
-            {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    channelId: channel.id,
-                    newUser: { id: socket.id, login: socket.id/*user.login*/ }
-                }),
-            });
+        // await fetch('http://localhost:5000/channels/addUser',
+        //     {
+        //         method: "POST",
+        //         headers: { 'Content-Type': 'application/json' },
+        //         credentials: 'include',
+        //         body: JSON.stringify({
+        //             channelId: channel.id,
+        //             newUser: { id: socket.id, login: socket.id/*user.login*/ }
+        //         }),
+        //     });
         // console.log(await response.json())
-        socket.emit("joinChannel", { channelId: channel.id});
+        socket.emit("joinChannel", { channelId: channel.id, newUser: { id: socket.id, login: socket.id/*user.login*/ }});
     }
 
     const handleLeaveChannel = useCallback( async () => {
-        await fetch('http://localhost:5000/channels/removeUser',
-            {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    channelId: channel.id,
-                    newUser: { id: socket.id, login: socket.id/*user.login*/ }
-            }),
-        });
-        socket.emit("leaveChannel", { channelId: channel.id});
+        // await fetch('http://localhost:5000/channels/removeUser',
+        //     {
+        //         method: "POST",
+        //         headers: { 'Content-Type': 'application/json' },
+        //         credentials: 'include',
+        //         body: JSON.stringify({
+        //             channelId: channel.id,
+        //             newUser: { id: socket.id, login: socket.id/*user.login*/ }
+        //     }),
+        // });
+        socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: socket.id, login: socket.id/*user.login*/ }});
     }, [channel.id]);//quit / kick button
 
     async function handleKick(target) {
