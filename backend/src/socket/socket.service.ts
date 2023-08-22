@@ -533,9 +533,16 @@ export class SocketService {
 
 	@SubscribeMessage("joinChannel")
 	async joinChannel(@MessageBody() {channelId, newUser}, @ConnectedSocket() client: Socket) {
-		await this.channelsService.addUser(channelId, newUser);
-		client.join(channelId);//check if banned first
-		this.server.to(channelId).emit("getMembers");
+		// let ret = true;
+		// if (mdp)
+		// 	ret = this.channelsService.mdp_checker(channelId, mdp);
+
+		// if (await this.isban({channelId: channelId, userId: newUser.id}, null) === false)
+		// {
+			await this.channelsService.addUser(channelId, newUser);
+			client.join(channelId);//check if banned first
+			this.server.to(channelId).emit("getMembers");
+		// }
 	}
 
 	@SubscribeMessage("leaveChannel")
@@ -551,7 +558,25 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("kick")
-	kick(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
+	kick(@MessageBody() {channelId, user}) {
+		console.log("kick called on ", user);
 		// this.server.to(connected[user].id).emit("kicked", { "channelId": channelId });
 	}
+
+	@SubscribeMessage("ban")
+	async ban(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
+		console.log("ban ret = ", await this.bannedService.setBan({channel: channelId, user: user.id}));
+		this.kick({channelId: channelId, user: user.login});
+	}
+
+	@SubscribeMessage("unban")
+	unban(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
+		this.bannedService.delete({channel: channelId, user: user.id});
+	}
+
+	@SubscribeMessage("isban")
+	isban(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
+		return this.bannedService.isBan(channelId, userId);
+	}
 }
+

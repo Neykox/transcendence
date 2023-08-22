@@ -119,33 +119,16 @@ export default function Chat() {
             const newUser = user.pseudo;
             // setChannelMembers((prevMembers) => [...prevMembers, newUser]);
         }
-        // await fetch('http://localhost:5000/channels/addUser',
-        //     {
-        //         method: "POST",
-        //         headers: { 'Content-Type': 'application/json' },
-        //         credentials: 'include',
-        //         body: JSON.stringify({
-        //             channelId: channel.id,
-        //             newUser: { id: socket.id, login: socket.id/*user.login*/ }
-        //         }),
-        //     });
-        // console.log(await response.json())
         socket.emit("joinChannel", { channelId: channel.id, newUser: { id: socket.id, login: socket.id/*user.login*/ }});
     }
 
     const handleLeaveChannel = useCallback( async () => {
-        // await fetch('http://localhost:5000/channels/removeUser',
-        //     {
-        //         method: "POST",
-        //         headers: { 'Content-Type': 'application/json' },
-        //         credentials: 'include',
-        //         body: JSON.stringify({
-        //             channelId: channel.id,
-        //             newUser: { id: socket.id, login: socket.id/*user.login*/ }
-        //     }),
-        // });
         socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: socket.id, login: socket.id/*user.login*/ }});
     }, [channel.id]);//quit / kick button
+
+    async function handleBan(target) {
+        socket.emit("ban", { channelId: channel.id, user: {login: target.login, id: target.id}});
+    }
 
     async function handleKick(target) {
         socket.emit("kick", { channelId: channel.id, user: target.login});
@@ -278,7 +261,7 @@ export default function Chat() {
                             <li key={index}>
                                 <div className="user-name">{user.login}</div>
                                 <div className="button-container">
-                                    <button>ban</button>
+                                    <button onClick={() => handleBan(user)}>ban</button>
                                     <button onClick={() => handleKick(user)}>kick</button>
                                     <button>mute</button>
                                 </div>

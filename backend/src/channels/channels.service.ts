@@ -49,6 +49,16 @@ export class ChannelsService {
     }
   }
 
+  async mdp_checker(id: number, mdp: string): Promise<boolean>
+  {
+    const chan = await this.channelRepository.findOneBy({ id });
+    const hashed = await argon.hash(mdp);
+
+    if (chan.password === hashed)
+      return true;
+    return false;
+  }
+
   async findAll(): Promise<Channel[]> {
     return await this.channelRepository
       .createQueryBuilder('chan')
