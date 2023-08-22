@@ -130,6 +130,10 @@ export default function Chat() {
         socket.emit("ban", { channelId: channel.id, user: {login: target.login, id: target.id}});
     }
 
+    async function handleMute(target) {
+        socket.emit("ismuted", { channelId: channel.id, user: target.login, until: 10});
+    }
+
     async function handleKick(target) {
         socket.emit("kick", { channelId: channel.id, user: target.login});
     }
@@ -263,7 +267,7 @@ export default function Chat() {
                                 <div className="button-container">
                                     <button onClick={() => handleBan(user)}>ban</button>
                                     <button onClick={() => handleKick(user)}>kick</button>
-                                    <button>mute</button>
+                                    <button onClick={() => handleMute(user)}>mute</button>
                                 </div>
                             </li>
 

@@ -531,6 +531,14 @@ export class SocketService {
 		}
 	}
 
+
+
+
+
+
+
+	/*****************************************************************************/
+
 	@SubscribeMessage("joinChannel")
 	async joinChannel(@MessageBody() {channelId, newUser}, @ConnectedSocket() client: Socket) {
 		// let ret = true;
@@ -552,10 +560,14 @@ export class SocketService {
 		client.leave(channelId);
 	}
 
+	/*****************************************************************************/
+
 	@SubscribeMessage("send_message")
 	send_message(@MessageBody() {channelId, newMessage}, @ConnectedSocket() client: Socket) {
 		this.server.to(channelId).emit("newMessage", newMessage);//check if muted first
 	}
+
+	/*****************************************************************************/
 
 	@SubscribeMessage("kick")
 	kick(@MessageBody() {channelId, user}) {
@@ -563,9 +575,11 @@ export class SocketService {
 		// this.server.to(connected[user].id).emit("kicked", { "channelId": channelId });
 	}
 
+	/*****************************************************************************/
+
 	@SubscribeMessage("ban")
 	async ban(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		console.log("ban ret = ", await this.bannedService.setBan({channel: channelId, user: user.id}));
+		await this.bannedService.setBan({channel: channelId, user: user.id});
 		this.kick({channelId: channelId, user: user.login});
 	}
 
@@ -578,5 +592,24 @@ export class SocketService {
 	isban(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
 		return this.bannedService.isBan(channelId, userId);
 	}
+
+	/*****************************************************************************/
+
+	@SubscribeMessage("mute")
+	async mute(@MessageBody() {channelId, user, until}, @ConnectedSocket() client: Socket) {
+		await this.mutedService.setMute({channel: channelId, user: user.id, until: until});
+	}
+
+	@SubscribeMessage("unmute")
+	unmute(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
+		this.mutedService.delete(channelId, user.id);
+	}
+
+	@SubscribeMessage("ismuted")
+	ismuted(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
+		return this.mutedService.isMute(channelId, userId);
+	}
+
+	/*****************************************************************************/
 }
 
