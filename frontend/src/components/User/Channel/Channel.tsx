@@ -27,7 +27,7 @@ function Channel() {
 
 	const addChannel = async (newChannel) => {
 		console.log("newChannel = ", newChannel)
-		const response = await fetch('http://localhost:5000/channels/create',
+		const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/channels/create',
 			{
 				method: "POST",
 				headers: { 'Content-Type': 'application/json' },
@@ -40,7 +40,7 @@ function Channel() {
 
 	useEffect(() => {
 		const fetchChannels = async () => {
-			const response = await fetch('http://localhost:5000/channels', { method: "GET" });
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/channels', { method: "GET" });
 			let data = await response.json();
 			if (!data)
 				return;

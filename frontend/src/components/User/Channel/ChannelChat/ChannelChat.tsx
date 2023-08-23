@@ -109,7 +109,7 @@ export default function Chat() {
     }, [myEventHandler2]);
 
     const deleteChannel = () => {
-        fetch(`http://localhost:5000/channels/${channel.id}`, { method: "DELETE" });
+        fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, { method: "DELETE" });
     }
 
     /*****************************************************************************/
@@ -172,7 +172,7 @@ export default function Chat() {
     /*****************************************************************************/
 
     const getMembersEvent = useCallback( async () => {
-        const response = await fetch('http://localhost:5000/channels/getMembers',
+        const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/channels/getMembers',
             {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
