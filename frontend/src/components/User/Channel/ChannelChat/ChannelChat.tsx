@@ -112,6 +112,8 @@ export default function Chat() {
         fetch(`http://localhost:5000/channels/${channel.id}`, { method: "DELETE" });
     }
 
+    /*****************************************************************************/
+
     const joinChannel = async () => {
         if (channel.type === 'protected') {
             setShowPasswordModal(true);
@@ -126,13 +128,33 @@ export default function Chat() {
         socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
     }, [channel.id]);//quit / kick button
 
+    /*****************************************************************************/
+
     async function handleBan(target) {
         socket.emit("ban", { channelId: channel.id, user: {login: target.login, id: target.id}});
     }
 
+    /*****************************************************************************/
+
     async function handleMute(target) {
-        socket.emit("ismuted", { channelId: channel.id, user: target.id, until: 10});
+        // function addMinutes(date, minutes) {
+        //     const dateCopy = new Date(date);
+        //     dateCopy.setMinutes(date.getMinutes() + minutes);
+
+        //     return dateCopy;
+        // }
+
+        // const date = new Date('2022-05-15T00:00:00.000Z');
+
+        // const newDate = addMinutes(date, 10);
+        socket.emit("mute", { channelId: channel.id, user: target.id, until: 10});
     }
+
+    // async function handleMute(target) {
+    //     socket.emit("ismuted", { channelId: channel.id, user: target.id});
+    // }
+
+    /*****************************************************************************/
 
     async function handleKick(target) {
         socket.emit("kick", { channelId: channel.id, user: target.login});
@@ -146,6 +168,8 @@ export default function Chat() {
       socket.on('kicked', onKick);
       return () => socket.off('kicked', onKick);
     }, [onKick]);
+
+    /*****************************************************************************/
 
     const getMembersEvent = useCallback( async () => {
         const response = await fetch('http://localhost:5000/channels/getMembers',

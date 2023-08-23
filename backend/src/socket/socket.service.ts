@@ -586,12 +586,12 @@ export class SocketService {
 		// if (mdp)
 		// 	ret = this.channelsService.mdp_checker(channelId, mdp);
 
-		// if (await this.isban({channelId: channelId, userId: newUser.id}, null) === false)
-		// {
+		if (await this.isban({channelId: channelId, userId: newUser.id}, null) === false)
+		{
 			await this.channelsService.addUser(channelId, newUser);
 			client.join(channelId);//check if banned first
 			this.server.to(channelId).emit("getMembers");
-		// }
+		}
 	}
 
 	@SubscribeMessage("leaveChannel")

@@ -23,9 +23,9 @@ CREATE TABLE "user" (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE "friend_requests" (
-    id SERIAL PRIMARY KEY,
-    sender VARCHAR(255) NOT NULL,
-    receiver VARCHAR(255) NOT NULL
-);
+# CREATE TABLE "friend_requests" (
+#     id SERIAL PRIMARY KEY,
+#     sender VARCHAR(255) NOT NULL,
+#     receiver VARCHAR(255) NOT NULL
+# );
 EOF
