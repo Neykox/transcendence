@@ -5,6 +5,9 @@ import { BannedService } from '../banned/banned.service';
 import { MutedService } from '../muted/muted.service';
 import { MessageService } from '../message/message.service';
 import { ChannelsService } from '../channels/channels.service';
+import { FriendsService } from "src/friends/friends.service";
+import { Injectable, Inject, forwardRef } from '@nestjs/common'
+
 
 import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interface'
 
@@ -13,10 +16,10 @@ const rooms: Room[] = [];
 let count = 0;
 const ballSpeed = 10;
 const max_score = 3;
-const connected: Socket [] = [];
 
 let _1v1 = 0;
 let _2balls = 0;
+var connected = {};
 
 @WebSocketGateway({
 		// transport: ['websocket'],
@@ -24,7 +27,6 @@ let _2balls = 0;
 			origin: '*',
 		},
 		pingInterval: 2000,
-		pingTimeout: 5000,
 		// connectionStateRecovery: {
 		// 	// the backup duration of the sessions and the packets
 		// 	maxDisconnectionDuration: 2 * 60 * 1000,
@@ -33,6 +35,7 @@ let _2balls = 0;
 		// },https://socket.io/docs/v4/connection-state-recovery
 })
 
+@Injectable()
 export class SocketService {
 
 	constructor (
@@ -40,6 +43,7 @@ export class SocketService {
 		private readonly mutedService: MutedService,
 		private readonly messageService: MessageService,
 		private readonly channelsService: ChannelsService,
+		@Inject(forwardRef(() => FriendsService)) private readonly friendsService: FriendsService
 	) {}
 
 	@WebSocketServer()
@@ -47,7 +51,6 @@ export class SocketService {
 
 	handleConnection(client: Socket){
 		console.log('client connected: ', client.id);
-		connected[client.id] = client;
 	}
 
 	handleDisconnect(client: Socket){
@@ -60,9 +63,18 @@ export class SocketService {
 			if (rooms[id].p2.socketId === client.id)
 				rooms[id].p2.dc = true;
 		}
-		console.log(rooms);
-		console.log('client disconnected: ', client.id);
-		delete connected[client.id];
+
+		for (const key in connected) {
+			if (connected[key] == client)
+			{
+				delete connected[key];
+				connected[key] = undefined;
+				console.log(key, "disconnected !");
+				break ;
+			}
+		}
+		// console.log(rooms);
+		// console.log('client disconnected: ', client.id);
 	}
 
 	// @SubscribeMessage('message')
@@ -424,6 +436,7 @@ export class SocketService {
 		}, 15);
 	}
 
+	
 	@SubscribeMessage('join_list')
 	joinList(@MessageBody() data, @ConnectedSocket() client: Socket) {
 
@@ -505,30 +518,58 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("send_invite")
-	send_invite(@MessageBody() {challenger, time, gamemode}, @ConnectedSocket() client: Socket) {
+	send_invite(@MessageBody() {challenger, time, gamemode, challenged}, @ConnectedSocket() client: Socket) {
 
-		for (const id in connected)
-		{
-			if (connected[id].id != client.id)
-			{
-				this.server.to(connected[id].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gamemode});
-				break;
-			}
-		}
+				this.server.to(connected[challenged].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gamemode});
 	}
-
+	
 	@SubscribeMessage("send_answer")
 	send_answer(@MessageBody() {challenger, time, answer, gametype}, @ConnectedSocket() client: Socket) {
 
-		for (const id in connected)
+				this.server.to(connected[challenger].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "challenger": challenger, "time": time, "gametype": gametype});
+	}
+	
+	// TAG FRIEND LIST
+
+	@SubscribeMessage('register')
+	async handleRegister(@MessageBody() {login}, @ConnectedSocket() client: Socket) {
+		console.log('received : ', login)
+		if (!login)
+			return('error');
+		
+		connected[login] = client;
+		return ('OK');
+	}
+	
+	@SubscribeMessage('sendFriend')
+	async handleFriendSent(@MessageBody() data, @ConnectedSocket() client: Socket) {
+		if (!data.to || !data.from)
 		{
-			if (connected[id].id != client.id)
-			{
-				console.log("send_aanswer");
-				this.server.to(connected[id].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "time": time, "gametype": gametype});
-				break;
-			}
+			client.emit('error', {text: "Something went wrong"});
+			return ('error');
+		}		
+		let response = await this.friendsService.sendRequest(data.from, data.to);
+		if (response != 'Request sent')
+		{
+			client.emit('error', {text: response});
+			return (response);
 		}
+		let request = await this.friendsService.getRequest(data.to, data.from);
+		if (connected[data.to] !== undefined)
+			connected[data.to].emit('receiveFriend', {from: data.fromUsername, id: request.id});
+		client.emit('success', {text: response + '!'})
+		return 'OK'
+	}
+
+	@SubscribeMessage('testreq')
+	async handleTest(@MessageBody() data, @ConnectedSocket() client: Socket) {
+		client.emit('receiveFriend', {from: "royal"})
+	}
+
+	async isConnected(who: string) {
+		if (connected[who] === undefined)
+			return 'offline';
+		return 'online';
 	}
 
 

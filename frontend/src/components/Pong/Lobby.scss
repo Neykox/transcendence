@@ -3,7 +3,7 @@
 	padding: 20px;
 	background-color: #1d0439;
 	text-align: center;
-	height: 100vh;
+/*	height: 100vh;*/
 }
 
 .colors{
@@ -36,6 +36,7 @@
 	font-size: 30px;
 	display: flow;
 	margin: auto;
+	margin-bottom: 20px;
 	border-radius: 10px;
 	width: 80%;
 	background-color: #180330;
@@ -51,4 +52,35 @@
 
 .queue:hover{
 	background-color: #c292f8;
+}
+
+.homeButton{
+	color: black;
+	background-color: #a662f4;
+	border: 1px solid #1d0439;
+	box-shadow: #7e1aef 0px 3px 7px;
+	position: absolute;
+	top: 15px;
+	left: 15px;
+}
+
+.homeButton:hover{
+	background-color: #ae70f5 + 30;
+}
+
+.invites{
+	padding-top: 15px;
+	padding-bottom: 15px;
+	text-align: center;
+	font-size: 30px;
+	display: flow;
+	margin: auto;
+	border-radius: 10px;
+	width: 80%;
+	background-color: #180330;
+	vertical-align: middle;
+}
+
+.invite{
+	font-size: 17px;
 }

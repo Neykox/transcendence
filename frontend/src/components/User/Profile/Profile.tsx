@@ -4,11 +4,17 @@ import History from './History/History';
 import { useState, useEffect } from 'react';
 import PlayerInfo from './PlayerInfo/PlayerInfo';
 import FriendList from './FriendList/FriendList';
+import { socket } from '../../Socket/socketInit'
+import { toast } from 'react-toastify';
+import accept from '../../../asset/images/checkmark-circle.svg';
+import decline from '../../../asset/images/close-circle.svg';
+import Modal from 'react-modal';
+import AddFriend from './AddFriend/AddFriend';
 
 // import io from 'socket.io-client';
 
 // Se connecter au canal de websocket
-// const socket = io('http://localhost:5000/users');
+// const socket = io('http://+'process.env.REACT_APP_POSTURL'+:5000/users');
 
 function randomName() {
 	const maleNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew", "Donald", "Anthony", "Mark", "Paul", "Steven", "George", "Kenneth"];
@@ -24,6 +30,15 @@ function Profile() {
 	// Set les wins et loses avec la db;
 	const [wins, setWins] = useState(0);
 	const [loses, setLoses] = useState(0);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const handleModalOpen = () => {
+		setIsModalOpen(true);
+	};
+
+	const handleModalClose = () => {
+		setIsModalOpen(false);
+	};
 	//const { user } = useContext(UserContext);
 
 	interface Match {
@@ -35,13 +50,21 @@ function Profile() {
 
 	interface Friends {
 		id: number;
-		pseudo: string;
+		login: string;
+		username: string;
 		status: string;
 	}
 
-	const [matchs, setMatch] = useState<Match[]>([]);
+	interface FriendRequest {
+		id: number;
+		to: string;
+		from: string;
+		fromUsername: string;
+	}
 
+	const [matchs, setMatch] = useState<Match[]>([]);
 	const [friends, setFriends] = useState<Friends[]>([]);
+	const [requests, setRequests] = useState<FriendRequest[]>([]);
 
 
 	// Écouter les événements de mise à jour
@@ -65,70 +88,156 @@ function Profile() {
 	// 	getUsers();
 	// });
 
-	useEffect(() => {
-		const fetchUsers = async (): Promise<Friends[]> => {
-			const response = await fetch('http://localhost:5000/users');
-			const data = await response.json();
-			const friendsData: Friends[] = data.map((user: any) => ({
-			  id: user.id,
-			  pseudo: user.pseudo,
-			  status: user.status,
-			}));
-			return friendsData;
-		  };
+	useEffect( () => {
+		// const fetchUsers = async (): Promise<Friends[]> => {
+		// 	const response = await fetch('http://+'process.env.REACT_APP_POSTURL'+:5000/users');
+		// 	const data = await response.json();
+		// 	const friendsData: Friends[] = data.map((user: any) => ({
+		// 	  id: user.id,
+		// 	  pseudo: user.pseudo,
+		// 	  status: user.status,
+		// 	}));
+		// 	return friendsData;
+		//   };
 
-		const getUsers = async () => {
-			const fetchedUsers = await fetchUsers();
-			setFriends(fetchedUsers);
+		// const getUsers = async () => {
+		// 	const fetchedUsers = await fetchUsers();
+		// 	setFriends(fetchedUsers);
+		// };
+
+		const fetchFriends = async () => {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends', {
+				credentials: 'include'
+			});
+			if (response.status != 200)
+				return;
+			let data = response;
+			if (!data)
+				return;
+			let friendsData: Friends[] = await data.json();
+			if (friendsData.length === 0)
+				return;
+			// let friends: Friends[] = friendsData.map((user: {id:number, login:string, username: string}) => ({
+			// 	id: user.id,
+			// 	login: user.login,
+			// 	username: user.username,
+			// 	status: 'offline'
+			// }));
+			let friends = friendsData.map((user: {id: number, login: string, username: string, status: string}) => ({
+				id: user.id,
+				login: user.login,
+				username: user.username,
+				status: user.status
+			}))
+
+			setFriends(friends);
 		};
 
-		getUsers();
+		const fetchRequest = async () => {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/requests', {
+				credentials: 'include',
+			});
+			if (response.status != 200)
+				return;
+			let data = await response.json();
+			if (!data)
+				return;
+			let requests = data.map((req: any) => ({
+				id: req.id,
+				from: req.sender,
+				to: req.receiver,
+				fromUsername: req.senderUsername
+			}));
 
+			setRequests(requests);
+		};
+
+		
 		const fetchMatchs = async () => {
-			const response = await fetch('http://localhost:5000/users/history', {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users/history', {
 				method: "POST",
 				credentials: 'include'
 			});
 			let data = await response.json();
+			// let data = ""
 			if (!data)
-				return ;
+			return;
 			let index = 0;
 			let newMatchs: Match[] = [];
 			let win = 0;
 			let lose = 0;
-			while (data[index])
-			{
+			while (data[index]) {
 				newMatchs.unshift(data[index]);
 				// newMatchs.push(data[index]);
 				if (data[index].result === "matchLose")
-					lose++;
+				lose++;
 				else
-					win++;
+				win++;
 				index++;
 			}
 			setLoses(lose);
 			setWins(win);
 			setMatch(newMatchs);
 		};
+
+		fetchFriends();
+		fetchRequest();
 		fetchMatchs();
 	}, []);
 
-	const friendsList = () => {
-		const id = new Date().getTime();
-		const pseudo = randomName();
-		const status = Math.random() < 0.5 ? "online" : "offline";
-		const friendsToAdd = { id, pseudo, status };
-
-		// 1. Copy du state
-		const friendsCopy = [...friends];
+	// const friendsList = () => {
+	// 	// const id = new Date().getTime();
+	// 	// const pseudo = randomName();
+	// 	// const status = Math.random() < 0.5 ? "online" : "offline";
+	// 	// const friendsToAdd = { id, pseudo, status };
 
 
-		// 2. Manipuler mon state
-		friendsCopy.unshift(friendsToAdd);
+	// 	// // 1. Copy du state
+	// 	// const friendsCopy = [...friends];
 
-		// 3. Modifier mon state
-		setFriends(friendsCopy);
-	};
+
+	// 	// // 2. Manipuler mon state
+	// 	// friendsCopy.unshift(friendsToAdd);
+
+	// 	// 3. Modifier mon state
+	// 	let friends = fetchFriends();
+	// 	setFriends(friends);
+	// };
+
+	const friendAccept = (accept: boolean, id: number) => {
+		if (accept)
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/accept/' + id, { credentials: 'include', method: 'DELETE' });
+		else
+			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/decline/' + id, { credentials: 'include', method: 'DELETE' });
+	}
+
+	const Test = () => { socket.emit('testreq') }
+	socket.on('receiveFriend', (data) => toast.info(({ closeToast }) =>
+		<div>
+			<div>
+				{data.from} wants to be your friend !
+			</div>
+			<div>
+				<a onClick={() => { friendAccept(true, data.id) }}><img src={accept} className="friendAccept friendIcon" /></a>
+				<a onClick={() => { friendAccept(false, data.id) }}><img src={decline} className="friendRefuse friendIcon" /></a>
+			</div>
+		</div>, { autoClose: 5000, toastId: "stopdupsuccess" }
+	)
+	)
+
+	socket.on('success', (data) => toast.success(({ closeToast }) =>
+		<div>
+			<p>{data.text}</p>
+		</div>, { autoClose: 5000, toastId: "stopduperror" }
+	)
+	)
+
+	socket.on('error', (data) => toast.error(({ closeToast }) =>
+		<div>
+			<p>{data.text}</p>
+		</div>, { autoClose: 5000, toastId: "stopduperror" }
+	)
+	)
 
 	const get_user = async () => {
     const response = await fetch(
@@ -155,13 +264,24 @@ function Profile() {
 		<div>
 			<NavBar />
 			<div className="profile">
-				<PlayerInfo wins={wins} loses={loses}/>
+				<PlayerInfo wins={wins} loses={loses} />
 				<div className="grid">
-					<History matchs={matchs}/>
-					<FriendList friends={friends} onClick={friendsList} />
+				<History matchs={matchs} />
+					<FriendList friends={friends} requests={requests} onClick={handleModalOpen} />
+				</div>
+				<div>
+					<Modal isOpen={isModalOpen} >
+						<h1> Add friend </h1>
+						<AddFriend />
+						<button onClick={() => handleModalClose()} className='closeModal'>Close</button>
+					</Modal>
 				</div>
 			</div>
+<<<<<<< HEAD
 			<button onClick={async () => {await get_cookie( await get_user())}}>get_cookie</button>
+=======
+			<button onClick={Test} />
+>>>>>>> 39d813b2e3e9be06f2dd27e69c09252b16931ed7
 		</div>
 	);
 }

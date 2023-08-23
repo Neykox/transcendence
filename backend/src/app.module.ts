@@ -15,6 +15,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 
 import { SocketModule } from './socket/socket.module'
+import { FriendsModule } from './friends/friends.module';
+import { FriendRequest } from './entities/friend_request.entity';
 
 @Module({
 	imports: [
@@ -31,17 +33,19 @@ import { SocketModule } from './socket/socket.module'
 				username: config.get('POSTGRES_USER'),
 				password: config.get('POSTGRES_PASSWORD'),
 				database: config.get('POSTGRES_DB'),
-				entities: [User, Channel, Banned, Muted],
+				entities: [User, Channel, Banned, Muted, FriendRequest],
 				synchronize: true,
 			}),
 			inject: [ConfigService],
 		}),
 		TypeOrmModule.forFeature([User]),
+		TypeOrmModule.forFeature([FriendRequest]),
 		UsersModule,
 		AuthModule,
 		TwoFaModule,
 		SocketModule,
-		ChannelsModule,],
+		ChannelsModule,
+		FriendsModule],
 	// controllers: [AppController],
 	// providers: [AppService],
 })

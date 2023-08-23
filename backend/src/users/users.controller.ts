@@ -45,7 +45,6 @@ export class UsersController {
 	@UseGuards(JwtGuard)
 	@Put('changeAvatar')
 	async changeAvatar(@Body() {Image} : UserCreationDto, @Req() request: Request) {
-
 		const user = await this.usersService.findOne(request.user['id']);
 		await this.usersService.changeAvatar(user, Image);
 		return Image; 

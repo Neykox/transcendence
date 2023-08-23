@@ -1,64 +1,18 @@
-// import { React, useState, useEffect, useContext } from 'react'
-// import gif from '../../asset/images/search.gif';
-// import Pong from './Pong'
-// import { socket } from '../Socket/socketInit';
-// import UserContext from '../../model/userContext';
-
-// function Game() {
-
-// 	const { user } = useContext(UserContext);
-
-// 	const [matched, setMatched] = useState(false);
-// 	const [paddle1, setPaddle1] = useState({});
-// 	const [paddle2, setPaddle2] = useState({});
-// 	const [ball, setBall] = useState({});
-// 	const [maxScore, setMaxScore] = useState(0);
-
-// 	socket.on('matched', (data) => {
-// 		// console.log(data)
-// 		setPaddle1(data.paddle1);
-// 		setPaddle2(data.paddle2);
-// 		setBall(data.ball);
-// 		setMaxScore(data.max_score);
-// 		setMatched(true);
-// 	} )
-
-// 	useEffect(() => {
-
-// 		function matchmaking()
-// 		{
-// 			socket.emit("join_list", user.pseudo);
-// 		}
-
-// 		matchmaking();
-// 	}, [user])
-
-
-// 	return (
-// 		<>
-// 			{
-// 				matched
-// 				? <Pong paddle1={paddle1} paddle2={paddle2} newBall={ball} max_score={maxScore}/>
-// 				: <img src={gif} alt="searching for opponents..." />
-// 			}
-// 		</>
-// 	)
-// }
- 
-// export default Game
-
 import { React, useState, useContext } from 'react'
 import Pong from './Pong'
 import DoubleBall from './DoubleBall'
 import { socket } from '../Socket/socketInit';
 import UserContext from '../../model/userContext';
 import './Lobby.scss'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import accept from '../../asset/images/checkmark-circle.svg';
+import decline from '../../asset/images/close-circle.svg';
 
 function Lobby() {
+	const navigate = useNavigate();
 	const location = useLocation()
 	const private_room = location.state ? location.state.private_room : undefined;
-	console.log("chall = ", private_room)
 	const private_gamemode: string = location.state ? location.state.gametype : "1v1";
 
 	const { user } = useContext(UserContext);
@@ -67,12 +21,9 @@ function Lobby() {
 	const colors = ["red", "lightgreen", "skyblue", "pink", "orange", "purple"];
 
 	const [gamemode, setGamemode] = useState(private_room ? "private" : "select");
-	console.log(gamemode);
 
 	const [paddle1, setPaddle1] = useState({});
 	const [paddle2, setPaddle2] = useState({});
-	// const [paddle3, setPaddle3] = useState({});
-	// const [paddle4, setPaddle4] = useState({});
 
 	const [ball, setBall] = useState({});
 	const [ball2, setBall2] = useState({});
@@ -80,7 +31,6 @@ function Lobby() {
 	const [maxScore, setMaxScore] = useState(0);
 
 	socket.on('1v1', (data) => {
-		// console.log(data)
 		setPaddle1(data.paddle1);
 		setPaddle2(data.paddle2);
 		setBall(data.ball);
@@ -89,7 +39,6 @@ function Lobby() {
 	} )
 
 	socket.on('2balls', (data) => {
-		// console.log(data)
 		setPaddle1(data.paddle1);
 		setPaddle2(data.paddle2);
 		setBall(data.ball);
@@ -120,8 +69,41 @@ function Lobby() {
 	const toLobby = () => {setGamemode("select")};
 
 	const _1v1 = <Pong paddle1={paddle1} paddle2={paddle2} newBall={ball} max_score={maxScore} toLobby={toLobby}/>;
-	// const _1v3 = <Pong4 paddle1={paddle1} paddle2={paddle2} paddle3={paddle3} paddle4={paddle4} newBall={ball} max_score={maxScore}/>;
 	const _2balls = <DoubleBall paddle1={paddle1} paddle2={paddle2} newBall={ball} newBall2={ball2} max_score={maxScore} toLobby={toLobby}/>;
+
+
+
+	// interface Invite {
+	// 	id: number;
+	// 	challenger: string;
+	// 	time: string;
+	// 	gametype: string;
+	// }
+
+	// const invites: Invite[] = [
+	// 	{id: 1, challenger: "orca", gametype: "1v1"},
+	// 	{id: 2, challenger: "zelda", gametype: "1v1"},
+	// 	{id: 3, challenger: "link", gametype: "2balls"},
+	// 	{id: 4, challenger: "link", gametype: "2balls"},
+	// 	{id: 5, challenger: "link", gametype: "2balls"},
+	// ];
+
+	// const send_answer = async (answer: boolean, challenger: string, time: string, gametype: string) => {
+	// 	socket.emit("send_answer", { "challenger": challenger, "time": time, "answer": answer, "gametype": gametype });
+	// 	if (answer === true)
+	// 		navigate('/lobby', {state: { "private_room": challenger + time, "gametype": gametype }});
+	// 	else
+	// 		toast("Match was declined");
+	// }
+
+	// const listInvite = invites.map((invite) =>
+	// 	<div className="invite">
+	// 		<div >{invite.challenger} challenged you to a {invite.gametype === "1v1" ? "Classic" : "2 Balls"} duel!
+	// 		<a onClick={() => {send_answer(true, invite.challenger, invite.time, invite.gametype)}}><img src={accept} className="friendAccept friendIcon"/></a>
+	// 		<a onClick={() => {send_answer(false, invite.challenger, invite.time, invite.gametype)}}><img src={decline} className="friendRefuse friendIcon"/></a>
+	// 		</div>
+	// 	</div>
+	// );
 
 	return (
 		<>
@@ -135,9 +117,12 @@ function Lobby() {
 						<div className="queues">
 							<button className="queue" type="button" onClick={matchmaking}>Classic</button>
 							<button className="queue" type="button" onClick={matchmaking_2balls}>2 Balls</button>
-							{/*<button className="queue" type="button" onClick={matchmaking}>1v3 match</button>*/}
 						</div>
 					</div>
+					{/*<div className="invites">Duel invites
+						<div>{listInvite}</div>
+					</div>*/}
+					<button className="homeButton" type="button" onClick={() => {navigate('../profile')}}>Home</button>
 				</div>
 			: <></>}
 			{gamemode === "matchmaking"
@@ -146,7 +131,6 @@ function Lobby() {
 				</div>
 			: <></>}
 			{gamemode === "1v1" ? _1v1 : <></>}
-			{/*{gamemode === "1v3" ? _1v3 : <></>}*/}
 			{gamemode === "2balls" ? _2balls : <></>}
 			{gamemode === "private"
 			?	<div className="menu">

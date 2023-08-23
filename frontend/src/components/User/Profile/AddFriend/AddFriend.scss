@@ -1,0 +1,41 @@
+.friend-list {
+	display: grid;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	.friend {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		height: 50px;
+		margin: 10px 0px;
+		border-radius: 10px;
+		background: rgb(255, 253, 253);
+		box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
+	}
+
+	.friend-avatar {
+		height: 50px;
+
+		img {
+			height: 50px;
+			width: auto;
+			border-radius: 50%;
+		}
+	}
+
+	.friend-pseudo {
+		margin: 0px 20px;
+		font-weight: 700;
+	}
+
+	.add-button {
+		height: 50px;
+		margin: 10px 0px;
+	}
+	.add-button:hover {
+		cursor: pointer;
+	}
+}

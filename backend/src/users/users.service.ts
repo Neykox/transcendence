@@ -60,6 +60,37 @@ export class UsersService {
 
 	async changeAvatar(user: User, newAvatar: string) {
 	this.usersRepository.update(user.id, {image: newAvatar, });
+}
+
+	async fetchFriends(id: number): Promise<string> {
+		const user = await this.usersRepository.findOneBy({id});
+		return user.friend_list;
+	}
+
+	async addFriend(id: number, login: string): Promise<void> {
+		const user = await this.usersRepository.findOneBy({id});
+		var newFriends = user.friend_list.split(',');
+		console.log(user.friend_list.length);
+		if (user.friend_list.length == 0)
+			this.usersRepository.update(id, { friend_list: login });
+		else {
+			newFriends.push(login);
+			this.usersRepository.update(id, { friend_list: newFriends.join(',') });
+		}
+	}
+
+	async removeFriend(id: number, login: string): Promise<void> {
+		const user = await this.usersRepository.findOneBy({id});
+		const newFriends = user.friend_list.split(',');
+		const index = newFriends.indexOf(login);
+		if (index > -1) {
+			newFriends.splice(index, 1);
+		}
+		this.usersRepository.update(id, { friend_list: newFriends.join(',') });
+	}
+
+	async findByLogin(login: string): Promise<User> {
+		return this.usersRepository.findOneBy({ login });
 	}
 
 	async getHistory(id: number) {
