@@ -101,17 +101,17 @@ export class MutedService {
             await this.mutedRepository.delete(exist.id);
     }
 
-    async isMute(channel: number, user: number) {
-        // const mutedUser = await this.getOne(channel, user);
-        // if (!mutedUser)
-        //     return false;
+    async isMute(channel: number, user: number, date: any) {
+        const mutedUser = await this.getOne(channel, user);
+        if (!mutedUser)
+            return false;
         // const storedDate = new Date(mutedUser.until);
-        const currentDate = new Date();
-        console.log({currentDate})
-        // if (storedDate.getTime() <= currentDate.getTime()) {
-        //     await this.delete(channel, user);
-        //     return false;
-        // }
-        // return true;
+        // const currentDate = new Date();
+        // console.log({currentDate})
+        if (mutedUser.until <= date) {
+            await this.delete(channel, user);
+            return false;
+        }
+        return true;
     }
 }

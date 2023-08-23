@@ -109,8 +109,10 @@ export default function Chat() {
     }, [myEventHandler2]);
 
     const deleteChannel = () => {
-        fetch(`http://localhost:5000/channels/${channel.id}`, { method: "DELETE" });
+        fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, { method: "DELETE" });
     }
+
+    /*****************************************************************************/
 
     const joinChannel = async () => {
         if (channel.type === 'protected') {
@@ -119,20 +121,40 @@ export default function Chat() {
             const newUser = user.pseudo;
             // setChannelMembers((prevMembers) => [...prevMembers, newUser]);
         }
-        socket.emit("joinChannel", { channelId: channel.id, newUser: { id: socket.id, login: socket.id/*user.login*/ }});
+        socket.emit("joinChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
     }
 
     const handleLeaveChannel = useCallback( async () => {
-        socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: socket.id, login: socket.id/*user.login*/ }});
+        socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
     }, [channel.id]);//quit / kick button
+
+    /*****************************************************************************/
 
     async function handleBan(target) {
         socket.emit("ban", { channelId: channel.id, user: {login: target.login, id: target.id}});
     }
 
+    /*****************************************************************************/
+
     async function handleMute(target) {
-        socket.emit("ismuted", { channelId: channel.id, user: target.login, until: 10});
+        function addMinutes(date, minutes) {
+            const dateCopy = new Date(date);
+            dateCopy.setMinutes(date.getMinutes() + minutes);
+
+            return dateCopy;
+        }
+        const date = new Date();
+
+        const newDate = addMinutes(date, 10);
+        socket.emit("mute", { channelId: channel.id, user: target.id, until: newDate});
     }
+
+    async function handleMute(target) {
+        const date = new Date();
+        socket.emit("ismuted", { channelId: channel.id, user: target.id, now: date});
+    }
+
+    /*****************************************************************************/
 
     async function handleKick(target) {
         socket.emit("kick", { channelId: channel.id, user: target.login});
@@ -147,8 +169,10 @@ export default function Chat() {
       return () => socket.off('kicked', onKick);
     }, [onKick]);
 
+    /*****************************************************************************/
+
     const getMembersEvent = useCallback( async () => {
-        const response = await fetch('http://localhost:5000/channels/getMembers',
+        const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/channels/getMembers',
             {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },

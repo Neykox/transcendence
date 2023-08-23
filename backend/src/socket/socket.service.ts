@@ -606,8 +606,8 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("ismuted")
-	ismuted(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
-		return this.mutedService.isMute(channelId, userId);
+	ismuted(@MessageBody() {channelId, userId, date}, @ConnectedSocket() client: Socket) {
+		return this.mutedService.isMute(channelId, userId, date);
 	}
 
 	/*****************************************************************************/
