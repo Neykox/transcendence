@@ -134,10 +134,8 @@ export default function Page1() {
 					if (user.is2FaActive)
 						setDirection("/twofa");
 				}
-				if ( localStorage.getItem("42image") === null) {
-					localStorage.setItem("42image", user_info.image.link);
-				}
-        		setRedirect(true);
+				localStorage.setItem("42image", user_info.image.link);
+        setRedirect(true);
 			}
 		};
     	test();

@@ -79,7 +79,7 @@ function App() {
 					{connected ? (
 						<Route path="/" element={<Navigate to="/profile" />} />
 					) : (
-						<Route path="/" element={<Login />} />
+						<Route path="/" element={<Login setStorage={setStorage} />} />
 					)}
 					<Route path="/profile/:login?" element={<Profile />}/>
 					<Route path="/message" element={<Message />}>
