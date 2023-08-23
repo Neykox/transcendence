@@ -10,7 +10,7 @@ import accept from '../../../asset/images/checkmark-circle.svg';
 import decline from '../../../asset/images/close-circle.svg';
 import Modal from 'react-modal';
 import AddFriend from './AddFriend/AddFriend';
-import { useParams } from 'react-router-dom';
+import { Navigate, Router, useParams } from 'react-router-dom';
 
 // import io from 'socket.io-client';
 
@@ -106,7 +106,6 @@ function Profile() {
 		// 	const fetchedUsers = await fetchUsers();
 		// 	setFriends(fetchedUsers);
 		// };
-
 		const fetchFriends = async () => {
 			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends', {
 				credentials: 'include'
@@ -187,8 +186,7 @@ function Profile() {
 
 
 		const fetchProfile = async (login: string) => {
-			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + `:5000/${login}/profile`, {
-				method: "POST",
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + `:5000/users/${login}/profile`, {
 				credentials: 'include'
 			});
 
@@ -260,7 +258,8 @@ function Profile() {
 		</div>, { autoClose: 5000, toastId: "stopduperror" }
 	)
 	)
-
+	if (localStorage.getItem("user") == null)
+		return (<Navigate to="/"/>);
 	return (
 		<div>
 			<NavBar />

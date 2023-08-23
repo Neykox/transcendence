@@ -28,6 +28,8 @@ export class UsersController {
 	@Get(':login')
 	async findOneByLogin(@Param('login') login: string, @Req() request: Request): Promise<User> { 
 		const user = await this.usersService.findOneByLogin(login);
+		if (!user)
+			throw new NotFoundException("user does not exist");
 		return user;
 	}
 

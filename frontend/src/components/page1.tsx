@@ -68,7 +68,7 @@ export default function Page1() {
 		if (response.status === 404) {
 			return null;
 		} else {
-			return response.json();
+			return await response.json();
 		}
 	};
 
@@ -115,8 +115,8 @@ export default function Page1() {
 				if (user === null) {
 					// localStorage.removeItem("user");
 					await create_user(user_info.login, user_info.image);
-					await get_cookie(user);
 					const newUser = await get_user(user_info.login);
+					await get_cookie(newUser);
 					userContext.setUser(user_info);
 					userContext.setUser(prevUser => ({ ...prevUser, image: user_info.image.link }));
 					userContext.setUser(prevUser => ({ ...prevUser, pseudo: user_info.login }));
