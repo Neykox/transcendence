@@ -613,7 +613,7 @@ export class SocketService {
 	@SubscribeMessage("kick")
 	kick(@MessageBody() {channelId, user}) {
 		console.log("kick called on ", user);
-		// this.server.to(connected[user].id).emit("kicked", { "channelId": channelId });
+		this.server.to(connected[user].id).emit("kicked", { "channelId": channelId });
 	}
 
 	/*****************************************************************************/

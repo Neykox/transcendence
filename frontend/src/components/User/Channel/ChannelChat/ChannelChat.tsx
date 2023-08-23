@@ -119,11 +119,11 @@ export default function Chat() {
             const newUser = user.pseudo;
             // setChannelMembers((prevMembers) => [...prevMembers, newUser]);
         }
-        socket.emit("joinChannel", { channelId: channel.id, newUser: { id: socket.id, login: socket.id/*user.login*/ }});
+        socket.emit("joinChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
     }
 
     const handleLeaveChannel = useCallback( async () => {
-        socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: socket.id, login: socket.id/*user.login*/ }});
+        socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
     }, [channel.id]);//quit / kick button
 
     async function handleBan(target) {
@@ -131,7 +131,7 @@ export default function Chat() {
     }
 
     async function handleMute(target) {
-        socket.emit("ismuted", { channelId: channel.id, user: target.login, until: 10});
+        socket.emit("ismuted", { channelId: channel.id, user: target.id, until: 10});
     }
 
     async function handleKick(target) {
