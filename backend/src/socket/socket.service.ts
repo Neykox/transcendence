@@ -4,6 +4,7 @@ import { PlayerDto } from '../dto/player.dto'
 import { BannedService } from '../banned/banned.service';
 import { MutedService } from '../muted/muted.service';
 import { MessageService } from '../message/message.service';
+import { AdminService } from '../admin/admin.service';
 import { ChannelsService } from '../channels/channels.service';
 
 import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interface'
@@ -39,6 +40,7 @@ export class SocketService {
 		private readonly bannedService: BannedService,
 		private readonly mutedService: MutedService,
 		private readonly messageService: MessageService,
+		private readonly adminService: AdminService,
 		private readonly channelsService: ChannelsService,
 	) {}
 
@@ -556,8 +558,8 @@ export class SocketService {
 	@SubscribeMessage("leaveChannel")
 	async leaveChannel(@MessageBody() {channelId, newUser}, @ConnectedSocket() client: Socket) {
 		await this.channelsService.removeUser(channelId, newUser);
-		this.server.to(channelId).emit("getMembers");
 		client.leave(channelId);
+		this.server.to(channelId).emit("getMembers");
 	}
 
 	/*****************************************************************************/
@@ -596,8 +598,8 @@ export class SocketService {
 	/*****************************************************************************/
 
 	@SubscribeMessage("mute")
-	async mute(@MessageBody() {channelId, user, until}, @ConnectedSocket() client: Socket) {
-		await this.mutedService.setMute({channel: channelId, user: user.id, until: until});
+	async mute(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
+		await this.mutedService.setMute(channelId, user);
 	}
 
 	@SubscribeMessage("unmute")
@@ -606,10 +608,29 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("ismuted")
-	ismuted(@MessageBody() {channelId, userId, date}, @ConnectedSocket() client: Socket) {
-		return this.mutedService.isMute(channelId, userId, date);
+	ismuted(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
+		return this.mutedService.isMute(channelId, userId);
 	}
 
 	/*****************************************************************************/
+
+	@SubscribeMessage("admin")
+	async admin(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
+		await this.adminService.setAdmin({channel: channelId, user: user.id});
+		this.kick({channelId: channelId, user: user.login});
+	}
+
+	@SubscribeMessage("unadmin")
+	unadmin(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
+		this.adminService.delete({channel: channelId, user: user.id});
+	}
+
+	@SubscribeMessage("isadmin")
+	isadmin(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
+		return this.adminService.isAdmin(channelId, userId);
+	}
+
+	/*****************************************************************************/
+
 }
 

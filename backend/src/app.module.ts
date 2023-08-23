@@ -11,6 +11,7 @@ import { ChannelsModule } from './channels/channels.module';
 import { Channel } from './channels/entities/channel.entity';
 import { Banned } from './banned/entities/banned.entity';
 import { Muted } from './muted/entities/muted.entity';
+import { Admin } from './admin/entities/admin.entity';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 
@@ -31,7 +32,7 @@ import { SocketModule } from './socket/socket.module'
 				username: config.get('POSTGRES_USER'),
 				password: config.get('POSTGRES_PASSWORD'),
 				database: config.get('POSTGRES_DB'),
-				entities: [User, Channel, Banned, Muted],
+				entities: [User, Channel, Banned, Muted, Admin],
 				synchronize: true,
 			}),
 			inject: [ConfigService],

@@ -126,6 +126,7 @@ export default function Chat() {
 
     const handleLeaveChannel = useCallback( async () => {
         socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
+        setChannelMembers([]);
     }, [channel.id]);//quit / kick button
 
     /*****************************************************************************/
@@ -134,24 +135,28 @@ export default function Chat() {
         socket.emit("ban", { channelId: channel.id, user: {login: target.login, id: target.id}});
     }
 
+    async function handleUnban(target) {
+        socket.emit("unban", { channelId: channel.id, user: {login: target.login, id: target.id}});
+    }
+
+    /*****************************************************************************/
+
+    async function handleAdmin(target) {
+        socket.emit("admin", { channelId: channel.id, user: {login: target.login, id: target.id}});
+    }
+
+    async function handleUnadmin(target) {
+        socket.emit("unadmin", { channelId: channel.id, user: {login: target.login, id: target.id}});
+    }
+
     /*****************************************************************************/
 
     async function handleMute(target) {
-        function addMinutes(date, minutes) {
-            const dateCopy = new Date(date);
-            dateCopy.setMinutes(date.getMinutes() + minutes);
-
-            return dateCopy;
-        }
-        const date = new Date();
-
-        const newDate = addMinutes(date, 10);
-        socket.emit("mute", { channelId: channel.id, user: target.id, until: newDate});
+        socket.emit("mute", { channelId: channel.id, user: target.id});
     }
 
-    async function handleMute(target) {
-        const date = new Date();
-        socket.emit("ismuted", { channelId: channel.id, user: target.id, now: date});
+    async function handleIsMuted(target) {
+        socket.emit("ismuted", { channelId: channel.id, user: target.id});
     }
 
     /*****************************************************************************/
@@ -292,6 +297,7 @@ export default function Chat() {
                                     <button onClick={() => handleBan(user)}>ban</button>
                                     <button onClick={() => handleKick(user)}>kick</button>
                                     <button onClick={() => handleMute(user)}>mute</button>
+                                    <button onClick={() => handleAdmin(user)}>admin</button>
                                 </div>
                             </li>
 

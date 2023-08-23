@@ -28,87 +28,56 @@ export class MutedService {
         });
     }
 
-    async setMute(mutedDto: MutedDto) {
-        // if (await this.getOne(mutedDto.channel, mutedDto.user) !== undefined) {
-        //     return await this.update(mutedDto);
-        // } else {
-        //     const newMuted = await this.mutedRepository.createQueryBuilder()
-        //         .insert()
-        //         .values([
-        //             {
-        //                 channel: mutedDto.channel,
-        //                 user: mutedDto.user,
-        //                 until: mutedDto.until
-        //             }
-        //         ])
-        //         .execute()
-        //     return {
-        //         message: 'User muted Successfully',
-        //         user: mutedDto.user,
-        //         channel: mutedDto.channel
-        //     };
-        // }
-        const exist = await this.getOne(mutedDto.channel, mutedDto.user);
+    async setMute(channelId: number, userId: number) {
+        function addMinutes(date, minutes) {
+            const dateCopy = new Date(date);
+            dateCopy.setMinutes(date.getMinutes() + minutes);
+
+            return dateCopy;
+        }
+        const date = new Date();
+        const newDate = addMinutes(date, 2).toString();
+        console.log(newDate)
+
+        const exist = await this.getOne(channelId, userId);
         if (exist === null)
-            await this.mutedRepository.save(mutedDto);
+            await this.mutedRepository.save({channel: channelId, user: userId, until: newDate});
     }
 
-    async update(mutedDto: MutedDto) {
-        try {
-            const update = await this.mutedRepository.createQueryBuilder()
-                .update()
-                .set({ until: mutedDto.until })
-                .where('user = :userId AND channel = :channelId', { userId: mutedDto.user, channelId: mutedDto.channel })
-                .execute();
-            return {
-                message: 'Muted user successfully updated',
-                user: mutedDto.user,
-                channel: mutedDto.channel
-            };
-        }
-        catch(error) {
-            return {
-                message: 'muted user update failed',
-                user: mutedDto.user,
-                channel: mutedDto.channel
-            };
-        }
-    }
+    // async update(mutedDto: MutedDto) {
+    //     try {
+    //         const update = await this.mutedRepository.createQueryBuilder()
+    //             .update()
+    //             .set({ until: newDate })
+    //             .where('user = :userId AND channel = :channelId', { userId: mutedDto.user, channelId: mutedDto.channel })
+    //             .execute();
+    //         return {
+    //             message: 'Muted user successfully updated',
+    //             user: mutedDto.user,
+    //             channel: mutedDto.channel
+    //         };
+    //     }
+    //     catch(error) {
+    //         return {
+    //             message: 'muted user update failed',
+    //             user: mutedDto.user,
+    //             channel: mutedDto.channel
+    //         };
+    //     }
+    // }
 
     async delete(channelId: number, userId: number) {
-        // try {
-        //     await this.mutedRepository.createQueryBuilder()
-        //         .delete()
-        //         .from(Muted)
-        //         .where('user = :userId', { userId: mutedDto.user })
-        //         .where('channel = :channelId', { channelId : mutedDto.channel })
-        //         .execute();
-        //     return {
-        //         message: 'User successfully unmuted',
-        //         user: mutedDto.user,
-        //         channel: mutedDto.channel
-        //     };
-        // }
-        // catch (error) {
-        //     return {
-        //         message: 'Fail to unmute user',
-        //         user: mutedDto.user,
-        //         channel: mutedDto.channel
-        //     };
-        // }
         const exist = await this.getOne(channelId, userId);
         if (exist !== null)
             await this.mutedRepository.delete(exist.id);
     }
 
-    async isMute(channel: number, user: number, date: any) {
+    async isMute(channel: number, user: number) {
         const mutedUser = await this.getOne(channel, user);
         if (!mutedUser)
             return false;
-        // const storedDate = new Date(mutedUser.until);
-        // const currentDate = new Date();
-        // console.log({currentDate})
-        if (mutedUser.until <= date) {
+        const currentDate = new Date().toString();
+        if (mutedUser.until <= currentDate) {
             await this.delete(channel, user);
             return false;
         }
