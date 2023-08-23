@@ -1,30 +1,45 @@
-import { Controller, Get, Post, Param, Body, NotFoundException, UseGuards, Put, Req } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, NotFoundException, ForbiddenException, UseGuards, Put, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../entities/user.entity';
 import { UserCreationDto } from '../dto/user_creation.dto';
 import { JwtGuard } from '../guard/jwt.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { SocketService } from 'src/socket/socket.service';
 
-
+interface profileResponse {
+	id: number;
+	login: string;
+	username?: string;
+	status: string;
+	gamehistory: Array<{ id: number, opponent: string, scores: string, result: string }>;
+}
 
 @Controller('users')
 export class UsersController {
-	constructor(private readonly usersService: UsersService) {}
+	constructor(private readonly usersService: UsersService, private readonly socketService: SocketService) {}
 
 	@Get()
 	findAll(): Promise<User[]> {
 		return this.usersService.findAll();
 	}
 
+	// @UseGuards(JwtGuard)
 	@Get(':login')
-	async findOneByLogin(@Param('login') login: string): Promise<User> { 
+	async findOneByLogin(@Param('login') login: string, @Req() request: Request): Promise<User> { 
+		const user = await this.usersService.findOneByLogin(login);
+		if (!user)
+			throw new NotFoundException("user does not exist");
+		return user;
+	}
+
+	@Get(':login/profile')
+	async findOneProfile(@Param('login') login: string): Promise<profileResponse> { 
 		const user = await this.usersService.findOneByLogin(login);
 		if (!user) {
 			throw new NotFoundException('User does not exist!');
-		} else {
-			return user;
 		}
+		return ({id: user.id, login: user.login, username: user.pseudo, gamehistory: user.gameHistory, status: await this.socketService.isConnected(user.login)})
 	}
 
 	@Post('create')

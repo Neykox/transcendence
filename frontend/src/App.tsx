@@ -153,10 +153,7 @@ function App() {
 					) : (
 						<Route path="/" element={<Login />} />
 					)}
-					<Route
-						path="/profile"
-						element={connected ? <Profile /> : <Navigate to="/" />}
-					/>
+					<Route path="/profile/:login?" element={<Profile />}/>
 					<Route path="/message" element={<Message />}>
 						<Route path="/message/:id" element={<Chat />} />
 					</Route>

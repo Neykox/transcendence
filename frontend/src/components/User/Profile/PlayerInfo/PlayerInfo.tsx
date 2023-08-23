@@ -8,12 +8,13 @@ import UserContext from '../../../../model/userContext';
 interface PlayerInfoProps {
 	wins: number;
 	loses: number;
+	profile: any;
 }
 
-function PlayerInfo({ wins, loses}: PlayerInfoProps) {
+function PlayerInfo({ wins, loses, profile}: PlayerInfoProps) {
 	const winBarRef = useRef<HTMLDivElement>(null);
 	const lossBarRef = useRef<HTMLDivElement>(null);
-	const { user } = useContext(UserContext);
+	const { user } = (useContext(UserContext));
 
 	//   Le useEffect est un Hook de React qui permet d'effectuer une action à 
 	// 	chaque fois que le composant auquel il est rattaché est affiché à l'écran ou mis à jour
@@ -60,8 +61,7 @@ function PlayerInfo({ wins, loses}: PlayerInfoProps) {
 			<div className="left">
 				<img {...{ src: user.image, alt: 'Avatar' }} />	
 				<div className="name">
-					<h1>{user.pseudo}</h1>
-					<h2>{user.first_name} {user.last_name}</h2>
+					<h1>{!profile ? user.pseudo : (profile.username ? profile.username : profile.login)}</h1>
 				</div>
 			</div>
 			<div className="right">

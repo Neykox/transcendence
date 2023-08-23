@@ -9,7 +9,7 @@ import { SocketModule } from 'src/socket/socket.module';
 import { forwardRef } from '@nestjs/common'
 
 @Module({
-imports: [TypeOrmModule.forFeature([FriendRequest]), JwtModule, UsersModule, forwardRef(() => SocketModule)],
+imports: [TypeOrmModule.forFeature([FriendRequest]), JwtModule, forwardRef(() => UsersModule), forwardRef(() => SocketModule)],
   controllers: [FriendsController],
   providers: [FriendsService],
   exports: [FriendsService],

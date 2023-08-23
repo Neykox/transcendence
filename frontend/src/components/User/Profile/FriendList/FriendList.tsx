@@ -64,7 +64,7 @@ export default function FriendList({ friends, requests, onClick }: HistoryProps)
 			<div className="requests">
 				<h1>Requests</h1>
 				{requests.length ? requests.map((request: {
-					id: number; from: string; to: string;
+					id: number; from: string; to: string; fromUsername: string;
 				}) => (<div className="request">
 							<p className="username">{request.fromUsername}</p>
 							<div className='requestButtons'>

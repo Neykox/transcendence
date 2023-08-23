@@ -69,7 +69,7 @@ export default function Page1() {
 		if (response.status === 404) {
 			return null;
 		} else {
-			return response.json();
+			return await response.json();
 		}
 	};
 
