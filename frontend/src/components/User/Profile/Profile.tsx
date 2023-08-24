@@ -141,16 +141,6 @@ function Profile() {
     }
   };
 
-  const get_cookie = async (user) => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(user),
-    };
-    await fetch("http://localhost:5000/auth/create_cookie", requestOptions);
-  };
-
 	return (
 		<div>
 			<NavBar />
@@ -161,7 +151,6 @@ function Profile() {
 					<FriendList friends={friends} onClick={friendsList} />
 				</div>
 			</div>
-			<button onClick={async () => {await get_cookie( await get_user())}}>get_cookie</button>
 		</div>
 	);
 }
