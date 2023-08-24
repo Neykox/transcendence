@@ -547,12 +547,12 @@ export class SocketService {
 		// if (mdp)
 		// 	ret = this.channelsService.mdp_checker(channelId, mdp);
 
-		// if (await this.isban({channelId: channelId, userId: newUser.id}, null) === false)
-		// {
+		if (await this.isban({channelId: channelId, userId: newUser.id}, null) === false)
+		{
 			await this.channelsService.addUser(channelId, newUser);
-			client.join(channelId);//check if banned first
+			client.join(channelId);
 			this.server.to(channelId).emit("getMembers");
-		// }
+		}
 	}
 
 	@SubscribeMessage("leaveChannel")
@@ -565,29 +565,36 @@ export class SocketService {
 	/*****************************************************************************/
 
 	@SubscribeMessage("send_message")
-	send_message(@MessageBody() {channelId, newMessage}, @ConnectedSocket() client: Socket) {
-		this.server.to(channelId).emit("newMessage", newMessage);//check if muted first
+	async send_message(@MessageBody() {channelId, newMessage, userId}, @ConnectedSocket() client: Socket) {
+		if (await this.mutedService.isMute(channelId, userId) === false)
+			this.server.to(channelId).emit("newMessage", newMessage);
 	}
 
 	/*****************************************************************************/
 
 	@SubscribeMessage("kick")
-	kick(@MessageBody() {channelId, user}) {
-		console.log("kick called on ", user);
-		// this.server.to(connected[user].id).emit("kicked", { "channelId": channelId });
+	async kick(@MessageBody() {channelId, user, target}) {
+		if (await this.isOp(channelId, user, target) === true)
+			console.log("kick called on ", target.login);
+			// this.server.to(connected[target.login].id).emit("kicked", { "channelId": channelId });
 	}
 
 	/*****************************************************************************/
 
 	@SubscribeMessage("ban")
-	async ban(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		await this.bannedService.setBan({channel: channelId, user: user.id});
-		this.kick({channelId: channelId, user: user.login});
+	async ban(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+		if (await this.isOp(channelId, user, target) === true)
+		{
+			await this.bannedService.setBan({channel: channelId, userId: target.userId, login: target.login});
+			this.adminService.delete({channel: channelId, user: target.id});
+			this.kick({channelId: channelId, user: user, target: target});
+		}
 	}
 
 	@SubscribeMessage("unban")
-	unban(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		this.bannedService.delete({channel: channelId, user: user.id});
+	async unban(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+		if (await this.isOp(channelId, user, target) === true)
+			await this.bannedService.delete({channel: channelId, userId: target.userId, login: target.login});
 	}
 
 	@SubscribeMessage("isban")
@@ -598,14 +605,15 @@ export class SocketService {
 	/*****************************************************************************/
 
 	@SubscribeMessage("mute")
-	async mute(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		await this.mutedService.setMute(channelId, user);
+	async mute(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+		if (await this.isOp(channelId, user, target) === true)
+			await this.mutedService.setMute(channelId, target.id);
 	}
 
-	@SubscribeMessage("unmute")
-	unmute(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		this.mutedService.delete(channelId, user.id);
-	}
+	// @SubscribeMessage("unmute")
+	// unmute(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
+	// 	this.mutedService.delete(channelId, user.id);
+	// }
 
 	@SubscribeMessage("ismuted")
 	ismuted(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
@@ -615,14 +623,15 @@ export class SocketService {
 	/*****************************************************************************/
 
 	@SubscribeMessage("admin")
-	async admin(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		await this.adminService.setAdmin({channel: channelId, user: user.id});
-		this.kick({channelId: channelId, user: user.login});
+	async admin(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+		if (await this.isOp(channelId, user, target) === true)
+			await this.adminService.setAdmin({channel: channelId, user: target.id});
 	}
 
 	@SubscribeMessage("unadmin")
-	unadmin(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		this.adminService.delete({channel: channelId, user: user.id});
+	async unadmin(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+		if (await this.isOp(channelId, user, target) === true)
+			this.adminService.delete({channel: channelId, user: target.id});
 	}
 
 	@SubscribeMessage("isadmin")
@@ -631,6 +640,33 @@ export class SocketService {
 	}
 
 	/*****************************************************************************/
+
+	async isOp(channelId, user, target)
+	{
+		const chan = await this.channelsService.findOne(channelId);
+		if (target.login === chan.owner)
+		{
+			console.log("target is owner | false");
+			return false;
+		}
+		if (user.login === chan.owner)
+		{
+			console.log("user is owner | true");
+			return true;
+		}
+		if (await this.adminService.isAdmin(channelId, user.id) === true && await this.adminService.isAdmin(channelId, target.id) === true)
+		{
+			console.log("both admin | false");
+			return false;
+		}
+		if (await this.adminService.isAdmin(channelId, user.id) === false)
+		{
+			console.log("user not admin | false");
+			return false;
+		}
+		console.log("else | true");
+		return true;
+	}
 
 }
 

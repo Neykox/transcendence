@@ -11,5 +11,8 @@ export class Banned {
     channel: number;
 
     @Column() // Same
-    user: number;
+    userId: number;
+
+    @Column() // Same
+    login: string;
 }

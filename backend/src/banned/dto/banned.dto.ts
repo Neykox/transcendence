@@ -7,5 +7,7 @@ export class BannedDto {
 
     @IsNotEmpty()
     @IsNumber()
-    user: number;
+    userId: number;
+
+    login: string;
 }

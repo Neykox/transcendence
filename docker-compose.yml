@@ -46,6 +46,7 @@ services:
     environment:
       - REACT_APP_UID42=${REACT_APP_UID42}
       - REACT_APP_SECRET42=${REACT_APP_SECRET42}
+      - REACT_APP_POSTURL=${REACT_APP_POSTURL}
     volumes:
       - ./frontend/src:/usr/src/app/frontend/src
       - ./frontend/public:/usr/src/app/frontend/public

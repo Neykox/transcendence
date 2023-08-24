@@ -2,7 +2,7 @@ import './ChannelChat.scss';
 import { socket } from '../../../Socket/socketInit';
 import UserContext from '../../../../model/userContext';
 import { useEffect, useRef, useState, useContext, useCallback } from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -26,15 +26,19 @@ export default function Chat() {
     const channel = location.state.channel;
     const lastMessageRef = useRef<HTMLDivElement>(null);
     const [showModal, setShowModal] = useState(false);
+    const [showBannedModal, setShowBannedModal] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [passwordInput, setPasswordInput] = useState('');
     const [channelMembers, setChannelMembers] = useState<member[]>([]);
+    const [channelBanned, setChannelBanned] = useState<member[]>([]);
     const [currentUser, setCurrentUser] = useState<string>('');
 
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<ChatMessage[]>([
 
     ]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const message = allMesage.filter(message => message.conversationOwner === channel.owner);
@@ -58,6 +62,14 @@ export default function Chat() {
         setShowModal(false);
     };
 
+    const openBannedModal = () => {
+        setShowBannedModal(true);
+    };
+
+    const closeBannedModal = () => {
+        setShowBannedModal(false);
+    };
+
     const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(event.target.value);
     };
@@ -79,7 +91,7 @@ export default function Chat() {
         allMesage.push(newMessage);
 
         setMessages((prevMessages) => [...prevMessages, newMessage]);
-        socket.emit("send_message", { channelId: channel.id, newMessage: newMessage });
+        socket.emit("send_message", { channelId: channel.id, newMessage: newMessage, userId: user.id});
         setInputValue('');
     };
 
@@ -109,7 +121,13 @@ export default function Chat() {
     }, [myEventHandler2]);
 
     const deleteChannel = () => {
-        fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, { method: "DELETE" });
+        if (channel.owner === user.login)
+        {
+            fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, { method: "DELETE" });
+            navigate("/channel");
+        }
+        else
+            console.log("only owner can deleteChannel");
     }
 
     /*****************************************************************************/
@@ -127,32 +145,33 @@ export default function Chat() {
     const handleLeaveChannel = useCallback( async () => {
         socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
         setChannelMembers([]);
+        navigate("/channel");
     }, [channel.id]);//quit / kick button
 
     /*****************************************************************************/
 
     async function handleBan(target) {
-        socket.emit("ban", { channelId: channel.id, user: {login: target.login, id: target.id}});
+        socket.emit("ban", { channelId: channel.id, user: {login: user.login, userId: user.id}, target: {login: target.login, userId: target.id}});
     }
 
     async function handleUnban(target) {
-        socket.emit("unban", { channelId: channel.id, user: {login: target.login, id: target.id}});
+        socket.emit("unban", { channelId: channel.id, user: {login: user.login, userId: user.id}, target: {login: target.login, userId: target.userId}});
     }
 
     /*****************************************************************************/
 
     async function handleAdmin(target) {
-        socket.emit("admin", { channelId: channel.id, user: {login: target.login, id: target.id}});
+        socket.emit("admin", { channelId: channel.id, user: {login: user.login, id: user.id}, target: {login: target.login, id: target.id}});
     }
 
     async function handleUnadmin(target) {
-        socket.emit("unadmin", { channelId: channel.id, user: {login: target.login, id: target.id}});
+        socket.emit("unadmin", { channelId: channel.id, user: {login: user.login, id: user.id}, target: {login: target.login, id: target.id}});
     }
 
     /*****************************************************************************/
 
     async function handleMute(target) {
-        socket.emit("mute", { channelId: channel.id, user: target.id});
+        socket.emit("mute", { channelId: channel.id, user: {login: user.login, id: user.id}, target: {login: target.login, id: target.id}});
     }
 
     async function handleIsMuted(target) {
@@ -162,7 +181,7 @@ export default function Chat() {
     /*****************************************************************************/
 
     async function handleKick(target) {
-        socket.emit("kick", { channelId: channel.id, user: target.login});
+        socket.emit("kick", { channelId: channel.id, user: {login: user.login, id: user.id}, target: {login: target.login, id: target.id}});
     }
 
     const onKick = useCallback( () => {
@@ -194,6 +213,19 @@ export default function Chat() {
             index++;
         }
         setChannelMembers(newMatchs)
+
+
+        const response2 = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/banned/${channel.id}`);
+        const data2 = await response2.json();
+        index = 0;
+        let newBanned: member[] = [];
+        while (data2[index])
+        {
+            // newMatchs.unshift(data[index]);
+            newBanned.push(data2[index]);
+            index++;
+        }
+        setChannelBanned(newBanned)
     }, [channel.id]);
 
     useEffect(() => {
@@ -247,6 +279,7 @@ export default function Chat() {
                 <button onClick={handleLeaveChannel}>Leave un canal</button>
                 <button onClick={deleteChannel} >delete</button>
                 <button onClick={openModal}>Membres</button>
+                <button onClick={openBannedModal}>Banned</button>
                 <div className={`${channel.type}`}></div>
             </div>
             <div className="chatBox">
@@ -298,11 +331,29 @@ export default function Chat() {
                                     <button onClick={() => handleKick(user)}>kick</button>
                                     <button onClick={() => handleMute(user)}>mute</button>
                                     <button onClick={() => handleAdmin(user)}>admin</button>
+                                    <button onClick={() => handleUnadmin(user)}>unadmin</button>
                                 </div>
                             </li>
 
                         ))}
                         <button onClick={closeModal}>Close</button>
+                    </ul>
+                </div>
+            )}
+            {showBannedModal && (
+                <div className="modal">
+                    <h3>Liste des banned</h3>
+                    <ul>
+                        {channelBanned.map((user, index) => (
+                            <li key={index}>
+                                <div className="user-name">{user.login}</div>
+                                <div className="button-container">
+                                    <button onClick={() => handleUnban(user)}>unban</button>
+                                </div>
+                            </li>
+
+                        ))}
+                        <button onClick={closeBannedModal}>Close</button>
                     </ul>
                 </div>
             )}
