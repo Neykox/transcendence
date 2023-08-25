@@ -49,7 +49,7 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
     return (
         <div className="channelList">
             {channels.map((channel) => (
-                <Link to={`/channel/${channel.owner}`} state={{ channel: channel }} key={channel.owner}>
+                <Link to={`/channel/${channel.name}`} state={{ channel: channel }} key={channel.name}>
                     <div className={`channel ${selectedChannelOwner === channel.owner ? 'selected' : ''}`} onClick={() => handleSelectMessage(channel.owner)}>
                         <h2>{channel.name}</h2>
                         <div className={`${channel.type}`}></div>

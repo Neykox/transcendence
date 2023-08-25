@@ -92,9 +92,8 @@ function App() {
           <Route path="/page1" element={<Page1 />} />
           <Route path="/twofa" element={<TwoFa />} />
           <Route path='/lobby' element={<Lobby />} />
-          <Route path='/channel' element={<Channel />}>
+          <Route path='/channel' element={<Channel />} />
           <Route path="/channel/:id" element={<ChannelChat />} />
-        </Route>
         </Routes>
       </div>
     </UserProvider>

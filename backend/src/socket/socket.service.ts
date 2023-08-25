@@ -564,6 +564,15 @@ export class SocketService {
 
 	/*****************************************************************************/
 
+	@SubscribeMessage("send_dm_invite")
+	async send_dm_invite(@MessageBody() {channel, user_login, target_login}, @ConnectedSocket() client: Socket) {
+		// if (not blocked)
+			// this.server.to(connected[target.login].id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
+		this.server.to(client.id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
+	}
+
+	/*****************************************************************************/
+
 	@SubscribeMessage("send_message")
 	async send_message(@MessageBody() {channelId, newMessage, userId}, @ConnectedSocket() client: Socket) {
 		if (await this.mutedService.isMute(channelId, userId) === false)
@@ -668,4 +677,3 @@ export class SocketService {
 		return true;
 	}
 }
-

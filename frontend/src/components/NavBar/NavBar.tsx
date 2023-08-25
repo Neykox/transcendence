@@ -56,7 +56,7 @@ function NavBar() {
 				</Link>
 			</div>
 			<div className={active.active === "shutdown" ? "set selectedLink" : "set2"}>
-				<Link to={"/shutdown"} onClick={() => active.setActive("shutdown")}>
+				<Link to={"/shutdown"} onClick={() => active.setActive("shutdown")} /*clear localstorage/cookie and navigate("/login")*/>
 					<img src={shutdown} alt="" />
 				</Link>
 			</div>

@@ -24,4 +24,7 @@ export class Channel {
 
     @Column({ type: 'jsonb', nullable: false, array: false, default: () => "'[]'", })
     users: Array<{ id: number, login: string }>;
+
+    @Column({ nullable: true })
+    dm?: string;
 }

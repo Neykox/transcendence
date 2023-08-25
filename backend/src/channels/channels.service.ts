@@ -27,6 +27,8 @@ export class ChannelsService {
         channel.password = await argon.hash(''); // channel is protected but no password given
       }
     }
+    if (createChannelDto.dm)
+      channel.dm = createChannelDto.dm;
 
     // save the channel in the database
     try {
@@ -73,6 +75,19 @@ export class ChannelsService {
 
     if (!chan) {
       throw new ForbiddenException(`Channel with id #${id} doesn't exist`);
+    }
+
+    delete(chan.password);
+    return chan;
+  }
+
+  async findByName(name: string) {
+    const chan = await this.channelRepository.findOneBy({
+      name,
+    });
+
+    if (!chan) {
+      throw new ForbiddenException(`Channel doesn't exist`);
     }
 
     delete(chan.password);

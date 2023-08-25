@@ -18,4 +18,8 @@ export class CreateChannelDto {
     @IsOptional()
     @IsString()    
     password?: string;
+
+    @IsOptional()
+    @IsString()    
+    dm?: string;
 }

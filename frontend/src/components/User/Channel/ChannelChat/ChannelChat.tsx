@@ -22,8 +22,9 @@ const allMesage: ChatMessage[] = [];
 
 export default function Chat() {
     const { user } = useContext(UserContext);
+    const navigate = useNavigate();
     const location = useLocation();
-    const channel = location.state.channel;
+    const channel = (location.state ? location.state.channel : "rip");
     const lastMessageRef = useRef<HTMLDivElement>(null);
     const [showModal, setShowModal] = useState(false);
     const [showBannedModal, setShowBannedModal] = useState(false);
@@ -38,9 +39,16 @@ export default function Chat() {
 
     ]);
 
-    const navigate = useNavigate();
-
     useEffect(() => {
+        if (location.state === null)
+            navigate(-1);
+        const fetchChannel = async () => {
+            const response = await fetch(`http://localhost:5000/channels/${channel.id}`, { method: "GET" });
+            if (response.status === 403)
+                navigate(-1);
+        };
+        fetchChannel();
+        console.log({channel})
         const message = allMesage.filter(message => message.conversationOwner === channel.owner);
         //console.log("1");
         if (message.length > 0) {
@@ -104,17 +112,16 @@ export default function Chat() {
         //     author: `${channel.name}`,
         //     message: "Coucou"
         // };
-        console.log(user.login + " " + data.who)
         
-        data.who = (user.login === data.who ? 'me' : 'contact');
-        // data.author = `${channel.name}`;
-        const newMessage: ChatMessage = data;
-
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        // if (data.owner not blocked)
+        // {
+            data.who = (user.login === data.who ? 'me' : 'contact');
+            const newMessage: ChatMessage = data;
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+        // }
     }
 
     const myEventHandler2 = useCallback(data => {
-        // console.log(data);
         contactSendMessage(data);
     }, []);
 
@@ -275,7 +282,7 @@ export default function Chat() {
                 <h2>{channel.name}</h2>
                 {// ici pas besoin de rajouter si public et protected car les privé ne sont pas visible mais plus securisé ? 
                 }
-                {(channel.type === 'public' || channel.type === 'protected') && (
+                {(channel.type === 'public' || channel.type === 'protected' || channel.type === 'dm') && (
                     <button onClick={joinChannel}>Rejoindre</button>
                 )}
 

@@ -22,6 +22,11 @@ export class ChannelsController {
     return this.channelsService.findOne(+id);
   }
 
+  @Post('channel_by_name')
+  findByName(@Body() {name}) {
+    return this.channelsService.findByName(name);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateChannelDto: UpdateChannelDto) {
     return this.channelsService.update(+id, updateChannelDto);
