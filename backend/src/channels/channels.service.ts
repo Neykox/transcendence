@@ -64,7 +64,7 @@ export class ChannelsService {
   async findAll(): Promise<Channel[]> {
     return await this.channelRepository
       .createQueryBuilder('chan')
-      .select(['chan.id', 'chan.name', 'chan.owner', 'chan.type'])
+      .select(['chan.id', 'chan.name', 'chan.owner', 'chan.type', 'chan.dm'])
       .getMany();
   }
 
