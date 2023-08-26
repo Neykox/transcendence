@@ -4,6 +4,7 @@ import { channelTypesDto } from "./channelTypes.dto";
 
 export class CreateChannelDto {
     @IsNotEmpty()
+    @IsString()
     // @Transform(({ value }) => parseInt(value))
     owner: string;
 

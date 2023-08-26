@@ -1,6 +1,9 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody, ConnectedSocket } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io';
 import { PlayerDto } from '../dto/player.dto'
+import { MatchmakingDto } from '../dto/matchmaking.dto'
+import { PlayerMoveDto } from '../dto/playerMove.dto'
+import { DuelDto } from '../dto/duel.dto'
 import { BannedService } from '../banned/banned.service';
 import { MutedService } from '../muted/muted.service';
 import { MessageService } from '../message/message.service';
@@ -78,11 +81,11 @@ export class SocketService {
 										// 1 v 1
 	/*****************************************************************************/
 	@SubscribeMessage('updatePlayer')
-	playerMove(@MessageBody() {p} , @ConnectedSocket() client: Socket) {
-		if (p.socketId === rooms[p.room].p1.socketId)
-			rooms[p.room].p1.dir = p.dir;
+	playerMove(@MessageBody() {socketId, dir, room} : PlayerMoveDto , @ConnectedSocket() client: Socket) {
+		if (socketId === rooms[room].p1.socketId)
+			rooms[room].p1.dir = dir;
 		else
-			rooms[p.room].p2.dir = p.dir;
+			rooms[room].p2.dir = dir;
 	}
 
 	async make_room(gametype: string, room: string)
@@ -427,7 +430,7 @@ export class SocketService {
 	}
 
 	@SubscribeMessage('join_list')
-	joinList(@MessageBody() data, @ConnectedSocket() client: Socket) {
+	joinList(@MessageBody() data: MatchmakingDto, @ConnectedSocket() client: Socket) {
 
 		let skip: boolean = false;
 		for (const id in rooms)
@@ -464,7 +467,7 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("private_match")
-	private_match(@MessageBody() data, @ConnectedSocket() client: Socket) {
+	private_match(@MessageBody() data: MatchmakingDto, @ConnectedSocket() client: Socket) {
 
 		let skip: boolean = false;
 		for (const id in rooms)
@@ -507,20 +510,20 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("send_invite")
-	send_invite(@MessageBody() {challenger, time, gamemode}, @ConnectedSocket() client: Socket) {
+	send_invite(@MessageBody() {challenger, time, gametype}: DuelDto, @ConnectedSocket() client: Socket) {
 
 		for (const id in connected)
 		{
 			if (connected[id].id != client.id)
 			{
-				this.server.to(connected[id].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gamemode});
+				this.server.to(connected[id].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gametype});
 				break;
 			}
 		}
 	}
 
 	@SubscribeMessage("send_answer")
-	send_answer(@MessageBody() {challenger, time, answer, gametype}, @ConnectedSocket() client: Socket) {
+	send_answer(@MessageBody() {challenger, time, answer, gametype} : DuelDto, @ConnectedSocket() client: Socket) {
 
 		for (const id in connected)
 		{

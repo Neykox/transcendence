@@ -93,7 +93,7 @@ export default function Chat() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (inputValue.trim() === '') {
+        if (inputValue.trim() === '' || showPasswordModal === true) {
             return;
         }
 

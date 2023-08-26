@@ -15,7 +15,6 @@ import { Response, Request } from 'express';
 import { TwoFaService } from './two_fa.service';
 import { UsersService } from '../users/users.service';
 import { TwoFaCodeDto } from '../dto/two_fa_code.dto';
-import { UserIdDto } from '../dto/user_id.dto';
 import { JwtGuard } from '../guard/jwt.guard';
 import { JwtService } from '@nestjs/jwt';
 
