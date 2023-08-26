@@ -14,6 +14,9 @@ export class User {
   @Column({ default: "offline" })
   status: string;
 
+  @Column( {default: ""} )
+  blocked: string;
+
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 

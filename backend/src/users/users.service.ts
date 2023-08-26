@@ -83,4 +83,32 @@ export class UsersService {
 		newHistory[index] = lastGame;
 		this.usersRepository.update(id, { gameHistory: newHistory });
 	}
+
+	async blockUser(login: string, blockedUser: string) : Promise<void> {
+		const user = await this.usersRepository.findOneBy({login: login});
+		const blocked = user.blocked;
+		if (blocked === null)
+		{
+			this.usersRepository.update(user.id, {blocked: blockedUser});
+			return;
+		}
+		this.usersRepository.update(user.id, {blocked: blocked + "," + blockedUser});
+	}
+
+	async unblockUser(login: string, blockedUser: string) : Promise<void> {
+		const user = await this.usersRepository.findOneBy({login: login});
+		const blocked = user.blocked;
+		if (blocked === null)
+			return;
+		let index = blocked.indexOf(blockedUser);
+		if (index === -1)
+			return;
+		let newBlocked = blocked.slice(0, index) + blocked.slice(index + blockedUser.length + 1);
+		this.usersRepository.update(user.id, {blocked: newBlocked});
+	}
+
+	async getBlocked(login: string) : Promise<string> {
+		const user = await this.usersRepository.findOneBy({login: login});
+		return user.blocked;
+	}
 }

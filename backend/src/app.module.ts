@@ -16,6 +16,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 
 import { SocketModule } from './socket/socket.module'
+import { BlockedModule } from './blocked/blocked.module';
 
 @Module({
 	imports: [
@@ -42,7 +43,8 @@ import { SocketModule } from './socket/socket.module'
 		AuthModule,
 		TwoFaModule,
 		SocketModule,
-		ChannelsModule,],
+		ChannelsModule,
+		BlockedModule,],
 	// controllers: [AppController],
 	// providers: [AppService],
 })
