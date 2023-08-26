@@ -17,7 +17,7 @@ function Channel() {
 
 	const { user } = useContext(UserContext);
 	const [channels, setChannels] = useState<Channels[]>([]);
-	const channelsNoPrivate = channels.filter(channel => {return user.login === channel.owner || user.login === channel.dm});
+	const channelsNoPrivate = channels.filter(channel => {return channel.type !== 'dm' || (user.login === channel.owner || user.login === channel.dm)});
 
 	const fetchChannels = useCallback(async () => {
 		const response = await fetch('http://localhost:5000/channels', { method: "GET" });

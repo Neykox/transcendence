@@ -58,7 +58,7 @@ function DmButton(login) {
 			chan = await createChannel({ owner: user.login, name: user.login+"-"+login.login, type: 'dm', dm: login.login });
 		if (chan.type !== 'dm')
 		{
-			console.log("log: someone already stole that name i dont fucking know")
+			console.log("log: someone already stole that name i dont fucking know call the tech support")
 			return "i dont fucking know";
 		}
 		console.log({chan})
