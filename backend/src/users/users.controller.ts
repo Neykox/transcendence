@@ -13,6 +13,7 @@ interface profileResponse {
 	username?: string;
 	status: string;
 	gamehistory: Array<{ id: number, opponent: string, scores: string, result: string }>;
+	image?: string;
 }
 
 @Controller('users')
@@ -39,7 +40,7 @@ export class UsersController {
 		if (!user) {
 			throw new NotFoundException('User does not exist!');
 		}
-		return ({id: user.id, login: user.login, username: user.pseudo, gamehistory: user.gameHistory, status: await this.socketService.isConnected(user.login)})
+		return ({id: user.id, login: user.login, username: user.pseudo, gamehistory: user.gameHistory, status: await this.socketService.isConnected(user.login), image: user.image});
 	}
 
 	@Post('create')
