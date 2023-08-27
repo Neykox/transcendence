@@ -3,6 +3,7 @@ import { Get, Post, Delete, Body, Req } from '@nestjs/common';
 import { JwtGuard } from 'src/guard/jwt.guard';
 import { UsersService } from 'src/users/users.service';
 import { Request } from 'express';
+import { BlockDto } from '../dto/block.dto';
 
 @Controller('blocked')
 export class BlockedController {
@@ -16,7 +17,7 @@ export class BlockedController {
 
 	@Post()
 	@UseGuards(JwtGuard)
-	async block(@Body() {login}, @Req() request: Request) : Promise<string> {
+	async block(@Body() {login}: BlockDto, @Req() request: Request) : Promise<string> {
 		if ( !login ) {
 			throw new Error("No login provided");
 		}
@@ -26,7 +27,7 @@ export class BlockedController {
 
 	@Delete()
 	@UseGuards(JwtGuard)
-	async unblock(@Body() {login}, @Req() request: Request) : Promise<string> {
+	async unblock(@Body() {login}: BlockDto, @Req() request: Request) : Promise<string> {
 		if ( !login ) {
 			throw new Error("No login provided");
 		}

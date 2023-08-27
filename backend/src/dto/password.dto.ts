@@ -1,16 +1,12 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
-export class PlayerMoveDto {
+export class PasswordDto {
+
+	@IsNumber()
+	@IsNotEmpty()
+	id: number;
 
 	@IsString()
 	@IsNotEmpty()
-	socketId: string;
-
-	@IsNumber()
-	@IsNotEmpty()
-	dir: number;
-
-	@IsNumber()
-	@IsNotEmpty()
-	room: number;
+	password: string;
 }

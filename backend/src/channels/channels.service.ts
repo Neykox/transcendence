@@ -17,6 +17,7 @@ export class ChannelsService {
 
   async create(createChannelDto: CreateChannelDto): Promise<Channel> {
     // create the new channel
+    console.log({createChannelDto})
     const channel = new Channel();
     channel.owner = createChannelDto.owner;
     channel.name = createChannelDto.name;
@@ -55,9 +56,8 @@ export class ChannelsService {
   async mdp_checker(id: number, mdp: string): Promise<boolean>
   {
     const chan = await this.channelRepository.findOneBy({ id });
-    const hashed = await argon.hash(mdp);
 
-    if (chan.password === hashed)
+    if (await argon.verify(chan.password, mdp))
       return true;
     return false;
   }

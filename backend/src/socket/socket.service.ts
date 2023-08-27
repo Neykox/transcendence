@@ -4,9 +4,10 @@ import { MatchmakingDto } from '../dto/matchmaking.dto'
 import { PlayerMoveDto } from '../dto/playerMove.dto'
 import { DuelDto } from '../dto/duel.dto'
 import { ClassicDto } from '../dto/classic.dto'
+import { PasswordDto } from '../dto/password.dto'
 import { BannedService } from '../banned/banned.service';
 import { MutedService } from '../muted/muted.service';
-import { MessageService } from '../message/message.service';
+// import { MessageService } from '../message/message.service';
 import { AdminService } from '../admin/admin.service';
 import { ChannelsService } from '../channels/channels.service';
 
@@ -42,7 +43,7 @@ export class SocketService {
 	constructor (
 		private readonly bannedService: BannedService,
 		private readonly mutedService: MutedService,
-		private readonly messageService: MessageService,
+		// private readonly messageService: MessageService,
 		private readonly adminService: AdminService,
 		private readonly channelsService: ChannelsService,
 	) {}
@@ -641,6 +642,14 @@ export class SocketService {
 		const target = {id: targetId, login: targetLogin};
 		if (await this.isOp(channelId, user, target) === true)
 			this.adminService.delete({channel: channelId, user: target.id});
+	}
+
+	/*****************************************************************************/
+
+	@SubscribeMessage("passwordCheck")
+	async passwordCheck(@MessageBody() {id, password}: PasswordDto, @ConnectedSocket() client: Socket) {
+		const ret = await this.channelsService.mdp_checker(id, password);
+		this.server.to(client.id).emit("passwordChecked", {check: ret});
 	}
 
 	/*****************************************************************************/

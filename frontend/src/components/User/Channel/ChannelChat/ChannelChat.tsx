@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useContext, useCallback } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DuelButton from '../../../Pong/DuelButton';
 
 type ChatMessage = {
     conversationOwner: string;
@@ -32,6 +33,7 @@ export default function Chat() {
     const [passwordInput, setPasswordInput] = useState('');
     const [channelMembers, setChannelMembers] = useState<member[]>([]);
     const [channelBanned, setChannelBanned] = useState<member[]>([]);
+    const [blocked, setBlocked] = useState<string>("");
 
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -44,7 +46,7 @@ export default function Chat() {
         if (location.state === null)
             navigate(-1);
         const fetchChannel = async () => {
-            const response = await fetch(`http://localhost:5000/channels/${channel.id}`, { method: "GET" });
+            const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, { method: "GET" });
             if (response.status === 403)
                 navigate(-1);
         };
@@ -121,13 +123,13 @@ export default function Chat() {
     // }
 
     const myEventHandler2 = useCallback(data => {
-        // if (data.owner not blocked && data.newMessage.origin === channel.id)
-        // {
+        if (!(blocked.find((element) => element === data.owner) !== undefined || data.newMessage.origin === channel.id))
+        {
             data.who = (user.login === data.who ? 'me' : 'contact');
             const newMessage: ChatMessage = data;
             setMessages((prevMessages) => [...prevMessages, newMessage]);
-        // }
-    }, [user]);
+        }
+    }, [user, channel, blocked]);
 
     useEffect(() => {
       socket.on('newMessage', myEventHandler2);
@@ -238,6 +240,10 @@ export default function Chat() {
             index++;
         }
         setChannelBanned(newBanned)
+
+        const response3 = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/blocked', { credentials: 'include', });
+        const data3 = await response3.json();
+        setBlocked(data3.split(','));
     }, [channel.id]);
 
     useEffect(() => {
@@ -261,21 +267,41 @@ export default function Chat() {
         setPasswordInput(event.target.value);
     };
 
-    const handlePasswordSubmit = () => {
+    const handlePasswordSubmit = async () => {
         // trouve bine le channel.name mais channel.password indefini
-        const correctPassword = channel.password;
-        console.log(correctPassword);
-        console.log(channel.name);
-        if (passwordInput === correctPassword) {
+        // const correctPassword = channel.password;
+        // console.log(correctPassword);
+        // console.log(channel.name);
+        socket.emit("passwordCheck", { id: channel.id,  password: passwordInput })
+        // console.log("ret = ", ret);
+        // if (ret === true) {
+        //     toast.success('Mot de passe correct !');
+        //     setShowPasswordModal(false);
+        //     socket.emit("joinChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
+        //     setPasswordInput('');
+        // } else {
+        //     toast.error('Mot de passe incorrect. Veuillez réessayer.');
+        //     setShowPasswordModal(false);
+        // }
+    };
+
+    const joinProtected = useCallback( async (data) => {
+        console.log("data.check = ", data.check);
+        if (data.check === true) {
             toast.success('Mot de passe correct !');
             setShowPasswordModal(false);
             socket.emit("joinChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
             setPasswordInput('');
         } else {
             toast.error('Mot de passe incorrect. Veuillez réessayer.');
-            setShowPasswordModal(false);
+            setPasswordInput('');
         }
-    };
+    }, [channel.id, user]);
+
+    useEffect(() => {
+      socket.on('passwordChecked', joinProtected);
+      return () => socket.off('passwordChecked', joinProtected);
+    }, [joinProtected]);
 
     return (
         <div className='chat'>
@@ -335,6 +361,7 @@ export default function Chat() {
                                     <button onClick={() => handleMute(user)}>mute</button>
                                     <button onClick={() => handleAdmin(user)}>admin</button>
                                     <button onClick={() => handleUnadmin(user)}>unadmin</button>
+                                    <DuelButton login={user.login}/>
                                 </div>
                             </li>
 
