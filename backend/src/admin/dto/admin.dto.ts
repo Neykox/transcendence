@@ -1,13 +1,11 @@
 import { IsNotEmpty, IsNumber } from "class-validator";
 
-export class BannedDto {
+export class AdminDto {
     @IsNotEmpty()
     @IsNumber()
     channel: number;
 
     @IsNotEmpty()
     @IsNumber()
-    userId: number;
-
-    login: string;
+    user: number;
 }

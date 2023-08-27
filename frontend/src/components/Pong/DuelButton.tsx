@@ -23,7 +23,7 @@ function DuelButton(login) {
 		setStatus("waitingForAnswer");
 		console.log(login.login);
 		time.current = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
-		socket.emit("send_invite", { "challenger": user.login, "time": time.current, "gamemode": gametype.current, "challenged": login.login });
+		socket.emit("send_invite", { "challenger": user.login, "time": time.current, "gametype": gametype.current, "challenged": login.login });
 	}
 
 	const myEventHandler2 = useCallback(data => {
@@ -44,8 +44,8 @@ function DuelButton(login) {
 		toast(({ closeToast }) => <div>
 									<div >{challenger.current} challenged you to a {gametype.current === "1v1" ? "Classic" : "2 Balls"} duel!
 										<div >
-											<a onClick={() => {send_answer(true)}} href="/#"><img src={accept} alt="accept" className="friendAccept friendIcon"/></a>
-											<a onClick={() => {send_answer(false)}} href="/#"><img src={decline} alt="decline" className="friendRefuse friendIcon"/></a>
+											<a onClick={() => {send_answer(true)}} ><img src={accept} alt="accept" className="friendAccept friendIcon"/></a>
+											<a onClick={() => {send_answer(false)}} ><img src={decline} alt="decline" className="friendRefuse friendIcon"/></a>
 										</div>
 									</div>
 								</div>, { autoClose: false, toastId: 'dup', closeButton: false, closeOnClick: false,})

@@ -1,12 +1,8 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
-export class UserCreationDto {
+export class BlockDto {
 
 	@IsString()
 	@IsNotEmpty()
-	Login: string;
-
-	@IsString()
-	@IsNotEmpty()
-	Image: string;
+	login: string;
 }

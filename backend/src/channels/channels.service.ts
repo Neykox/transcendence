@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from './entities/channel.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { DatabaseError } from 'pg-protocol';
+import { ClassicDto } from '../dto/classic.dto'
 
 @Injectable()
 export class ChannelsService {
@@ -16,6 +17,7 @@ export class ChannelsService {
 
   async create(createChannelDto: CreateChannelDto): Promise<Channel> {
     // create the new channel
+    console.log({createChannelDto})
     const channel = new Channel();
     channel.owner = createChannelDto.owner;
     channel.name = createChannelDto.name;
@@ -27,6 +29,8 @@ export class ChannelsService {
         channel.password = await argon.hash(''); // channel is protected but no password given
       }
     }
+    if (createChannelDto.dm)
+      channel.dm = createChannelDto.dm;
 
     // save the channel in the database
     try {
@@ -52,9 +56,8 @@ export class ChannelsService {
   async mdp_checker(id: number, mdp: string): Promise<boolean>
   {
     const chan = await this.channelRepository.findOneBy({ id });
-    const hashed = await argon.hash(mdp);
 
-    if (chan.password === hashed)
+    if (await argon.verify(chan.password, mdp))
       return true;
     return false;
   }
@@ -62,7 +65,7 @@ export class ChannelsService {
   async findAll(): Promise<Channel[]> {
     return await this.channelRepository
       .createQueryBuilder('chan')
-      .select(['chan.id', 'chan.name', 'chan.owner', 'chan.type'])
+      .select(['chan.id', 'chan.name', 'chan.owner', 'chan.type', 'chan.dm'])
       .getMany();
   }
 
@@ -73,6 +76,19 @@ export class ChannelsService {
 
     if (!chan) {
       throw new ForbiddenException(`Channel with id #${id} doesn't exist`);
+    }
+
+    delete(chan.password);
+    return chan;
+  }
+
+  async findByName(name: string) {
+    const chan = await this.channelRepository.findOneBy({
+      name,
+    });
+
+    if (!chan) {
+      throw new ForbiddenException(`Channel doesn't exist`);
     }
 
     delete(chan.password);
@@ -120,7 +136,8 @@ export class ChannelsService {
     return this.channelRepository.delete(id);
   }
 
-  async addUser(channelId: number, newUser: any) {
+  async addUser({channelId, userId, userLogin}: ClassicDto) {
+    const newUser = {id: userId, login: userLogin}
     const channel = await this.findOne(channelId);
     let index = 0;
     let newUsers = channel.users;
@@ -142,7 +159,8 @@ export class ChannelsService {
     return {msg: "user added"};
   }
 
-  async removeUser(channelId: number, newUser: any) {
+  async removeUser({channelId, userId, userLogin}: ClassicDto) {
+    const newUser = {id: userId, login: userLogin}
     const channel = await this.findOne(channelId);
     let index = 0;
     let n = 0;
@@ -161,7 +179,7 @@ export class ChannelsService {
     this.channelRepository.update(channelId, { users: newUsers });
   }
 
-  async getMembers(channelId: number) {
+  async getMembers({channelId}: ClassicDto) {
     const channel = await this.findOne(channelId);
     return channel.users;
   }

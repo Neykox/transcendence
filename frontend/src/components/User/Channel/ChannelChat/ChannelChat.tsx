@@ -2,9 +2,10 @@ import './ChannelChat.scss';
 import { socket } from '../../../Socket/socketInit';
 import UserContext from '../../../../model/userContext';
 import { useEffect, useRef, useState, useContext, useCallback } from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DuelButton from '../../../Pong/DuelButton';
 
 type ChatMessage = {
     conversationOwner: string;
@@ -22,14 +23,17 @@ const allMesage: ChatMessage[] = [];
 
 export default function Chat() {
     const { user } = useContext(UserContext);
+    const navigate = useNavigate();
     const location = useLocation();
-    const channel = location.state.channel;
+    const channel = (location.state ? location.state.channel : "rip");
     const lastMessageRef = useRef<HTMLDivElement>(null);
     const [showModal, setShowModal] = useState(false);
+    const [showBannedModal, setShowBannedModal] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [passwordInput, setPasswordInput] = useState('');
     const [channelMembers, setChannelMembers] = useState<member[]>([]);
-    const [currentUser, setCurrentUser] = useState<string>('');
+    const [channelBanned, setChannelBanned] = useState<member[]>([]);
+    const [blocked, setBlocked] = useState<string>("");
 
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -37,6 +41,24 @@ export default function Chat() {
     ]);
 
     useEffect(() => {
+
+        //check for potential errors
+        if (location.state === null)
+            navigate(-1);
+        const fetchChannel = async () => {
+            const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, { method: "GET" });
+            if (response.status === 403)
+                navigate(-1);
+        };
+        fetchChannel();
+
+        //check for join
+        if (channel.type === 'protected')
+            setShowPasswordModal(true);
+        else
+            socket.emit("joinChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
+
+
         const message = allMesage.filter(message => message.conversationOwner === channel.owner);
         //console.log("1");
         if (message.length > 0) {
@@ -44,7 +66,7 @@ export default function Chat() {
         } else {
             setMessages([]);
         }
-    }, [channel.owner]);
+    }, [channel, user, navigate, location]);
 
     useEffect(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -58,6 +80,14 @@ export default function Chat() {
         setShowModal(false);
     };
 
+    const openBannedModal = () => {
+        setShowBannedModal(true);
+    };
+
+    const closeBannedModal = () => {
+        setShowBannedModal(false);
+    };
+
     const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputValue(event.target.value);
     };
@@ -65,43 +95,41 @@ export default function Chat() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if (inputValue.trim() === '') {
+        if (inputValue.trim() === '' || showPasswordModal === true) {
             return;
         }
 
         const newMessage: ChatMessage = {
             conversationOwner: channel.owner,
-            who: 'me',
-            author: 'Vous',
+            who: user.login,//'me',
+            author: user.login,//'Vous',
             message: inputValue.trim(),
+            time: getTime(),
+            origin: channel.id,
         };
 
-        allMesage.push(newMessage);
-
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-        socket.emit("send_message", { channelId: channel.id, newMessage: newMessage });
+        console.log({newMessage})
+        socket.emit("send_message", { channelId: channel.id, newMessage: newMessage, userId: user.id});
         setInputValue('');
     };
 
-    const contactSendMessage = (data) => {
-        // const newMessage: ChatMessage = {
-        //     conversationOwner: channel.owner,
-        //     who: 'contact',
-        //     author: `${channel.name}`,
-        //     message: "Coucou"
-        // };
-        
-        data.who = 'contact';
-        data.author = `${channel.name}`;
-        const newMessage: ChatMessage = data;
-
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-    }
+    // const contactSendMessage = (data) => {
+    //     // if (data.owner not blocked && data.newMessage.origin === channel.id)
+    //     // {
+    //         data.who = (user.login === data.who ? 'me' : 'contact');
+    //         const newMessage: ChatMessage = data;
+    //         setMessages((prevMessages) => [...prevMessages, newMessage]);
+    //     // }
+    // }
 
     const myEventHandler2 = useCallback(data => {
-        // console.log(data);
-        contactSendMessage(data);
-    }, []);
+        if (!(blocked.find((element) => element === data.owner) !== undefined || data.newMessage.origin === channel.id))
+        {
+            data.who = (user.login === data.who ? 'me' : 'contact');
+            const newMessage: ChatMessage = data;
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+        }
+    }, [user, channel, blocked]);
 
     useEffect(() => {
       socket.on('newMessage', myEventHandler2);
@@ -109,55 +137,65 @@ export default function Chat() {
     }, [myEventHandler2]);
 
     const deleteChannel = () => {
-        fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, { method: "DELETE" });
+        if (channel.owner === user.login)
+        {
+            fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, { method: "DELETE" });
+            navigate("/channel");
+        }
+        else
+            console.log("only owner can deleteChannel");
     }
 
     /*****************************************************************************/
 
-    const joinChannel = async () => {
-        if (channel.type === 'protected') {
-            setShowPasswordModal(true);
-        } else {
-            const newUser = user.pseudo;
-            // setChannelMembers((prevMembers) => [...prevMembers, newUser]);
-        }
-        socket.emit("joinChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
-    }
+    // const joinChannel = () => {
+    //     if (channel.type === 'protected')
+    //         setShowPasswordModal(true);
+    //     else
+    //         socket.emit("joinChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
+    //     socket.emit("joinChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
+    // }
 
     const handleLeaveChannel = useCallback( async () => {
-        socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
-    }, [channel.id]);//quit / kick button
+        socket.emit("leaveChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
+        setChannelMembers([]);
+        navigate("/channel");
+    }, [channel, user, navigate]);//quit / kick button
 
     /*****************************************************************************/
 
     async function handleBan(target) {
-        socket.emit("ban", { channelId: channel.id, user: {login: target.login, id: target.id}});
+        socket.emit("ban", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
+    }
+
+    async function handleUnban(target) {
+        socket.emit("unban", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
+    }
+
+    /*****************************************************************************/
+
+    async function handleAdmin(target) {
+        socket.emit("admin", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
+    }
+
+    async function handleUnadmin(target) {
+        socket.emit("unadmin", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
     }
 
     /*****************************************************************************/
 
     async function handleMute(target) {
-        // function addMinutes(date, minutes) {
-        //     const dateCopy = new Date(date);
-        //     dateCopy.setMinutes(date.getMinutes() + minutes);
-
-        //     return dateCopy;
-        // }
-
-        // const date = new Date('2022-05-15T00:00:00.000Z');
-
-        // const newDate = addMinutes(date, 10);
-        socket.emit("mute", { channelId: channel.id, user: target.id, until: 10});
+        socket.emit("mute", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
     }
 
-    // async function handleMute(target) {
+    // async function handleIsMuted(target) {
     //     socket.emit("ismuted", { channelId: channel.id, user: target.id});
     // }
 
     /*****************************************************************************/
 
     async function handleKick(target) {
-        socket.emit("kick", { channelId: channel.id, user: target.login});
+        socket.emit("kick", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
     }
 
     const onKick = useCallback( () => {
@@ -177,7 +215,7 @@ export default function Chat() {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ channelId: channel.id }),
+                body: JSON.stringify({ channelId: channel.id,  userId: 0, userLogin: "",  targetId: 0, targetLogin: "" }),
             });
         const data = await response.json();
         let index = 0;
@@ -189,6 +227,23 @@ export default function Chat() {
             index++;
         }
         setChannelMembers(newMatchs)
+
+
+        const response2 = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/banned/${channel.id}`);
+        const data2 = await response2.json();
+        index = 0;
+        let newBanned: member[] = [];
+        while (data2[index])
+        {
+            // newMatchs.unshift(data[index]);
+            newBanned.push(data2[index]);
+            index++;
+        }
+        setChannelBanned(newBanned)
+
+        const response3 = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/blocked', { credentials: 'include', });
+        const data3 = await response3.json();
+        setBlocked(data3.split(','));
     }, [channel.id]);
 
     useEffect(() => {
@@ -212,22 +267,41 @@ export default function Chat() {
         setPasswordInput(event.target.value);
     };
 
-    const handlePasswordSubmit = () => {
+    const handlePasswordSubmit = async () => {
         // trouve bine le channel.name mais channel.password indefini
-        const correctPassword = channel.password;
-        console.log(correctPassword);
-        console.log(channel.name);
-        if (passwordInput === correctPassword) {
+        // const correctPassword = channel.password;
+        // console.log(correctPassword);
+        // console.log(channel.name);
+        socket.emit("passwordCheck", { id: channel.id,  password: passwordInput })
+        // console.log("ret = ", ret);
+        // if (ret === true) {
+        //     toast.success('Mot de passe correct !');
+        //     setShowPasswordModal(false);
+        //     socket.emit("joinChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
+        //     setPasswordInput('');
+        // } else {
+        //     toast.error('Mot de passe incorrect. Veuillez réessayer.');
+        //     setShowPasswordModal(false);
+        // }
+    };
+
+    const joinProtected = useCallback( async (data) => {
+        console.log("data.check = ", data.check);
+        if (data.check === true) {
             toast.success('Mot de passe correct !');
             setShowPasswordModal(false);
-            const newUser = user.pseudo;
-            setChannelMembers((prevMembers) => [...prevMembers, newUser]);
+            socket.emit("joinChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
             setPasswordInput('');
         } else {
             toast.error('Mot de passe incorrect. Veuillez réessayer.');
-            setShowPasswordModal(false);
+            setPasswordInput('');
         }
-    };
+    }, [channel.id, user]);
+
+    useEffect(() => {
+      socket.on('passwordChecked', joinProtected);
+      return () => socket.off('passwordChecked', joinProtected);
+    }, [joinProtected]);
 
     return (
         <div className='chat'>
@@ -235,13 +309,11 @@ export default function Chat() {
                 <h2>{channel.name}</h2>
                 {// ici pas besoin de rajouter si public et protected car les privé ne sont pas visible mais plus securisé ? 
                 }
-                {(channel.type === 'public' || channel.type === 'protected') && (
-                    <button onClick={joinChannel}>Rejoindre</button>
-                )}
 
                 <button onClick={handleLeaveChannel}>Leave un canal</button>
                 <button onClick={deleteChannel} >delete</button>
                 <button onClick={openModal}>Membres</button>
+                <button onClick={openBannedModal}>Banned</button>
                 <div className={`${channel.type}`}></div>
             </div>
             <div className="chatBox">
@@ -250,7 +322,7 @@ export default function Chat() {
                         <div key={index} className={`chatMessageBox ${message.who}`} ref={messages.length - 1 === index ? lastMessageRef : null}>
                             <div className="userInfo">
                                 <span className="author">{message.author}: </span>
-                                <span className="date">{getTime()}</span>
+                                <span className="date">{message.time}</span>
                             </div>
                             <div className="messageChat">
                                 <span className="chatText">{message.message}</span>
@@ -259,16 +331,11 @@ export default function Chat() {
                     ))}
                 </div>
                 <form onSubmit={handleSubmit}>
-                    <textarea
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        placeholder="Entrer votre message ici"
-                    />
+                    <input type="text" placeholder="Enter your message" value={inputValue} onChange={handleInputChange} />
                     <button type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.7264 2.95706L16.2732 22.0433C16.1222 22.5718 15.7976 22.5958 15.5561 22.1127L10.9998 13.0002L1.92266 9.36931C1.41298 9.16544 1.41929 8.86034 1.9567 8.6812L21.0429 2.31913C21.5714 2.14297 21.8745 2.43878 21.7264 2.95706ZM19.0351 5.0966L6.81197 9.17097L12.4486 11.4256L15.4893 17.507L19.0351 5.0966Z"></path></svg>
                     </button>
                 </form>
-                <button onClick={contactSendMessage}>Contact Send</button>
             </div>
             {showPasswordModal && (
                 <div className="passwordModal">
@@ -292,11 +359,31 @@ export default function Chat() {
                                     <button onClick={() => handleBan(user)}>ban</button>
                                     <button onClick={() => handleKick(user)}>kick</button>
                                     <button onClick={() => handleMute(user)}>mute</button>
+                                    <button onClick={() => handleAdmin(user)}>admin</button>
+                                    <button onClick={() => handleUnadmin(user)}>unadmin</button>
+                                    <DuelButton login={user.login}/>
                                 </div>
                             </li>
 
                         ))}
                         <button onClick={closeModal}>Close</button>
+                    </ul>
+                </div>
+            )}
+            {showBannedModal && (
+                <div className="modal">
+                    <h3>Liste des banned</h3>
+                    <ul>
+                        {channelBanned.map((user, index) => (
+                            <li key={index}>
+                                <div className="user-name">{user.login}</div>
+                                <div className="button-container">
+                                    <button onClick={() => handleUnban(user)}>unban</button>
+                                </div>
+                            </li>
+
+                        ))}
+                        <button onClick={closeBannedModal}>Close</button>
                     </ul>
                 </div>
             )}

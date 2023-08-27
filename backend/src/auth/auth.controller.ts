@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, UseGuards, Res, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response, Request } from 'express';
-import { UserIdDto } from '../dto/user_id.dto';
 import { JwtGuard } from '../guard/jwt.guard';
 import { User } from '../entities/user.entity';
 

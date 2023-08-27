@@ -2,6 +2,9 @@ import { Controller, Get, Post, Param, Body, NotFoundException, ForbiddenExcepti
 import { UsersService } from './users.service';
 import { User } from '../entities/user.entity';
 import { UserCreationDto } from '../dto/user_creation.dto';
+import { ChangePseudoDto } from '../dto/changePseudo.dto';
+import { ChangeAvatarDto } from '../dto/changeAvatar.dto';
+import { ScoreDto } from '../dto/score.dto';
 import { JwtGuard } from '../guard/jwt.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
@@ -51,7 +54,7 @@ export class UsersController {
 
 	@UseGuards(JwtGuard)
 	@Put('changePseudo')
-	async changeLogin(@Body() {Pseudo} : UserCreationDto, @Req() request: Request) {
+	async changeLogin(@Body() {Pseudo} : ChangePseudoDto, @Req() request: Request) {
 
 		const user = await this.usersService.findOne(request.user['id']);
 		await this.usersService.changePseudo(user, Pseudo);
@@ -60,7 +63,7 @@ export class UsersController {
 
 	@UseGuards(JwtGuard)
 	@Put('changeAvatar')
-	async changeAvatar(@Body() {Image} : UserCreationDto, @Req() request: Request) {
+	async changeAvatar(@Body() {Image} : ChangeAvatarDto, @Req() request: Request) {
 		const user = await this.usersService.findOne(request.user['id']);
 		await this.usersService.changeAvatar(user, Image);
 		return Image; 
@@ -76,8 +79,8 @@ export class UsersController {
 
 	@UseGuards(JwtGuard)
 	@Post('addGameToHistory')
-	async addGameToHistory(@Body() {score}, @Req() request: Request) {
-
+	async addGameToHistory(@Body() {id, opponent, scores, result} : ScoreDto, @Req() request: Request) {
+		const score = { id: id, opponent: opponent, scores: scores, result: result}
 		const user = await this.usersService.findOne(request.user['id']);
 		await this.usersService.addGameToHistory(user.id, score);
 	}

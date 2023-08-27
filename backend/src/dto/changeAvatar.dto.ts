@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class TwoFaCodeDto {
+export class ChangeAvatarDto {
 	@IsString()
 	@IsNotEmpty()
-	TwoFaCode: string
+	Image: string;
 }

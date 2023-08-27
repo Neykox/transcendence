@@ -1,9 +1,14 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody, ConnectedSocket } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io';
-import { PlayerDto } from '../dto/player.dto'
+import { MatchmakingDto } from '../dto/matchmaking.dto'
+import { PlayerMoveDto } from '../dto/playerMove.dto'
+import { DuelDto } from '../dto/duel.dto'
+import { ClassicDto } from '../dto/classic.dto'
+import { PasswordDto } from '../dto/password.dto'
 import { BannedService } from '../banned/banned.service';
 import { MutedService } from '../muted/muted.service';
-import { MessageService } from '../message/message.service';
+// import { MessageService } from '../message/message.service';
+import { AdminService } from '../admin/admin.service';
 import { ChannelsService } from '../channels/channels.service';
 import { FriendsService } from "src/friends/friends.service";
 import { Injectable, Inject, forwardRef } from '@nestjs/common'
@@ -41,7 +46,8 @@ export class SocketService {
 	constructor (
 		private readonly bannedService: BannedService,
 		private readonly mutedService: MutedService,
-		private readonly messageService: MessageService,
+		// private readonly messageService: MessageService,
+		private readonly adminService: AdminService,
 		private readonly channelsService: ChannelsService,
 		@Inject(forwardRef(() => FriendsService)) private readonly friendsService: FriendsService
 	) {}
@@ -88,11 +94,11 @@ export class SocketService {
 										// 1 v 1
 	/*****************************************************************************/
 	@SubscribeMessage('updatePlayer')
-	playerMove(@MessageBody() {p} , @ConnectedSocket() client: Socket) {
-		if (p.socketId === rooms[p.room].p1.socketId)
-			rooms[p.room].p1.dir = p.dir;
+	playerMove(@MessageBody() {socketId, dir, room} : PlayerMoveDto , @ConnectedSocket() client: Socket) {
+		if (socketId === rooms[room].p1.socketId)
+			rooms[room].p1.dir = dir;
 		else
-			rooms[p.room].p2.dir = p.dir;
+			rooms[room].p2.dir = dir;
 	}
 
 	async make_room(gametype: string, room: string)
@@ -438,7 +444,7 @@ export class SocketService {
 
 	
 	@SubscribeMessage('join_list')
-	joinList(@MessageBody() data, @ConnectedSocket() client: Socket) {
+	joinList(@MessageBody() data: MatchmakingDto, @ConnectedSocket() client: Socket) {
 
 		let skip: boolean = false;
 		for (const id in rooms)
@@ -475,7 +481,7 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("private_match")
-	private_match(@MessageBody() data, @ConnectedSocket() client: Socket) {
+	private_match(@MessageBody() data: MatchmakingDto, @ConnectedSocket() client: Socket) {
 
 		let skip: boolean = false;
 		for (const id in rooms)
@@ -518,13 +524,13 @@ export class SocketService {
 	}
 
 	@SubscribeMessage("send_invite")
-	send_invite(@MessageBody() {challenger, time, gamemode, challenged}, @ConnectedSocket() client: Socket) {
+	send_invite(@MessageBody() {challenger, time, gametype, challenged}: DuelDto, @ConnectedSocket() client: Socket) {
 
-				this.server.to(connected[challenged].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gamemode});
+				this.server.to(connected[challenged].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gametype});
 	}
 	
 	@SubscribeMessage("send_answer")
-	send_answer(@MessageBody() {challenger, time, answer, gametype}, @ConnectedSocket() client: Socket) {
+	send_answer(@MessageBody() {challenger, time, answer, gametype} : DuelDto, @ConnectedSocket() client: Socket) {
 
 				this.server.to(connected[challenger].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "challenger": challenger, "time": time, "gametype": gametype});
 	}
@@ -577,80 +583,141 @@ export class SocketService {
 
 
 
-
 	/*****************************************************************************/
 
 	@SubscribeMessage("joinChannel")
-	async joinChannel(@MessageBody() {channelId, newUser}, @ConnectedSocket() client: Socket) {
+	async joinChannel(@MessageBody() {channelId, userId, userLogin}: ClassicDto, @ConnectedSocket() client: Socket) {
 		// let ret = true;
 		// if (mdp)
 		// 	ret = this.channelsService.mdp_checker(channelId, mdp);
+		console.log(userLogin, userId)
 
-		if (await this.isban({channelId: channelId, userId: newUser.id}, null) === false)
+		if (await this.bannedService.isBan(channelId, userId) === false)
 		{
-			await this.channelsService.addUser(channelId, newUser);
-			client.join(channelId);//check if banned first
-			this.server.to(channelId).emit("getMembers");
+			await this.channelsService.addUser({ channelId: channelId,  userId: userId, userLogin: userLogin });
+			client.join(channelId.toString());
+			this.server.to(channelId.toString()).emit("getMembers");
 		}
 	}
 
 	@SubscribeMessage("leaveChannel")
-	async leaveChannel(@MessageBody() {channelId, newUser}, @ConnectedSocket() client: Socket) {
-		await this.channelsService.removeUser(channelId, newUser);
-		this.server.to(channelId).emit("getMembers");
-		client.leave(channelId);
+	async leaveChannel(@MessageBody() {channelId, userId, userLogin}: ClassicDto, @ConnectedSocket() client: Socket) {
+		await this.channelsService.removeUser({ channelId: channelId,  userId: userId, userLogin: userLogin });
+		client.leave(channelId.toString());
+		this.server.to(channelId.toString()).emit("getMembers");
+	}
+
+	/*****************************************************************************/
+
+	@SubscribeMessage("send_dm_invite")
+	async send_dm_invite(@MessageBody() {channel, user_login, target_login}, @ConnectedSocket() client: Socket) {
+		// if (not blocked)
+			// this.server.to(connected[target.login].id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
+		this.server.to(client.id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
 	}
 
 	/*****************************************************************************/
 
 	@SubscribeMessage("send_message")
-	send_message(@MessageBody() {channelId, newMessage}, @ConnectedSocket() client: Socket) {
-		this.server.to(channelId).emit("newMessage", newMessage);//check if muted first
+	async send_message(@MessageBody() {channelId, newMessage, userId}, @ConnectedSocket() client: Socket) {
+		if (await this.mutedService.isMute(channelId, userId) === false)
+			this.server.to(channelId).emit("newMessage", newMessage);
 	}
 
 	/*****************************************************************************/
 
 	@SubscribeMessage("kick")
-	kick(@MessageBody() {channelId, user}) {
-		console.log("kick called on ", user);
-		this.server.to(connected[user].id).emit("kicked", { "channelId": channelId });
+	async kick(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
+		if (await this.isOp(channelId, user, target) === true)
+			this.server.to(connected[target.login].id).emit("kicked", { "channelId": channelId });
 	}
 
 	/*****************************************************************************/
 
 	@SubscribeMessage("ban")
-	async ban(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		await this.bannedService.setBan({channel: channelId, user: user.id});
-		this.kick({channelId: channelId, user: user.login});
+	async ban(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
+		if (await this.isOp(channelId, user, target) === true)
+		{
+			await this.bannedService.setBan({channel: channelId, userId: target.id, login: target.login});
+			this.adminService.delete({channel: channelId, user: target.id});
+			this.kick({channelId: channelId, userId: userId, userLogin: userLogin, targetId: targetId, targetLogin: targetLogin});
+		}
 	}
 
 	@SubscribeMessage("unban")
-	unban(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		this.bannedService.delete({channel: channelId, user: user.id});
-	}
-
-	@SubscribeMessage("isban")
-	isban(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
-		return this.bannedService.isBan(channelId, userId);
+	async unban(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
+		if (await this.isOp(channelId, user, target) === true)
+			await this.bannedService.delete({channel: channelId, userId: target.id, login: target.login});
 	}
 
 	/*****************************************************************************/
 
 	@SubscribeMessage("mute")
-	async mute(@MessageBody() {channelId, user, until}, @ConnectedSocket() client: Socket) {
-		await this.mutedService.setMute({channel: channelId, user: user.id, until: until});
-	}
-
-	@SubscribeMessage("unmute")
-	unmute(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-		this.mutedService.delete(channelId, user.id);
-	}
-
-	@SubscribeMessage("ismuted")
-	ismuted(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
-		return this.mutedService.isMute(channelId, userId);
+	async mute(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
+		if (await this.isOp(channelId, user, target) === true)
+			await this.mutedService.setMute(channelId, target.id);
 	}
 
 	/*****************************************************************************/
-}
 
+	@SubscribeMessage("admin")
+	async admin(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
+		if (await this.isOp(channelId, user, target) === true)
+			await this.adminService.setAdmin({channel: channelId, user: target.id});
+	}
+
+	@SubscribeMessage("unadmin")
+	async unadmin(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
+		if (await this.isOp(channelId, user, target) === true)
+			this.adminService.delete({channel: channelId, user: target.id});
+	}
+
+	/*****************************************************************************/
+
+	@SubscribeMessage("passwordCheck")
+	async passwordCheck(@MessageBody() {id, password}: PasswordDto, @ConnectedSocket() client: Socket) {
+		const ret = await this.channelsService.mdp_checker(id, password);
+		this.server.to(client.id).emit("passwordChecked", {check: ret});
+	}
+
+	/*****************************************************************************/
+
+	async isOp(channelId, user, target)
+	{
+		const chan = await this.channelsService.findOne(channelId);
+		if (target.login === chan.owner)
+		{
+			console.log("target is owner | false");
+			return false;
+		}
+		if (user.login === chan.owner)
+		{
+			console.log("user is owner | true");
+			return true;
+		}
+		if (await this.adminService.isAdmin(channelId, user.id) === true && await this.adminService.isAdmin(channelId, target.id) === true)
+		{
+			console.log("both admin | false");
+			return false;
+		}
+		if (await this.adminService.isAdmin(channelId, user.id) === false)
+		{
+			console.log("user not admin | false");
+			return false;
+		}
+		console.log("else | true");
+		return true;
+	}
+}

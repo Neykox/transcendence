@@ -11,11 +11,11 @@ export class BannedService {
         private bannedRepository : Repository<Banned>
     ) {}
 
-    async getOne(channel: number, user: number): Promise<Banned> {
+    async getOne(channel: number, userId: number): Promise<Banned> {
         return this.bannedRepository.findOne({
             where: {
                 channel,
-                user
+                userId
             }
         });
     }
@@ -47,7 +47,8 @@ export class BannedService {
             //         }
             //     ])
             //     .execute();
-        const exist = await this.getOne(bannedDto.channel, bannedDto.user);
+        console.log({bannedDto})
+        const exist = await this.getOne(bannedDto.channel, bannedDto.userId);
         if (exist === null)
             await this.bannedRepository.save(bannedDto);
             // return {
@@ -79,7 +80,9 @@ export class BannedService {
         //         channel: bannedDto.channel
         //     };
         // }
-        const exist = await this.getOne(bannedDto.channel, bannedDto.user);
+        console.log({bannedDto})
+        const exist = await this.getOne(bannedDto.channel, bannedDto.userId);
+        console.log({exist})
         if (exist !== null)
             await this.bannedRepository.delete(exist.id);
     }

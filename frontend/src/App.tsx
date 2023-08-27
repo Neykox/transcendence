@@ -108,12 +108,40 @@ function App() {
 					<Route path="/page1" element={<Page1 />} />
 					<Route path="/twofa" element={<TwoFa />} />
 					<Route path='/lobby' element={<Lobby />} />
-          <Route path='/channel' element={<Channel />} />
-          <Route path="/channel/:id" element={<ChannelChat />} />
+					<Route path='/channel' element={<Channel />} />
+					<Route path="/channel/:id" element={<ChannelChat />} />
 				</Routes>
 			</div>
 		</UserProvider>
 	);
+	// return (
+	// 	<UserProvider>
+	// 		<div className="App">
+	// 			{/* <h1>Home</h1> */}
+	// 			<ToastContainer />
+	// 			<Routes>
+	// 				{connected ? (
+	// 					<Route path="/" element={<Navigate to="/profile" />} />
+	// 				) : (
+	// 					<Route path="/" element={<Login setStorage={setStorage} />} />
+	// 				)}
+	// 				<Route
+	// 					path="/profile"
+	// 					element={connected ? <Profile /> : <Navigate to="/" />}
+	// 				/>
+	// 				<Route path="/message" element={<Message />}>
+	// 					<Route path="/message/:id" element={<Chat />} />
+	// 				</Route>
+	// 				<Route path="/settings" element={<Settings />} />
+	// 				<Route path="/page1" element={<Page1 />} />
+	// 				<Route path="/twofa" element={<TwoFa />} />
+	// 				<Route path='/lobby' element={<Lobby />} />
+	// 				<Route path='/channel' element={<Channel />} />
+	// 				<Route path="/channel/:id" element={<ChannelChat />} />
+	// 			</Routes>
+	// 		</div>
+	// 	</UserProvider>
+	// );
 }
 
 export default App;

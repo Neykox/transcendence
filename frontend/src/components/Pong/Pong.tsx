@@ -22,17 +22,21 @@ function Pong({ paddle1, paddle2, newBall, max_score, toLobby }) {
 
 	const myEventHandler = useCallback(data => {
 		setEnded(true);
-		let score;
+		let requestOptions
 		if (data.p1.socketId === socket.id)
-			score = { id: Date().toLocaleString(), opponent: data.p2.name, scores: data.p1.score + "/" + data.p2.score, result: data.p1.score > data.p2.score ? "matchWin" : "matchLose" };
+			requestOptions = {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify({ id: Date().toLocaleString(), opponent: data.p2.name, scores: data.p1.score + "/" + data.p2.score, result: data.p1.score > data.p2.score ? "matchWin" : "matchLose" }),
+			};
 		else
-			score = { id: Date().toLocaleString(), opponent: data.p1.name, scores: data.p2.score + "/" + data.p1.score, result: data.p2.score > data.p1.score ? "matchWin" : "matchLose" };
-		const requestOptions = {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			credentials: "include",
-			body: JSON.stringify({ "score": score }),
-		};
+			requestOptions = {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify({ id: Date().toLocaleString(), opponent: data.p1.name, scores: data.p2.score + "/" + data.p1.score, result: data.p2.score > data.p1.score ? "matchWin" : "matchLose" }),
+			};
 		fetch("http://"+ process.env.REACT_APP_POSTURL + ":5000/users/addGameToHistory", requestOptions);
 	}, []);
 
@@ -52,16 +56,16 @@ function Pong({ paddle1, paddle2, newBall, max_score, toLobby }) {
 			if (event.keyCode === 38)//up
 			{
 				if (paddle1.socketId === socket.id)
-					socket.emit("updatePlayer", { "p": { dir: -1, room: p1.current.room, socketId: p1.current.socketId } });
+					socket.emit("updatePlayer", {dir: -1, room:p1.current.room, socketId:p1.current.socketId});
 				else
-					socket.emit("updatePlayer", { "p": { dir: -1, room: p2.current.room, socketId: p2.current.socketId } });
+					socket.emit("updatePlayer", {dir: -1, room:p2.current.room, socketId:p2.current.socketId});
 			}
 			if (event.keyCode === 40)//down
 			{
 				if (paddle1.socketId === socket.id)
-					socket.emit("updatePlayer", { "p": { dir: 1, room: p1.current.room, socketId: p1.current.socketId } });
+					socket.emit("updatePlayer", {dir: 1, room:p1.current.room, socketId:p1.current.socketId});
 				else
-					socket.emit("updatePlayer", { "p": { dir: 1, room: p2.current.room, socketId: p2.current.socketId } });
+					socket.emit("updatePlayer", {dir: 1, room:p2.current.room, socketId:p2.current.socketId});
 			}
 		}
 	};

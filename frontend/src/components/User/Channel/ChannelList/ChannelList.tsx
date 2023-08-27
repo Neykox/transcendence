@@ -6,8 +6,8 @@ import './ChannelList.scss';
 import UserContext from '../../../../model/userContext';
 
 interface HistoryProps {
-    channels: Array<{ owner: string; name: string; type: string; password: string }>;
-    addChannel: (newChannel: { owner: string; name: string; type: string; password: string }) => void;
+    channels: Array<{ owner: string; name: string; type: string; password: string; dm: string }>;
+    addChannel: (newChannel: { owner: string; name: string; type: string; password: string; }) => void;
 }
 
 function ChannelList({ channels, addChannel }: HistoryProps) {
@@ -49,7 +49,7 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
     return (
         <div className="channelList">
             {channels.map((channel) => (
-                <Link to={`/channel/${channel.owner}`} state={{ channel: channel }} key={channel.owner}>
+                <Link to={`/channel/${channel.name}`} state={{ channel: channel }} key={channel.name}>
                     <div className={`channel ${selectedChannelOwner === channel.owner ? 'selected' : ''}`} onClick={() => handleSelectMessage(channel.owner)}>
                         <h2>{channel.name}</h2>
                         <div className={`${channel.type}`}></div>
@@ -73,10 +73,9 @@ function ChannelList({ channels, addChannel }: HistoryProps) {
                     />
                     <select value={newChannelType} onChange={(e) => setNewChannelType(e.target.value)}>
                         <option value="public">public</option>
-                        <option value="private">privé</option>
                         <option value="protected">protégé</option>
                     </select>
-                    {newChannelType === "private" || newChannelType === "protected" ? (
+                    {newChannelType === "protected" ? (
                         <input
                             type="password"
                             placeholder="Mot de passe du canal"

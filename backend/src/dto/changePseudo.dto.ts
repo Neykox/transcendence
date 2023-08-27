@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class TwoFaCodeDto {
+export class ChangePseudoDto {
 	@IsString()
 	@IsNotEmpty()
-	TwoFaCode: string
+	Pseudo: string;
 }
