@@ -109,6 +109,7 @@ export default function Page1() {
 			if (code) {
 				// const access_token = await get_access_token();
 				const user_info = await get_user_info();
+				console.log({user_info})
 				const user = await get_user(user_info.login);
 
 
