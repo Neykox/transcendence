@@ -73,21 +73,21 @@ function App() {
 	}, [])
 
 
-	async function Validate() {
-		if (!localStorage.getItem("user"))
-			return true;
+	// async function Validate() {
+	// 	if (!localStorage.getItem("user"))
+	// 		return true;
 
-		let data = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/validate', { credentials: 'include', method: 'POST' });
-		if (data.status !== 201)
-		{
-			clearCookie();
-			localStorage.removeItem("user");
-			localStorage.removeItem("42image");
-			navigate('/shutdown');
-		}
-	}
+	// 	let data = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/validate', { credentials: 'include', method: 'POST' });
+	// 	if (data.status !== 201)
+	// 	{
+	// 		clearCookie();
+	// 		localStorage.removeItem("user");
+	// 		localStorage.removeItem("42image");
+	// 		navigate('/');
+	// 	}
+	// }
 	
-	Validate();
+	// Validate();
 
 	return (
 		<UserProvider>

@@ -59,7 +59,7 @@ function PlayerInfo({ wins, loses, profile}: PlayerInfoProps) {
 	return (
 		<div className="header">
 			<div className="left">
-				<img {...{ src: (profile != undefined ? profile.image : user.image), alt: 'Avatar' }} />	
+				<img {...{ src: (profile !== undefined ? profile.image : user.image), alt: 'Avatar' }} />	
 				<div className="name">
 					<h1>{!profile ? user.pseudo : (profile.username ? profile.username : profile.login)}</h1>
 				</div>

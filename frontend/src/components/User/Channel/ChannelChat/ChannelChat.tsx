@@ -33,7 +33,7 @@ export default function Chat() {
     const [passwordInput, setPasswordInput] = useState('');
     const [channelMembers, setChannelMembers] = useState<member[]>([]);
     const [channelBanned, setChannelBanned] = useState<member[]>([]);
-    const [blocked, setBlocked] = useState<string>("");
+    const [blocked, setBlocked] = useState<string[]>([]);
 
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -107,8 +107,6 @@ export default function Chat() {
             time: getTime(),
             origin: channel.id,
         };
-
-        console.log({newMessage})
         socket.emit("send_message", { channelId: channel.id, newMessage: newMessage, userId: user.id});
         setInputValue('');
     };
@@ -123,7 +121,7 @@ export default function Chat() {
     // }
 
     const myEventHandler2 = useCallback(data => {
-        if (!(blocked.find((element) => element === data.owner) !== undefined || data.newMessage.origin === channel.id))
+        if (data.origin === channel.id && blocked.find((element) => element === data.owner) === undefined )
         {
             data.who = (user.login === data.who ? 'me' : 'contact');
             const newMessage: ChatMessage = data;
@@ -268,21 +266,7 @@ export default function Chat() {
     };
 
     const handlePasswordSubmit = async () => {
-        // trouve bine le channel.name mais channel.password indefini
-        // const correctPassword = channel.password;
-        // console.log(correctPassword);
-        // console.log(channel.name);
         socket.emit("passwordCheck", { id: channel.id,  password: passwordInput })
-        // console.log("ret = ", ret);
-        // if (ret === true) {
-        //     toast.success('Mot de passe correct !');
-        //     setShowPasswordModal(false);
-        //     socket.emit("joinChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
-        //     setPasswordInput('');
-        // } else {
-        //     toast.error('Mot de passe incorrect. Veuillez réessayer.');
-        //     setShowPasswordModal(false);
-        // }
     };
 
     const joinProtected = useCallback( async (data) => {

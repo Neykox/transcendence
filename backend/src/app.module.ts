@@ -52,4 +52,5 @@ import { BlockedModule } from './blocked/blocked.module';
 	// controllers: [AppController],
 	// providers: [AppService],
 })
+
 export class AppModule {}

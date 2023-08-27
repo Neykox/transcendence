@@ -2,7 +2,7 @@ import './Channel.scss';
 import NavBar from "../../NavBar/NavBar";
 import ChannelList from './ChannelList/ChannelList';
 import { useState, useEffect, useCallback, useContext } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import UserContext from '../../../model/userContext';
 
 // voir plutot un booleen pour le status (menu deroulant de la modale pour dire si privé ou public)

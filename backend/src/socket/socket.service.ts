@@ -587,11 +587,6 @@ export class SocketService {
 
 	@SubscribeMessage("joinChannel")
 	async joinChannel(@MessageBody() {channelId, userId, userLogin}: ClassicDto, @ConnectedSocket() client: Socket) {
-		// let ret = true;
-		// if (mdp)
-		// 	ret = this.channelsService.mdp_checker(channelId, mdp);
-		console.log(userLogin, userId)
-
 		if (await this.bannedService.isBan(channelId, userId) === false)
 		{
 			await this.channelsService.addUser({ channelId: channelId,  userId: userId, userLogin: userLogin });
@@ -612,8 +607,8 @@ export class SocketService {
 	@SubscribeMessage("send_dm_invite")
 	async send_dm_invite(@MessageBody() {channel, user_login, target_login}, @ConnectedSocket() client: Socket) {
 		// if (not blocked)
-			// this.server.to(connected[target.login].id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
-		this.server.to(client.id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
+			this.server.to(connected[target_login].id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
+		// this.server.to(client.id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
 	}
 
 	/*****************************************************************************/
@@ -621,7 +616,7 @@ export class SocketService {
 	@SubscribeMessage("send_message")
 	async send_message(@MessageBody() {channelId, newMessage, userId}, @ConnectedSocket() client: Socket) {
 		if (await this.mutedService.isMute(channelId, userId) === false)
-			this.server.to(channelId).emit("newMessage", newMessage);
+			this.server.to(channelId.toString()).emit("newMessage", newMessage);
 	}
 
 	/*****************************************************************************/

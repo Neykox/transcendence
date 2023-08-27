@@ -18,7 +18,7 @@ export default function Page1() {
 	};
 
 
-	const get_access_token = async () => {
+	// const get_access_token = async () => {
 		// const requestOptions = {
 		// 	method: "POST",
 		// 	headers: { "Content-Type": "application/json" },
@@ -41,7 +41,7 @@ export default function Page1() {
 		// );
 		// const data = await response.json();
 		// return data.access_token;
-	};
+	// };
 
 
 
@@ -55,7 +55,6 @@ export default function Page1() {
 		// 	requestOptions
 		// );
 		// return response.json();
-
 		const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/auth/${code}`)
 		return await response.json();
 	};

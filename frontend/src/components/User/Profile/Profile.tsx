@@ -17,14 +17,14 @@ import { Navigate, Router, useParams, useNavigate } from 'react-router-dom';
 // Se connecter au canal de websocket
 // const socket = io('http://+'process.env.REACT_APP_POSTURL'+:5000/users');
 
-function randomName() {
-	const maleNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew", "Donald", "Anthony", "Mark", "Paul", "Steven", "George", "Kenneth"];
-	const femaleNames = ["Mary", "Patricia", "Linda", "Barbara", "Elizabeth", "Jennifer", "Maria", "Susan", "Margaret", "Dorothy", "Lisa", "Nancy", "Karen", "Betty", "Helen", "Sandra", "Donna", "Carol", "Ruth", "Sharon"];
-	const allNames = [...maleNames, ...femaleNames];
+// function randomName() {
+// 	const maleNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew", "Donald", "Anthony", "Mark", "Paul", "Steven", "George", "Kenneth"];
+// 	const femaleNames = ["Mary", "Patricia", "Linda", "Barbara", "Elizabeth", "Jennifer", "Maria", "Susan", "Margaret", "Dorothy", "Lisa", "Nancy", "Karen", "Betty", "Helen", "Sandra", "Donna", "Carol", "Ruth", "Sharon"];
+// 	const allNames = [...maleNames, ...femaleNames];
 
-	const randomIndex = Math.floor(Math.random() * allNames.length);
-	return allNames[randomIndex];
-}
+// 	const randomIndex = Math.floor(Math.random() * allNames.length);
+// 	return allNames[randomIndex];
+// }
 
 function Profile() {
 
@@ -111,7 +111,7 @@ function Profile() {
 			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends', {
 				credentials: 'include'
 			});
-			if (response.status != 200)
+			if (response.status !== 200)
 				return;
 			let data = response;
 			if (!data)
@@ -139,7 +139,7 @@ function Profile() {
 			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/requests', {
 				credentials: 'include',
 			});
-			if (response.status != 200)
+			if (response.status !== 200)
 				return;
 			let data = await response.json();
 			if (!data)
@@ -197,7 +197,7 @@ function Profile() {
 			process_matches(data['gamehistory']);
 			setProfile(data);
 		}
-		if (login != undefined)
+		if (login !== undefined)
 			fetchProfile(login);
 		else {
 			fetchFriends();
@@ -271,7 +271,7 @@ function Profile() {
     }
   };
 
-	if (localStorage.getItem("user") == null)
+	if (localStorage.getItem("user") === null)
 		return (<Navigate to="/"/>);
 
 	return (

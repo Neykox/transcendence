@@ -1,18 +1,20 @@
-import { Controller, Get, Post, Body, UseGuards, Res, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Res, Param, HttpCode, } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response, Request } from 'express';
 import { JwtGuard } from '../guard/jwt.guard';
 import { User } from '../entities/user.entity';
+import { CodeDto } from '../dto/code.dto'
 
 @Controller('auth')
 export class AuthController {
 	constructor(private authService: AuthService) { }
 
-	@UseGuards(JwtGuard)
-	@Post('validate')
-	async validate(@Body() user: UserIdDto) {
-		return 'valid';
-	}
+	// @UseGuards(JwtGuard)
+	// @HttpCode(201)
+	// @Post('validate')
+	// async validate() {
+	// 	return 'valid'; 
+	// }
 
 	@Post('create_cookie')
 	async create_cookie(@Body() user: User, @Res({ passthrough: true }) response: Response) {
@@ -39,7 +41,7 @@ export class AuthController {
 					client_id: process.env.REACT_APP_UID42,
 					client_secret: process.env.REACT_APP_SECRET42,
 					code: code.code,
-					redirect_uri: `http://${process.env.REACT_APP_POSTURL}/page1`
+					redirect_uri: `http://${process.env.REACT_APP_POSTURL}:3000/page1`
 					// "access_token":code.code
 					// "token_type":"bearer",
 					// "expires_in":7200,
@@ -48,6 +50,7 @@ export class AuthController {
 				})
 				//body: `grant_type=authorization_code&client_id=${process.env.REACT_APP_UID42}&client_secret=${process.env.REACT_APP_SECRET42}&code=${code.code}&redirect_uri=http%3A%2F%2F10.18.198.79%3A3000%2Fpage1`
 			};
+			console.log(requestOptions)
 			const response = await fetch(
 				"https://api.intra.42.fr/oauth/token",
 				requestOptions

@@ -88,7 +88,7 @@ function Login({ setStorage }: LoginProps) {
 		return () => window.removeEventListener('resize', resizeCanvas);
 	}, []);
 
-	const login_link = 'https://api.intra.42.fr/oauth/authorize?client_id=' + process.env.REACT_APP_UID42 + '&redirect_uri=http%3A%2F%2F' + process.env.REACT_APP_POSTURL + '%2Fpage1&response_type=code';
+	const login_link = 'https://api.intra.42.fr/oauth/authorize?client_id=' + process.env.REACT_APP_UID42 + '&redirect_uri=http%3A%2F%2F' + process.env.REACT_APP_POSTURL + '%3A3000%2Fpage1&response_type=code';
 	// const search = useLocation().search; //if search=NULL need to try to login
 	// const code = new URLSearchParams(search).get('code'); //if code=NULL access was denied
 	// let access_token;
