@@ -1,9 +1,9 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, MessageBody, ConnectedSocket } from "@nestjs/websockets";
 import { Server, Socket } from 'socket.io';
-import { PlayerDto } from '../dto/player.dto'
 import { MatchmakingDto } from '../dto/matchmaking.dto'
 import { PlayerMoveDto } from '../dto/playerMove.dto'
 import { DuelDto } from '../dto/duel.dto'
+import { ClassicDto } from '../dto/classic.dto'
 import { BannedService } from '../banned/banned.service';
 import { MutedService } from '../muted/muted.service';
 import { MessageService } from '../message/message.service';
@@ -544,24 +544,25 @@ export class SocketService {
 	/*****************************************************************************/
 
 	@SubscribeMessage("joinChannel")
-	async joinChannel(@MessageBody() {channelId, newUser}, @ConnectedSocket() client: Socket) {
+	async joinChannel(@MessageBody() {channelId, userId, userLogin}: ClassicDto, @ConnectedSocket() client: Socket) {
 		// let ret = true;
 		// if (mdp)
 		// 	ret = this.channelsService.mdp_checker(channelId, mdp);
+		console.log(userLogin, userId)
 
-		if (await this.isban({channelId: channelId, userId: newUser.id}, null) === false)
+		if (await this.bannedService.isBan(channelId, userId) === false)
 		{
-			await this.channelsService.addUser(channelId, newUser);
-			client.join(channelId);
-			this.server.to(channelId).emit("getMembers");
+			await this.channelsService.addUser({ channelId: channelId,  userId: userId, userLogin: userLogin });
+			client.join(channelId.toString());
+			this.server.to(channelId.toString()).emit("getMembers");
 		}
 	}
 
 	@SubscribeMessage("leaveChannel")
-	async leaveChannel(@MessageBody() {channelId, newUser}, @ConnectedSocket() client: Socket) {
-		await this.channelsService.removeUser(channelId, newUser);
-		client.leave(channelId);
-		this.server.to(channelId).emit("getMembers");
+	async leaveChannel(@MessageBody() {channelId, userId, userLogin}: ClassicDto, @ConnectedSocket() client: Socket) {
+		await this.channelsService.removeUser({ channelId: channelId,  userId: userId, userLogin: userLogin });
+		client.leave(channelId.toString());
+		this.server.to(channelId.toString()).emit("getMembers");
 	}
 
 	/*****************************************************************************/
@@ -584,7 +585,9 @@ export class SocketService {
 	/*****************************************************************************/
 
 	@SubscribeMessage("kick")
-	async kick(@MessageBody() {channelId, user, target}) {
+	async kick(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
 		if (await this.isOp(channelId, user, target) === true)
 			console.log("kick called on ", target.login);
 			// this.server.to(connected[target.login].id).emit("kicked", { "channelId": channelId });
@@ -593,61 +596,51 @@ export class SocketService {
 	/*****************************************************************************/
 
 	@SubscribeMessage("ban")
-	async ban(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+	async ban(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
 		if (await this.isOp(channelId, user, target) === true)
 		{
-			await this.bannedService.setBan({channel: channelId, userId: target.userId, login: target.login});
+			await this.bannedService.setBan({channel: channelId, userId: target.id, login: target.login});
 			this.adminService.delete({channel: channelId, user: target.id});
-			this.kick({channelId: channelId, user: user, target: target});
+			this.kick({channelId: channelId, userId: userId, userLogin: userLogin, targetId: targetId, targetLogin: targetLogin});
 		}
 	}
 
 	@SubscribeMessage("unban")
-	async unban(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+	async unban(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
 		if (await this.isOp(channelId, user, target) === true)
-			await this.bannedService.delete({channel: channelId, userId: target.userId, login: target.login});
-	}
-
-	@SubscribeMessage("isban")
-	isban(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
-		return this.bannedService.isBan(channelId, userId);
+			await this.bannedService.delete({channel: channelId, userId: target.id, login: target.login});
 	}
 
 	/*****************************************************************************/
 
 	@SubscribeMessage("mute")
-	async mute(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+	async mute(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
 		if (await this.isOp(channelId, user, target) === true)
 			await this.mutedService.setMute(channelId, target.id);
-	}
-
-	// @SubscribeMessage("unmute")
-	// unmute(@MessageBody() {channelId, user}, @ConnectedSocket() client: Socket) {
-	// 	this.mutedService.delete(channelId, user.id);
-	// }
-
-	@SubscribeMessage("ismuted")
-	ismuted(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
-		return this.mutedService.isMute(channelId, userId);
 	}
 
 	/*****************************************************************************/
 
 	@SubscribeMessage("admin")
-	async admin(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+	async admin(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
 		if (await this.isOp(channelId, user, target) === true)
 			await this.adminService.setAdmin({channel: channelId, user: target.id});
 	}
 
 	@SubscribeMessage("unadmin")
-	async unadmin(@MessageBody() {channelId, user, target}, @ConnectedSocket() client: Socket) {
+	async unadmin(@MessageBody() {channelId, userId, userLogin, targetId, targetLogin}: ClassicDto) {
+		const user = {id: userId, login: userLogin};
+		const target = {id: targetId, login: targetLogin};
 		if (await this.isOp(channelId, user, target) === true)
 			this.adminService.delete({channel: channelId, user: target.id});
-	}
-
-	@SubscribeMessage("isadmin")
-	isadmin(@MessageBody() {channelId, userId}, @ConnectedSocket() client: Socket) {
-		return this.adminService.isAdmin(channelId, userId);
 	}
 
 	/*****************************************************************************/

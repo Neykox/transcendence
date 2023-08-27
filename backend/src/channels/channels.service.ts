@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from './entities/channel.entity';
 import { QueryFailedError, Repository } from 'typeorm';
 import { DatabaseError } from 'pg-protocol';
+import { ClassicDto } from '../dto/classic.dto'
 
 @Injectable()
 export class ChannelsService {
@@ -135,7 +136,8 @@ export class ChannelsService {
     return this.channelRepository.delete(id);
   }
 
-  async addUser(channelId: number, newUser: any) {
+  async addUser({channelId, userId, userLogin}: ClassicDto) {
+    const newUser = {id: userId, login: userLogin}
     const channel = await this.findOne(channelId);
     let index = 0;
     let newUsers = channel.users;
@@ -157,7 +159,8 @@ export class ChannelsService {
     return {msg: "user added"};
   }
 
-  async removeUser(channelId: number, newUser: any) {
+  async removeUser({channelId, userId, userLogin}: ClassicDto) {
+    const newUser = {id: userId, login: userLogin}
     const channel = await this.findOne(channelId);
     let index = 0;
     let n = 0;
@@ -176,7 +179,7 @@ export class ChannelsService {
     this.channelRepository.update(channelId, { users: newUsers });
   }
 
-  async getMembers(channelId: number) {
+  async getMembers({channelId}: ClassicDto) {
     const channel = await this.findOne(channelId);
     return channel.users;
   }

@@ -54,7 +54,7 @@ export default function Chat() {
         if (channel.type === 'protected')
             setShowPasswordModal(true);
         else
-            socket.emit("joinChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
+            socket.emit("joinChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
 
 
         const message = allMesage.filter(message => message.conversationOwner === channel.owner);
@@ -155,7 +155,7 @@ export default function Chat() {
     // }
 
     const handleLeaveChannel = useCallback( async () => {
-        socket.emit("leaveChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
+        socket.emit("leaveChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
         setChannelMembers([]);
         navigate("/channel");
     }, [channel, user, navigate]);//quit / kick button
@@ -163,27 +163,27 @@ export default function Chat() {
     /*****************************************************************************/
 
     async function handleBan(target) {
-        socket.emit("ban", { channelId: channel.id, user: {login: user.login, userId: user.id}, target: {login: target.login, userId: target.id}});
+        socket.emit("ban", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
     }
 
     async function handleUnban(target) {
-        socket.emit("unban", { channelId: channel.id, user: {login: user.login, userId: user.id}, target: {login: target.login, userId: target.userId}});
+        socket.emit("unban", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
     }
 
     /*****************************************************************************/
 
     async function handleAdmin(target) {
-        socket.emit("admin", { channelId: channel.id, user: {login: user.login, id: user.id}, target: {login: target.login, id: target.id}});
+        socket.emit("admin", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
     }
 
     async function handleUnadmin(target) {
-        socket.emit("unadmin", { channelId: channel.id, user: {login: user.login, id: user.id}, target: {login: target.login, id: target.id}});
+        socket.emit("unadmin", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
     }
 
     /*****************************************************************************/
 
     async function handleMute(target) {
-        socket.emit("mute", { channelId: channel.id, user: {login: user.login, id: user.id}, target: {login: target.login, id: target.id}});
+        socket.emit("mute", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
     }
 
     // async function handleIsMuted(target) {
@@ -193,7 +193,7 @@ export default function Chat() {
     /*****************************************************************************/
 
     async function handleKick(target) {
-        socket.emit("kick", { channelId: channel.id, user: {login: user.login, id: user.id}, target: {login: target.login, id: target.id}});
+        socket.emit("kick", { channelId: channel.id,  userId: user.id, userLogin: user.login, targetId: target.id, targetLogin: target.login });
     }
 
     const onKick = useCallback( () => {
@@ -213,7 +213,7 @@ export default function Chat() {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ channelId: channel.id }),
+                body: JSON.stringify({ channelId: channel.id,  userId: 0, userLogin: "",  targetId: 0, targetLogin: "" }),
             });
         const data = await response.json();
         let index = 0;
@@ -269,7 +269,7 @@ export default function Chat() {
         if (passwordInput === correctPassword) {
             toast.success('Mot de passe correct !');
             setShowPasswordModal(false);
-            socket.emit("joinChannel", { channelId: channel.id, newUser: { id: user.id, login: user.login }});
+            socket.emit("joinChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
             setPasswordInput('');
         } else {
             toast.error('Mot de passe incorrect. Veuillez réessayer.');

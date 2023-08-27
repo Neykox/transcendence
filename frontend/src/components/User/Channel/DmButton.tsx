@@ -59,7 +59,7 @@ function DmButton(login) {
 		if (chan.type !== 'dm')
 		{
 			console.log("log: someone already stole that name i dont fucking know call the tech support")
-			return "i dont fucking know";
+			return "someone already stole that name i dont fucking know call the tech support";
 		}
 		console.log({chan})
 		delete(chan.dm)
