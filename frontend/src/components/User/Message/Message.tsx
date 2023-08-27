@@ -2,7 +2,7 @@ import './Message.scss';
 import NavBar from "../../NavBar/NavBar";
 import FriendListMessage from './FriendListMessage/FriendListMessage';
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 
 function randomName() {
 	const maleNames = ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles", "Christopher", "Daniel", "Matthew", "Donald", "Anthony", "Mark", "Paul", "Steven", "George", "Kenneth"];

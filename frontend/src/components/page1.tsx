@@ -27,7 +27,7 @@ export default function Page1() {
 		// 		client_id: process.env.REACT_APP_UID42,
 		// 		client_secret: process.env.REACT_APP_SECRET42,
 		// 		// code,
-		// 		// redirect_uri: `http://${process.env.REACT_APP_POSTURL}:3000/page1`,
+		// 		// redirect_uri: `http://${process.env.REACT_APP_POSTURL}/page1`,
 		// 		"access_token":code,
 		// 		"token_type":"bearer",
 		// 		"expires_in":7200,
@@ -94,15 +94,15 @@ export default function Page1() {
 
 
 
-  const get_cookie = async (user) => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(user),
-    };
-    await fetch("http://" + process.env.REACT_APP_POSTURL + ":5000/auth/create_cookie", requestOptions);
-  };
+	const get_cookie = async (user) => {
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify(user),
+		};
+		await fetch("http://" + process.env.REACT_APP_POSTURL + ":5000/auth/create_cookie", requestOptions);
+	};
 
 
 	useEffect(() => {
@@ -135,17 +135,17 @@ export default function Page1() {
 						setDirection("/twofa");
 				}
 				localStorage.setItem("42image", user_info.image.link);
-        setRedirect(true);
+				setRedirect(true);
 			}
 		};
-    	test();
+		test();
 	}, []);
 
-  useEffect(() => {
-    if (redirect) {
-      navigate(direction, {state: { signin: true }});
-    }
-  }, [redirect, direction, navigate]);
+	useEffect(() => {
+		if (redirect) {
+			navigate(direction, { state: { signin: true } });
+		}
+	}, [redirect, direction, navigate]);
 
 	useEffect(() => {
 		if (redirect) {

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Res, Param} from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Res, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response, Request } from 'express';
 import { UserIdDto } from '../dto/user_id.dto';
@@ -7,21 +7,26 @@ import { User } from '../entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private authService: AuthService) {}
+	constructor(private authService: AuthService) { }
+
+	@UseGuards(JwtGuard)
+	@Post('validate')
+	async validate(@Body() user: UserIdDto) {
+		return 'valid';
+	}
 
 	@Post('create_cookie')
-	async create_cookie(@Body() user: User, @Res({passthrough: true}) response: Response) {
+	async create_cookie(@Body() user: User, @Res({ passthrough: true }) response: Response) {
 		const jwt = await this.authService.create_cookie(user);
 		console.log(jwt);
-		response.cookie('my_cooky', jwt, {httpOnly: true});
-		return {msg: "cooky sent?"};
+		response.cookie('my_cooky', jwt, { httpOnly: true });
+		return { msg: "cooky sent?" };
 	}
 
 	@Post('clear_cookie')
-	async clear_cookie(@Res({passthrough: true}) response: Response)
-	{
+	async clear_cookie(@Res({ passthrough: true }) response: Response) {
 		response.clearCookie('my_cooky');
-		return {msg: 'cookies cleared'}
+		return { msg: 'cookies cleared' }
 	}
 
 	@Get(':code')
@@ -35,7 +40,7 @@ export class AuthController {
 					client_id: process.env.REACT_APP_UID42,
 					client_secret: process.env.REACT_APP_SECRET42,
 					code: code.code,
-					redirect_uri: `http://${process.env.REACT_APP_POSTURL}:3000/page1`
+					redirect_uri: `http://${process.env.REACT_APP_POSTURL}/page1`
 					// "access_token":code.code
 					// "token_type":"bearer",
 					// "expires_in":7200,
@@ -51,9 +56,9 @@ export class AuthController {
 			const data = await response.json();
 			return data['access_token'];
 		};
-	
-	
-	
+
+
+
 		const get_user_info = async (access_token) => {
 			const requestOptions = {
 				method: "GET",

@@ -10,7 +10,7 @@ import accept from '../../../asset/images/checkmark-circle.svg';
 import decline from '../../../asset/images/close-circle.svg';
 import Modal from 'react-modal';
 import AddFriend from './AddFriend/AddFriend';
-import { Navigate, Router, useParams } from 'react-router-dom';
+import { Navigate, Router, useParams, useNavigate } from 'react-router-dom';
 
 // import io from 'socket.io-client';
 
@@ -34,6 +34,7 @@ function Profile() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [profile, setProfile] = useState(undefined);
 	const { login } = useParams();
+	const navigate = useNavigate();
 	const handleModalOpen = () => {
 		setIsModalOpen(true);
 	};
@@ -282,6 +283,7 @@ function Profile() {
 
 	if (localStorage.getItem("user") == null)
 		return (<Navigate to="/"/>);
+
 	return (
 		<div>
 			<NavBar />

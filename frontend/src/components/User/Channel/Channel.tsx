@@ -2,7 +2,7 @@ import './Channel.scss';
 import NavBar from "../../NavBar/NavBar";
 import ChannelList from './ChannelList/ChannelList';
 import { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 
 
 function randomName() {
@@ -55,7 +55,6 @@ function Channel() {
 		};
 		fetchChannels();
 	}, []);
-
 
 	// faire en sorte que les channel qui s'affiche ne soit que ceux de l'utilisateur et non toute la liste 
 	return (
