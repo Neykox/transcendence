@@ -9,18 +9,17 @@ import { CodeDto } from '../dto/code.dto'
 export class AuthController {
 	constructor(private authService: AuthService) { }
 
-	// @UseGuards(JwtGuard)
-	// @HttpCode(201)
-	// @Post('validate')
-	// async validate() {
-	// 	return 'valid'; 
-	// }
+	@UseGuards(JwtGuard)
+	@Post('validate')
+	async validate() {
+		return 'valid'; 
+	}
 
 	@Post('create_cookie')
-	async create_cookie(@Body() user: User, @Res({ passthrough: true }) response: Response) {
+	async create_cookie(@Body() user: any, @Res({ passthrough: true }) response: Response) {
 		const jwt = await this.authService.create_cookie(user);
 		console.log(jwt);
-		response.cookie('my_cooky', jwt, { httpOnly: true });
+		response.cookie('my_cooky', jwt);
 		return { msg: "cooky sent?" };
 	}
 

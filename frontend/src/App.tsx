@@ -16,7 +16,7 @@ import Channel from './components/User/Channel/Channel';
 import ChannelChat from './components/User/Channel/ChannelChat/ChannelChat';
 import { socket } from './components/Socket/socketInit';
 import { useNavigate } from 'react-router-dom';
-
+import Cookies from 'js-cookie';
 function App() {
 	const [connected, setConnected] = useState(false);
 	const [storage, setStorage] = useState(localStorage.getItem("user"));
@@ -73,21 +73,31 @@ function App() {
 	}, [])
 
 
-	// async function Validate() {
-	// 	if (!localStorage.getItem("user"))
-	// 		return true;
-
-	// 	let data = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/validate', { credentials: 'include', method: 'POST' });
-	// 	if (data.status !== 201)
-	// 	{
-	// 		clearCookie();
-	// 		localStorage.removeItem("user");
-	// 		localStorage.removeItem("42image");
-	// 		navigate('/');
-	// 	}
-	// }
+	async function Validate() {
+		if (!localStorage.getItem("user"))
+			return ;
+		console.log(Cookies.get('my_cooky').value);
+		if ((!Cookies.get('my_cooky') || !Cookies.get('my_cooky').value) && localStorage.getItem("user"))
+		{
+			setConnected(false);
+			localStorage.removeItem("user");
+			localStorage.removeItem("42image");
+			navigate('/');
+			return ;
+		}
+		let data = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/validate', { credentials: 'include', method: 'POST' });
+		if (data.status !== 201)
+		{
+			setConnected(false);
+			clearCookie();
+			localStorage.removeItem("user");
+			localStorage.removeItem("42image");
+			navigate('/');
+			return ;
+		}
+	}
 	
-	// Validate();
+	Validate();
 
 	return (
 		<UserProvider>
