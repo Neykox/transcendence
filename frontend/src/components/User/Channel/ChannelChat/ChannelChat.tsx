@@ -390,6 +390,7 @@ export default function Chat() {
                                     <button onClick={() => handleMute(user)}>mute</button>
                                     <button onClick={() => handleAdmin(user)}>admin</button>
                                     <button onClick={() => handleUnadmin(user)}>unadmin</button>
+									<button onClick={() => {navigate("/profile/" + user.login)}}>profile</button>
                                     <DuelButton login={user.login}/>
                                 </div>
                             </li>
