@@ -32,10 +32,9 @@ export class TwoFaController {
 
 	@Post('turn-on')
 	@HttpCode(200)
-	@UseGuards(JwtGuard)
-	async turnOnTwoFactorAuthentication(@Body() { TwoFaCode } : TwoFaCodeDto, @Res({passthrough: true}) response: Response, @Req() request: Request)
+	async turnOnTwoFactorAuthentication(@Body() { TwoFaCode, Id } : TwoFaCodeDto, @Res({passthrough: true}) response: Response, @Req() request: Request)
 	{
-		const user = await this.usersService.findOne(request.user['id']);
+		const user = await this.usersService.findOne(Id);
 		const isCodeValid = this.twoFaService.isTwoFactorAuthenticationCodeValid(TwoFaCode, user);
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');

@@ -126,7 +126,10 @@ const Settings = () => {
       await turnOff();
     }
     else
-      navigate("/twofa");
+    {
+    	console.log({user})//do a get user idc anymore
+      navigate("/twofa", { state: { signin: false, user: user, image: user.image } });
+    }
   };
 
 	/*

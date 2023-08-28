@@ -10,21 +10,32 @@ import { UserInfo } from '../../model/userInfo';
 function TwoFactor(){
 
 	const location = useLocation()
-	const signin = location.state ? location.state.signin : false;
+	const signin = location.state.signin;
 	const [text, setText] = useState("");
 	const [qrcode, setqrcode] = useState("")
 	const navigate = useNavigate();
 	let { user } = useContext<UserInfo>(UserContext);
+	const userContext = useContext(UserContext);
 	// const userContext = useContext(UserContext);
 	// let ball: Ball = useRef(newBall);
 
+	const get_cookie = async (user) => {
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify(user),
+		};
+		await fetch("http://" + process.env.REACT_APP_POSTURL + ":5000/auth/create_cookie", requestOptions);
+	};
+
 	const turnOn = async (e) => {
 		e.preventDefault();
+		console.log(location.state)
 		const requestOptions = {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		credentials: 'include',
-		body: JSON.stringify({ TwoFaCode: text })
+		body: JSON.stringify({ TwoFaCode: text, Id: location.state.user.id})
 		};
 
 		const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/two_fa/turn-on', requestOptions);
@@ -32,7 +43,15 @@ function TwoFactor(){
 		{
 			toast("ok");
 			if (signin === true)
+			{
+				console.log(location.state)
+				await get_cookie(location.state.user);
+				const userJSON = JSON.stringify(location.state.user);
+				localStorage.setItem("user", userJSON);
+				userContext.setUser(JSON.parse(userJSON));
+				localStorage.setItem("42image", location.state.image);
 				navigate("/profile");
+			}
 			else
 			{
 				user = {...user, is2FaActive: true};

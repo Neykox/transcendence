@@ -28,7 +28,7 @@ export class UsersService {
 
 
 	async setTwoFaSecret(secret: string, userId: number) {
-	return this.usersRepository.update(userId, {
+	return await this.usersRepository.update(userId, {
 		twoFaSecret: secret
 	});
 	}

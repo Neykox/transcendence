@@ -125,15 +125,18 @@ export default function Page1() {
 					localStorage.setItem("user", userJSON);
 					setDirection("/profile");
 				} else {
-					// if (user.is2FaActive)
-					// 	navigate("/twofa", { state: { signin: true, user: user } });
+					if (user.is2FaActive)
+					{
+						navigate("/twofa", { state: { signin: true, user: user, image: user_info.image.link } });
+						return ;
+					}
 					await get_cookie(user);
 					const userJSON = JSON.stringify(user);
 					localStorage.setItem("user", userJSON);
 					userContext.setUser(JSON.parse(userJSON));
 					setDirection("/profile");
-					if (user.is2FaActive)
-						setDirection("/twofa");
+					// if (user.is2FaActive)
+					// 	setDirection("/twofa");
 				}
 				localStorage.setItem("42image", user_info.image.link);
 				setRedirect(true);
