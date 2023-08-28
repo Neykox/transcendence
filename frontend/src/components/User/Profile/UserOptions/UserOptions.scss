@@ -1,0 +1,30 @@
+.userOptions {
+	background: white;
+	box-shadow: rgba(74, 74, 74, 0.52) 0px 5px 15px;
+
+	border-radius: 10px;
+	padding: 20px;
+	height: 450px;
+	max-height: 450px;
+
+	button {
+		width: 75%;
+		height: 15%;
+		color: black;
+		margin: 15px 30px;
+		background-color: white;
+		border: black solid 1px;
+	}
+
+	.blockUser:hover{
+		background-color: red;
+		box-shadow: red 0px 5px 15px;
+		border: red solid 1px;
+	}
+
+	.addFriend:hover, .unblockUser:hover {
+		background-color: green;
+		box-shadow: green 0px 5px 15px;
+		border: green solid 1px;
+	}
+}

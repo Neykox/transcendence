@@ -4,6 +4,7 @@ import History from './History/History';
 import { useState, useEffect } from 'react';
 import PlayerInfo from './PlayerInfo/PlayerInfo';
 import FriendList from './FriendList/FriendList';
+import UserOptions from './UserOptions/UserOptions'
 import { socket } from '../../Socket/socketInit'
 import { toast } from 'react-toastify';
 import accept from '../../../asset/images/checkmark-circle.svg';
@@ -91,7 +92,7 @@ function Profile() {
 	// 	getUsers();
 	// });
 
-	useEffect( () => {
+	useEffect(() => {
 		// const fetchUsers = async (): Promise<Friends[]> => {
 		// 	const response = await fetch('http://+'process.env.REACT_APP_POSTURL'+:5000/users');
 		// 	const data = await response.json();
@@ -125,7 +126,7 @@ function Profile() {
 			// 	username: user.username,
 			// 	status: 'offline'
 			// }));
-			let friends = friendsData.map((user: {id: number, login: string, username: string, status: string}) => ({
+			let friends = friendsData.map((user: { id: number, login: string, username: string, status: string }) => ({
 				id: user.id,
 				login: user.login,
 				username: user.username,
@@ -163,16 +164,16 @@ function Profile() {
 				newMatchs.unshift(data[index]);
 				// newMatchs.push(data[index]);
 				if (data[index].result === "matchLose")
-				lose++;
+					lose++;
 				else
-				win++;
+					win++;
 				index++;
 			}
 			setLoses(lose);
 			setWins(win);
 			setMatch(newMatchs);
 		}
-		
+
 		const fetchMatchs = async () => {
 			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users/history', {
 				method: "POST",
@@ -192,15 +193,13 @@ function Profile() {
 			});
 
 			let data = await response.json();
-			if (!data || !data['login']) 
-				return ;
+			if (!data || !data['login'])
+				return;
 			process_matches(data['gamehistory']);
 			setProfile(data);
 		}
 		if (login !== undefined)
 			fetchProfile(login);
-		// else if (login === undefined)
-		// 	setProfile(undefined);
 		else {
 			fetchFriends();
 			fetchRequest();
@@ -263,16 +262,16 @@ function Profile() {
 	)
 
 	if (localStorage.getItem("user") === null)
-		return (<Navigate to="/"/>);
+		return (<Navigate to="/" />);
 
 	return (
 		<div>
 			<NavBar />
 			<div className="profile">
-				<PlayerInfo wins={wins} loses={loses} profile={profile}/>
+				<PlayerInfo wins={wins} loses={loses} profile={profile} />
 				<div className="grid">
-				<History matchs={matchs} />
-					{profile == undefined ? <FriendList friends={friends} requests={requests} onClick={handleModalOpen} /> : ''}
+					<History matchs={matchs} />
+					{profile == undefined ? <FriendList friends={friends} requests={requests} onClick={handleModalOpen} /> : <UserOptions profile={profile} />}
 				</div>
 				<div>
 					<Modal isOpen={isModalOpen} >
