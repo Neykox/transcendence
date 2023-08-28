@@ -118,6 +118,9 @@ export class UsersService {
 	async blockUser(login: string, blockedUser: string) : Promise<void> {
 		const user = await this.usersRepository.findOneBy({login: login});
 		const blocked = user.blocked;
+
+		if (blocked.split(',').indexOf(blockedUser) !== -1 || blockedUser === login)
+			return ;
 		if (blocked.length === 0)
 		{
 			this.usersRepository.update(user.id, {blocked: blockedUser});
