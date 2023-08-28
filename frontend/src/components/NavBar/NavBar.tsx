@@ -8,7 +8,7 @@ import settings from '../../asset/images/settings_logo.png';
 import pingPongImg from '../../asset/images/ping-pong_logo.png';
 import shutdown from '../../asset/images/shutdown_logo.png';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 class active {
 	static setActive(name: string) {
 		active.active = name;
@@ -19,30 +19,33 @@ class active {
 
 // import UserContext from '../../model/userContext';
 
-function e(){
-	const clearCookie = async () => {
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			credentials: 'include',
-			body: JSON.stringify({ title: 'React POST Request Example' })
-		};
-		await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/clear_cookie', requestOptions);
-	};
-	clearCookie();
-	localStorage.removeItem("user");
-	localStorage.removeItem("42image");
-}
-
 function NavBar() {
 
+	const navigate = useNavigate();
+	async function e() {
+		const clearCookie = async () => {
+			const requestOptions = {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: JSON.stringify({ title: 'React POST Request Example' })
+			};
+			await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/clear_cookie', requestOptions);
+		};
+		await clearCookie();
+		localStorage.removeItem("user");
+		localStorage.removeItem("42image");
+		navigate('/');
+	}
+
+	async function a() {
+		navigate('/');
+	}
 	// const { user } = useContext(UserContext);
 	return (
 		<nav>
 			<div className={active.active === "profile" ? "selectedLink" : ""}>
-				<Link to={"/profile"} onClick={() => active.setActive("profile")}>
-					<img src={homePageImg} alt="homePage" className="first" />
-				</Link>
+				<img src={homePageImg} alt="homePage" className="first" onClick={() => a()} />
 			</div>
 			<div className="line"></div>
 			<div className={active.active === "message" ? "selectedLink" : ""}>
@@ -71,9 +74,7 @@ function NavBar() {
 				</Link>
 			</div>
 			<div className={active.active === "shutdown" ? "set selectedLink" : "set2"}>
-				<Link to={"/"} onClick={async () =>{ await e}} /*clear localstorage/cookie and navigate("/login")*/>
-					<img src={shutdown} alt="" />
-				</Link>
+				<img src={shutdown} alt="" onClick={() => e()} />
 			</div>
 
 		</nav>
