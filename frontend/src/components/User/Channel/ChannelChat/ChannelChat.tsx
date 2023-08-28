@@ -311,6 +311,7 @@ export default function Chat() {
                 <button onClick={deleteChannel} >delete</button>
                 <button onClick={openModal}>Membres</button>
                 <button onClick={openBannedModal}>Banned</button>
+                <button>update channel</button>
                 <div className={`${channel.type}`}></div>
             </div>
             <div className="chatBox">

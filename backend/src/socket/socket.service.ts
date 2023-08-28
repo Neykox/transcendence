@@ -132,6 +132,7 @@ export class SocketService {
 					p2 = players[id].socket;
 			}
 		}
+		console.log("room = ", room)
 
 		p1.join(room);
 		p2.join(room);
@@ -446,80 +447,80 @@ export class SocketService {
 	@SubscribeMessage('join_list')
 	joinList(@MessageBody() data: MatchmakingDto, @ConnectedSocket() client: Socket) {
 
-		let skip: boolean = false;
-		for (const id in rooms)
+		for (const id in rooms)//desconnect someone if already in game
 		{
 			if (rooms[id].p1.socketId === client.id)
-			{
-				// this.server.to(rooms[id].p1.room).emit(rooms[id].gametype, { "paddle1": rooms[id].p1, "paddle2": rooms[id].p2, "ball": rooms[id].ball, "ball2": rooms[id].ball2, "max_score": max_score });
 				rooms[id].p1.dc = true;
-				// skip = true;
-			}
 			if (rooms[id].p2.socketId === client.id)
-			{
-				// this.server.to(rooms[id].p1.room).emit(rooms[id].gametype, { "paddle1": rooms[id].p1, "paddle2": rooms[id].p2, "ball": rooms[id].ball, "ball2": rooms[id].ball2, "max_score": max_score });
 				rooms[id].p2.dc = true;
-				// skip = true;
+		}
+
+
+		// console.log("skip = ", skip)
+		for (const id in players)//desconnect someone if already in game
+		{
+			if (id === client.id)
+			{
+				if (players[id].gametype === "1v1")
+					_1v1--;
+				else
+					_2balls--;
+				delete players[client.id];
 			}
 		}
-		// console.log("skip = ", skip)
-		if (skip === false)
-		{
-			players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
-			// console.log(players)
+		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
+		// console.log(players)
 
-			if (data.gametype === "1v1")
-				_1v1++;
-			else
-				_2balls++;
+		if (data.gametype === "1v1")
+			_1v1++;
+		else
+			_2balls++;
 
-			if (_1v1 >= 2 && _1v1 % 2 == 0)
-				this.make_room("1v1", null);
-			if (_2balls >= 2 && _2balls % 2 == 0)
-				this.make_room("2balls", null);
-		}
+		if (_1v1 >= 2 && _1v1 % 2 == 0)
+			this.make_room("1v1", null);
+		if (_2balls >= 2 && _2balls % 2 == 0)
+			this.make_room("2balls", null);
 	}
 
 	@SubscribeMessage("private_match")
 	private_match(@MessageBody() data: MatchmakingDto, @ConnectedSocket() client: Socket) {
 
-		let skip: boolean = false;
 		for (const id in rooms)
 		{
 			if (rooms[id].p1.socketId === client.id)
-			{
-				// this.server.to(rooms[id].p1.room).emit(rooms[id].gametype, { "paddle1": rooms[id].p1, "paddle2": rooms[id].p2, "ball": rooms[id].ball, "ball2": rooms[id].ball2, "max_score": max_score });
 				rooms[id].p1.dc = true;
-				// skip = true;
-			}
 			if (rooms[id].p2.socketId === client.id)
-			{
-				// this.server.to(rooms[id].p1.room).emit(rooms[id].gametype, { "paddle1": rooms[id].p1, "paddle2": rooms[id].p2, "ball": rooms[id].ball, "ball2": rooms[id].ball2, "max_score": max_score });
 				rooms[id].p2.dc = true;
-				// skip = true;
-			}
 		}
 		// console.log("skip = ", skip)
-		if (skip === false)
+		for (const id in players)//desconnect someone if already in game
 		{
-			players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: data.room, socket: client }
-			// console.log(players)
-
-			let num = 0;
-
-			for (const id in players)
+			if (id === client.id)
 			{
-				if (players[id].room === data.room)
-					num++;
-			}
-
-			if (num === 2)
-			{
-				if (data.gametype === "1v1")
-					this.make_room("1v1", data.room);
+				if (players[id].gametype === "1v1")
+					_1v1--;
 				else
-					this.make_room("2balls", data.room);
+					_2balls--;
+				delete players[client.id];
 			}
+		}
+		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: data.room, socket: client }
+		// console.log(players)
+
+		let num = 0;
+
+		for (const id in players)
+		{
+			if (players[id].room === data.room)
+				num++;
+		}
+
+		if (num === 2)
+		{
+			if (data.gametype === "1v1")
+				this.make_room("1v1", data.room);
+			else
+				this.make_room("2balls", data.room);
 		}
 	}
 
