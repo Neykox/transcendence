@@ -29,13 +29,13 @@ export class ChannelsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateChannelDto: UpdateChannelDto) {
-    return this.channelsService.update(+id, updateChannelDto);
+  update(@Param('id') id: number, @Body() updateChannelDto: UpdateChannelDto) {
+    return this.channelsService.update(id, updateChannelDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.channelsService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.channelsService.remove(id);
   }
 
   // @Post('addUser')

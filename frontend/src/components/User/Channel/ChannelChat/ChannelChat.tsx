@@ -30,11 +30,14 @@ export default function Chat() {
     const [showModal, setShowModal] = useState(false);
     const [showBannedModal, setShowBannedModal] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
+	const [showChannelOptionModal, setShowChannelOptionModal] = useState(false);
     const [passwordInput, setPasswordInput] = useState('');
     const [channelMembers, setChannelMembers] = useState<member[]>([]);
     const [channelBanned, setChannelBanned] = useState<member[]>([]);
     const [blocked, setBlocked] = useState<string[]>([]);
-
+	const [newChannelName, setNewChannelName] = useState<string>('');
+    const [newChannelType, setNewChannelType] = useState<string>('public');
+	const [newChannelPassword, setNewChannelPassword] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState<ChatMessage[]>([
 
@@ -302,6 +305,32 @@ export default function Chat() {
       return () => socket.off('passwordChecked', joinProtected);
     }, [joinProtected]);
 
+	const updateChannel = async (newChannel) => {
+		const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, {
+			method: "PATCH",
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include',
+			body: JSON.stringify(newChannel),
+		});
+		if (response.status === 200) {
+			navigate("/channel");
+		}
+	}
+
+	const handleModalSubmit = () => {
+        if (newChannelName.trim() !== '') {
+            const newChannel = {
+                owner: user.login,
+                name: newChannelName,
+                type: newChannelType,
+                password: newChannelPassword,
+            };
+
+            updateChannel(newChannel);
+            setShowChannelOptionModal(false);
+        }
+    }
+
     return (
         <div className='chat'>
             <div className="channelInfo">
@@ -313,7 +342,7 @@ export default function Chat() {
                 <button onClick={deleteChannel} >delete</button>
                 <button onClick={openModal}>Membres</button>
                 <button onClick={openBannedModal}>Banned</button>
-                <button>update channel</button>
+                <button onClick={() => {setShowChannelOptionModal(true)}}>update channel</button>
                 <div className={`${channel.type}`}></div>
             </div>
             <div className="chatBox">
@@ -349,7 +378,7 @@ export default function Chat() {
                 </div>
             )}
             {showModal && (
-                <div className="modal">
+                <div className="modalMembre">
                     <h3>Liste des membres</h3>
                     <ul>
                         {channelMembers.map((user, index) => (
@@ -361,6 +390,7 @@ export default function Chat() {
                                     <button onClick={() => handleMute(user)}>mute</button>
                                     <button onClick={() => handleAdmin(user)}>admin</button>
                                     <button onClick={() => handleUnadmin(user)}>unadmin</button>
+									<button onClick={() => {navigate("/profile/" + user.login)}}>profile</button>
                                     <DuelButton login={user.login}/>
                                 </div>
                             </li>
@@ -387,6 +417,32 @@ export default function Chat() {
                     </ul>
                 </div>
             )}
+			{showChannelOptionModal && (
+				<div className="modal">
+					<h3>Channel Options</h3>
+					<input
+                        type="text"
+                        placeholder="Nom du canal"
+                        value={newChannelName}
+                        onChange={(e) => setNewChannelName(e.target.value)}
+                    />
+                    <select value={newChannelType} onChange={(e) => setNewChannelType(e.target.value)}>
+                        <option value="public">public</option>
+                        <option value="protected">protégé</option>
+                    </select>
+                    {newChannelType === "protected" ? (
+                        <input
+                            type="password"
+                            placeholder="Mot de passe du canal"
+                            value={newChannelPassword}
+                            onChange={(e) => setNewChannelPassword(e.target.value)}
+                        />
+                    ) : null}
+                    <button onClick={handleModalSubmit}>Mettre a jour</button>
+                    <button onClick={() => {setShowChannelOptionModal(false)}}>Annuler</button>
+				</div>
+				)
+			}
         </div>
     );
 }
