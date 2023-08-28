@@ -378,7 +378,7 @@ export default function Chat() {
                 </div>
             )}
             {showModal && (
-                <div className="modal">
+                <div className="modalMembre">
                     <h3>Liste des membres</h3>
                     <ul>
                         {channelMembers.map((user, index) => (
