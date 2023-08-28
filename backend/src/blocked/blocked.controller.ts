@@ -1,4 +1,4 @@
-import { Controller, UseGuards } from '@nestjs/common';
+import { Controller, UseGuards, HttpCode } from '@nestjs/common';
 import { Get, Post, Delete, Body, Req } from '@nestjs/common';
 import { JwtGuard } from 'src/guard/jwt.guard';
 import { UsersService } from 'src/users/users.service';
@@ -11,8 +11,8 @@ export class BlockedController {
 
 	@Get()
 	@UseGuards(JwtGuard)
-	async getall( @Req() request: Request) : Promise<string> {
-		return this.userService.getBlocked(request.user['login']);
+	async getall( @Req() request: Request) : Promise<string[]> {
+		return (await this.userService.getBlocked(request.user['login'])).split(',');
 	}
 
 	@Post()

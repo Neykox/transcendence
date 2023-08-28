@@ -140,6 +140,7 @@ export class UsersService {
 
 	async getBlocked(login: string) : Promise<string> {
 		const user = await this.usersRepository.findOneBy({login: login});
+		console.log("blocked = ", user.blocked)
 		return user.blocked;
 	}
 }

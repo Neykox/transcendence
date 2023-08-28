@@ -73,31 +73,31 @@ function App() {
 	}, [])
 
 
-	async function Validate() {
-		if (!localStorage.getItem("user"))
-			return ;
-		console.log(Cookies.get('my_cooky').value);
-		if ((!Cookies.get('my_cooky') || !Cookies.get('my_cooky').value) && localStorage.getItem("user"))
-		{
-			setConnected(false);
-			localStorage.removeItem("user");
-			localStorage.removeItem("42image");
-			navigate('/');
-			return ;
-		}
-		let data = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/validate', { credentials: 'include', method: 'POST' });
-		if (data.status !== 201)
-		{
-			setConnected(false);
-			clearCookie();
-			localStorage.removeItem("user");
-			localStorage.removeItem("42image");
-			navigate('/');
-			return ;
-		}
-	}
+	// async function Validate() {
+	// 	if (!localStorage.getItem("user"))
+	// 		return ;
+	// 	console.log(Cookies.get('my_cooky').value);
+	// 	if ((!Cookies.get('my_cooky') || !Cookies.get('my_cooky').value) && localStorage.getItem("user"))
+	// 	{
+	// 		setConnected(false);
+	// 		localStorage.removeItem("user");
+	// 		localStorage.removeItem("42image");
+	// 		navigate('/');
+	// 		return ;
+	// 	}
+	// 	let data = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/validate', { credentials: 'include', method: 'POST' });
+	// 	if (data.status !== 201)
+	// 	{
+	// 		setConnected(false);
+	// 		clearCookie();
+	// 		localStorage.removeItem("user");
+	// 		localStorage.removeItem("42image");
+	// 		navigate('/');
+	// 		return ;
+	// 	}
+	// }
 	
-	Validate();
+	// Validate();
 
 	return (
 		<UserProvider>

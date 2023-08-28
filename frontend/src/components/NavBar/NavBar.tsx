@@ -71,7 +71,7 @@ function NavBar() {
 				</Link>
 			</div>
 			<div className={active.active === "shutdown" ? "set selectedLink" : "set2"}>
-				<Link to={"/"} onClick={e} /*clear localstorage/cookie and navigate("/login")*/>
+				<Link to={"/"} onClick={async () =>{ await e}} /*clear localstorage/cookie and navigate("/login")*/>
 					<img src={shutdown} alt="" />
 				</Link>
 			</div>

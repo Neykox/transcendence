@@ -9,6 +9,7 @@ function DmButton(login) {
 
 	const navigate = useNavigate();
 	const { user } = useContext(UserContext);
+	console.log(login)
 
 
 	const myEventHandler = useCallback(data => {
@@ -27,7 +28,7 @@ function DmButton(login) {
 
 
 	const findChannel = async (channel) => {
-		const response = await fetch('http://localhost:5000/channels/channel_by_name',
+		const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/channels/channel_by_name',
 			{
 				method: "POST",
 				headers: { 'Content-Type': 'application/json' },
@@ -40,7 +41,7 @@ function DmButton(login) {
 	};
 
 	const createChannel = async (newChannel) => {
-		const response = await fetch('http://localhost:5000/channels/create',
+		const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/channels/create',
 			{
 				method: "POST",
 				headers: { 'Content-Type': 'application/json' },

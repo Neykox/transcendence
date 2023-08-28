@@ -587,6 +587,7 @@ export class SocketService {
 
 	@SubscribeMessage("joinChannel")
 	async joinChannel(@MessageBody() {channelId, userId, userLogin}: ClassicDto, @ConnectedSocket() client: Socket) {
+		console.log("join chqnne; ", channelId, userId, userLogin)
 		if (await this.bannedService.isBan(channelId, userId) === false)
 		{
 			await this.channelsService.addUser({ channelId: channelId,  userId: userId, userLogin: userLogin });

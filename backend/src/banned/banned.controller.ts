@@ -6,8 +6,9 @@ export class BannedController {
   constructor(private readonly bannedService: BannedService) {}
 
   @Get(':id')
-  findAll(@Param('id') id: string) {
-    return this.bannedService.getAll(+id);
+  findAll(@Param('id') id: number) {
+    console.log(id)
+    return this.bannedService.getAll(id);
   }
 
 }

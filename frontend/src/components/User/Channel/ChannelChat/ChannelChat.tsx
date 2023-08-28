@@ -56,7 +56,14 @@ export default function Chat() {
         if (channel.type === 'protected')
             setShowPasswordModal(true);
         else
-            socket.emit("joinChannel", { channelId: channel.id,  userId: user.id, userLogin: user.login });
+        {
+            let user2 = localStorage.getItem('user');
+            if (user2 === null)
+                return;
+            let data = JSON.parse(user2);
+            console.log(data.login)
+            socket.emit("joinChannel", { channelId: channel.id,  userId: data.id, userLogin: data.login });
+        }
 
 
         const message = allMesage.filter(message => message.conversationOwner === channel.owner);
@@ -228,6 +235,8 @@ export default function Chat() {
 
 
         const response2 = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/banned/${channel.id}`);
+        if (!response2 || response2.status !== 200)
+                return;
         const data2 = await response2.json();
         index = 0;
         let newBanned: member[] = [];
@@ -240,8 +249,12 @@ export default function Chat() {
         setChannelBanned(newBanned)
 
         const response3 = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/blocked', { credentials: 'include', });
+        if (!response3 || response3.status !== 200)
+                return;
+        console.log("status", response3.status)
         const data3 = await response3.json();
-        setBlocked(data3.split(','));
+        console.log("data3",data3)
+        setBlocked(data3);
     }, [channel.id]);
 
     useEffect(() => {
