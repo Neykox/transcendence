@@ -20,7 +20,7 @@ function Channel() {
 	const channelsNoPrivate = channels.filter(channel => {return channel.type !== 'dm' || (user.login === channel.owner || user.login === channel.dm)});
 
 	const fetchChannels = useCallback(async () => {
-		const response = await fetch('http://localhost:5000/channels', { method: "GET" });
+		const response = await fetch('http://'+ process.env.REACT_APP_POSTURL + ':5000/channels', { method: "GET" });
 		let data = await response.json();
 		if (!data)
 			return;

@@ -261,17 +261,6 @@ function Profile() {
 	)
 	)
 
-	const get_user = async () => {
-		const response = await fetch(
-			`http://localhost:5000/users/aleroy`
-		);
-		if (response.status === 404) {
-			return null;
-		} else {
-			return response.json();
-		}
-	};
-
 	if (localStorage.getItem("user") === null)
 		return (<Navigate to="/" />);
 
