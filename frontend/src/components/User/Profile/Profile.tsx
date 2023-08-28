@@ -92,6 +92,37 @@ function Profile() {
 	// 	getUsers();
 	// });
 
+	const process_matches = (data: any) => {
+			let index = 0;
+			let newMatchs: Match[] = [];
+			let win = 0;
+			let lose = 0;
+			while (data[index]) {
+				newMatchs.unshift(data[index]);
+				// newMatchs.push(data[index]);
+				if (data[index].result === "matchLose")
+					lose++;
+				else
+					win++;
+				index++;
+			}
+			setLoses(lose);
+			setWins(win);
+			setMatch(newMatchs);
+	}
+
+	const fetchProfile = async (login: string) => {
+			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + `:5000/users/${login}/profile`, {
+				credentials: 'include'
+			});
+
+			let data = await response.json();
+			if (!data || !data['login'])
+				return;
+			process_matches(data['gamehistory']);
+			setProfile(data);
+	}
+
 	useEffect(() => {
 		// const fetchUsers = async (): Promise<Friends[]> => {
 		// 	const response = await fetch('http://+'process.env.REACT_APP_POSTURL'+:5000/users');
@@ -155,25 +186,6 @@ function Profile() {
 			setRequests(requests);
 		};
 
-		const process_matches = (data: any) => {
-			let index = 0;
-			let newMatchs: Match[] = [];
-			let win = 0;
-			let lose = 0;
-			while (data[index]) {
-				newMatchs.unshift(data[index]);
-				// newMatchs.push(data[index]);
-				if (data[index].result === "matchLose")
-					lose++;
-				else
-					win++;
-				index++;
-			}
-			setLoses(lose);
-			setWins(win);
-			setMatch(newMatchs);
-		}
-
 		const fetchMatchs = async () => {
 			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/users/history', {
 				method: "POST",
@@ -186,18 +198,6 @@ function Profile() {
 			process_matches(data);
 		};
 
-
-		const fetchProfile = async (login: string) => {
-			const response = await fetch('http://' + process.env.REACT_APP_POSTURL + `:5000/users/${login}/profile`, {
-				credentials: 'include'
-			});
-
-			let data = await response.json();
-			if (!data || !data['login'])
-				return;
-			process_matches(data['gamehistory']);
-			setProfile(data);
-		}
 		if (login !== undefined)
 			fetchProfile(login);
 		else {
@@ -207,6 +207,9 @@ function Profile() {
 		}
 	}, []);
 
+	const updateProfile = (login) => {
+			fetchProfile(login);
+	}
 	// const friendsList = () => {
 	// 	// const id = new Date().getTime();
 	// 	// const pseudo = randomName();
@@ -271,7 +274,7 @@ function Profile() {
 				<PlayerInfo wins={wins} loses={loses} profile={profile} />
 				<div className="grid">
 					<History matchs={matchs} />
-					{profile == undefined ? <FriendList friends={friends} requests={requests} onClick={handleModalOpen} /> : <UserOptions profile={profile} />}
+					{profile == undefined ? <FriendList friends={friends} requests={requests} onClick={handleModalOpen} updateProfile={updateProfile } /> : <UserOptions profile={profile} />}
 				</div>
 				<div>
 					<Modal isOpen={isModalOpen} >

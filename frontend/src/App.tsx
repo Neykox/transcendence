@@ -111,9 +111,6 @@ function App() {
 						<Route path="/" element={<Login setStorage={setStorage} />} />
 					)}
 					<Route path="/profile/:login?" element={<Profile />}/>
-					<Route path="/message" element={<Message />}>
-						<Route path="/message/:id" element={<Chat />} />
-					</Route>
 					<Route path="/settings" element={<Settings />} />
 					<Route path="/page1" element={<Page1 />} />
 					<Route path="/twofa" element={<TwoFa />} />

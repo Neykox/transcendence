@@ -109,7 +109,6 @@ export default function Page1() {
 			if (code) {
 				// const access_token = await get_access_token();
 				const user_info = await get_user_info();
-				console.log({user_info})
 				const user = await get_user(user_info.login);
 
 
@@ -126,6 +125,8 @@ export default function Page1() {
 					localStorage.setItem("user", userJSON);
 					setDirection("/profile");
 				} else {
+					// if (user.is2FaActive)
+					// 	navigate("/twofa", { state: { signin: true, user: user } });
 					await get_cookie(user);
 					const userJSON = JSON.stringify(user);
 					localStorage.setItem("user", userJSON);
@@ -149,7 +150,7 @@ export default function Page1() {
 
 	useEffect(() => {
 		if (redirect) {
-			navigate(direction);
+			navigate(direction, { state: { signin: true } });
 		}
 	}, [redirect, direction, navigate]);
 

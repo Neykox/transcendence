@@ -12,11 +12,11 @@ export default function UserOptions({profile} : OptionsProps) {
 
 
 	const blockUser = async () => {
-		await fetch("http://" + process.env.REACT_APP_POSTURL + "/blocked/" + profile.login, {method: "POST", credentials: 'include'});
+		await fetch("http://" + process.env.REACT_APP_POSTURL + ":5000/blocked/", {method: "POST", credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ login: profile.login})});
 	}
 
 	const unblockUser = async () => {
-		await fetch("http://" + process.env.REACT_APP_POSTURL + "/blocked/" + profile.login, {method: "DELETE", credentials: 'include'})
+		await fetch("http://" + process.env.REACT_APP_POSTURL + ":5000/blocked/", {method: "DELETE", credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ login: profile.login})})
 	}
 
 	const addFriend = async () => {

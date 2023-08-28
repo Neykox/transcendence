@@ -128,7 +128,9 @@ export default function Chat() {
     // }
 
     const myEventHandler2 = useCallback(data => {
-        if (data.origin === channel.id && blocked.find((element) => element === data.owner) === undefined )
+        console.log(blocked)
+        console.log(blocked.indexOf(data.author))
+        if (data.origin === channel.id && blocked.indexOf(data.author) === -1 )
         {
             data.who = (user.login === data.who ? 'me' : 'contact');
             const newMessage: ChatMessage = data;

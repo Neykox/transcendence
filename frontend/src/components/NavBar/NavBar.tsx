@@ -47,17 +47,6 @@ function NavBar() {
 			<div className={active.active === "profile" ? "selectedLink" : ""}>
 				<img src={homePageImg} alt="homePage" className="first" onClick={() => a()} />
 			</div>
-			<div className="line"></div>
-			<div className={active.active === "message" ? "selectedLink" : ""}>
-				<Link to={"/message"} onClick={() => active.setActive("message")}>
-					<img src={messageImg} alt="" />
-				</Link>
-			</div>
-			<div className={active.active === "user" ? "selectedLink" : ""}>
-				<Link to={"/message"} onClick={() => active.setActive("message")}>
-					<img src={userImg} alt="" />
-				</Link>
-			</div>
 			<div>
 				<Link to={"/channel"}>
 					<img src={crowdImg} alt="" />
