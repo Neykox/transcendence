@@ -18,7 +18,6 @@ export class AuthController {
 	@Post('create_cookie')
 	async create_cookie(@Body() user: any, @Res({ passthrough: true }) response: Response) {
 		const jwt = await this.authService.create_cookie(user);
-		console.log(jwt);
 		response.cookie('my_cooky', jwt);
 		return { msg: "cooky sent?" };
 	}
@@ -49,7 +48,6 @@ export class AuthController {
 				})
 				//body: `grant_type=authorization_code&client_id=${process.env.REACT_APP_UID42}&client_secret=${process.env.REACT_APP_SECRET42}&code=${code.code}&redirect_uri=http%3A%2F%2F10.18.198.79%3A3000%2Fpage1`
 			};
-			console.log(requestOptions)
 			const response = await fetch(
 				"https://api.intra.42.fr/oauth/token",
 				requestOptions

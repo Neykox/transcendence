@@ -16,7 +16,7 @@ import { Injectable, Inject, forwardRef } from '@nestjs/common'
 
 import { User, Room, Ball, Paddle, } from '../../shared/interfaces/game.interface'
 
-const players: { name: string, color:string, gametype: string, room: string, socket: Socket}[] = [] ;
+const players: { login: string, name: string, color:string, gametype: string, room: string, socket: Socket}[] = [] ;
 const rooms: Room[] = [];
 let count = 0;
 const ballSpeed = 10;
@@ -60,6 +60,13 @@ export class SocketService {
 	}
 
 	handleDisconnect(client: Socket){
+		if (players[client.id])
+		{
+			if (players[client.id].gametype === "1v1")
+				_1v1--;
+			else
+				_2balls--;
+		}
 		delete players[client.id];
 		// console.log(rooms);
 		for (const id in rooms)
@@ -459,7 +466,7 @@ export class SocketService {
 		// console.log("skip = ", skip)
 		for (const id in players)//desconnect someone if already in game
 		{
-			if (id === client.id)
+			if (players[id].login === data.login)
 			{
 				if (players[id].gametype === "1v1")
 					_1v1--;
@@ -468,8 +475,8 @@ export class SocketService {
 				delete players[client.id];
 			}
 		}
-		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
-		// console.log(players)
+		players[client.id] = { login: data.login, name: data.pseudo, color: data.color, gametype: data.gametype, room: null, socket: client }
+		console.log(players)
 
 		if (data.gametype === "1v1")
 			_1v1++;
@@ -495,7 +502,7 @@ export class SocketService {
 		// console.log("skip = ", skip)
 		for (const id in players)//desconnect someone if already in game
 		{
-			if (id === client.id)
+			if (players[id].login === data.login)
 			{
 				if (players[id].gametype === "1v1")
 					_1v1--;
@@ -504,8 +511,8 @@ export class SocketService {
 				delete players[client.id];
 			}
 		}
-		players[client.id] = { name: data.pseudo, color: data.color, gametype: data.gametype, room: data.room, socket: client }
-		// console.log(players)
+		players[client.id] = { login: data.login, name: data.pseudo, color: data.color, gametype: data.gametype, room: data.room, socket: client }
+		console.log(players)
 
 		let num = 0;
 

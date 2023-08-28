@@ -49,17 +49,17 @@ function Lobby() {
 
 	const matchmaking = async () => {
 		setGamemode("matchmaking");
-		socket.emit("join_list", {pseudo: user.pseudo, color: color, gametype: "1v1"});
+		socket.emit("join_list", { login: user.login, pseudo: user.pseudo, color: color, gametype: "1v1"});
 	}
 
 	const matchmaking_2balls = async () => {
 		setGamemode("matchmaking");
-		socket.emit("join_list", {pseudo: user.pseudo, color: color, gametype: "2balls"});
+		socket.emit("join_list", { login: user.login, pseudo: user.pseudo, color: color, gametype: "2balls"});
 	}
 
 	const private_match = async () => {
 		setGamemode("matchmaking");
-		socket.emit("private_match", {pseudo: user.pseudo, color: color, gametype: private_gamemode, room: private_room});
+		socket.emit("private_match", { login: user.login, pseudo: user.pseudo, color: color, gametype: private_gamemode, room: private_room});
 	}
 
 	const listItems = colors.map((colory) =>

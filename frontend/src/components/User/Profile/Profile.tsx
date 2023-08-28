@@ -181,7 +181,7 @@ function Profile() {
 			let data = await response.json();
 			// let data = ""
 			if (!data)
-			return;
+				return;
 			process_matches(data);
 		};
 
@@ -199,8 +199,8 @@ function Profile() {
 		}
 		if (login !== undefined)
 			fetchProfile(login);
-		else if (login === undefined)
-			setProfile(undefined);
+		// else if (login === undefined)
+		// 	setProfile(undefined);
 		else {
 			fetchFriends();
 			fetchRequest();
@@ -261,17 +261,6 @@ function Profile() {
 		</div>, { autoClose: 5000, toastId: "stopduperror" }
 	)
 	)
-
-	const get_user = async () => {
-    const response = await fetch(
-      `http://localhost:5000/users/aleroy`
-    );
-    if (response.status === 404) {
-      return null;
-    } else {
-      return response.json();
-    }
-  };
 
 	if (localStorage.getItem("user") === null)
 		return (<Navigate to="/"/>);
