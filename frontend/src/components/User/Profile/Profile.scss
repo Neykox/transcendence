@@ -16,7 +16,6 @@
 		margin: 0;
 	}
 
-
 	.grid {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -50,8 +49,16 @@
 		padding-bottom: 40px;
 
 		.grid {
+			width: 80%;
+			margin: auto;
+			padding: 0;
 			grid-template-columns: 1fr;
 			grid-template-rows: auto;
+		}
+
+		.history, .friends {
+			padding: 20px;
+			width: calc(100% - 40px);
 		}
 	}
 }
