@@ -199,6 +199,8 @@ function Profile() {
 		}
 		if (login !== undefined)
 			fetchProfile(login);
+		else if (login === undefined)
+			setProfile(undefined);
 		else {
 			fetchFriends();
 			fetchRequest();

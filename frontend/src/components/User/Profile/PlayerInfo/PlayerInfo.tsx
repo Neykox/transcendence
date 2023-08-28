@@ -62,6 +62,7 @@ function PlayerInfo({ wins, loses, profile}: PlayerInfoProps) {
 				<img {...{ src: (profile !== undefined ? profile.image : user.image), alt: 'Avatar' }} />	
 				<div className="name">
 					<h1>{!profile ? user.pseudo : (profile.username ? profile.username : profile.login)}</h1>
+					{ profile !== undefined ? <div className={`${profile.status}`}></div> : ''}
 				</div>
 			</div>
 			<div className="right">

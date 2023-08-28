@@ -25,14 +25,37 @@
 			width: 40%;
 			border-radius: 50%;
 		}
+
+		.name {
+
+			display: flex;
+	
+			.online {
+				width: 15px;
+				height: 15px;
+				margin-top: 17px;
+				border: 5px solid rgba(19, 169, 19, 0.7);
+				background-color:  rgba(19, 169, 19, 1);
+				border-radius: 50%;
+			}
+	
+			.offline {
+				width: 15px;
+				margin-top: 17px;
+				height: 15px;
+				border: 5px solid rgba(255, 0, 0, 0.7);
+				background-color: rgba(255, 0, 0, 1);
+				border-radius: 50%;
+			}
+		}
 	}
 
-//	.left img {
-//		width: 200px;
-//		height: 200px; /* Optionnel, si vous souhaitez également spécifier la hauteur */
-//		border-radius: 50%;
-//		object-fit: cover;
-//	  }
+	//	.left img {
+	//		width: 200px;
+	//		height: 200px; /* Optionnel, si vous souhaitez également spécifier la hauteur */
+	//		border-radius: 50%;
+	//		object-fit: cover;
+	//	  }
 
 
 	.right {
@@ -85,14 +108,14 @@
 @media (max-width: 900px) {
 	.header {
 		font-size: clamp(8px, 1.3vw, 22px);
-		justify-content:center;
+		justify-content: center;
 		gap: 10%;
 		margin-bottom: 40px;
 
 		h2 {
 			font-size: clamp(7px, 1.3vw, 22px);
 		}
-	
+
 		.left {
 			display: flex;
 			justify-content: center;
@@ -103,25 +126,26 @@
 			h2 {
 				margin: 0px;
 			}
-	
+
 			img {
 				width: 40%;
 			}
+
 		}
-	
+
 		.right {
 			gap: 2px;
-	
+
 			.bar-container {
 				height: 25%;
 			}
-	
+
 			.label {
 				font-size: clamp(8px, 1.3vw, 22px);
 				font-weight: bold;
 				text-align: center;
 			}
-	
+
 		}
 	}
 }
