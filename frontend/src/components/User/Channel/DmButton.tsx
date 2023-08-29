@@ -73,7 +73,7 @@ function DmButton(login) {
 	return (
 		<>
 			<div className='svg'>
-				<a onClick={joinChan}> <img className="" src={dm} alt='dm'/>dm</a>
+				<a onClick={joinChan}> <img className="" src={dm} alt='dm'/></a>
 			</div>
 		</>
 	)
