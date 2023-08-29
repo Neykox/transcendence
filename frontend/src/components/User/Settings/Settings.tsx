@@ -32,8 +32,6 @@ const Settings = () => {
   // const userContext = useContext(UserContext);
   //const [username, setUsername] = useState(user.username);
   const [pseudo, setPseudo] = useState(user.pseudo);
-  const [darkMode, setDarkMode] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModal2Open, setIsModal2Open] = useState(false);
@@ -90,21 +88,6 @@ const Settings = () => {
     setIsModalOpen(false);
   };
 
-  /*
-  evenements de changement de mode 
-  */
-
-  const handleDarkModeToggle = () => {
-    setDarkMode(!darkMode);
-  };
-
-  /*
-  evenements de changement de son
-  */
-
-  const handleSoundToggle = () => {
-    setSoundEnabled(!soundEnabled);
-  };
 
   /* 
   evenements de changement de double authentification
@@ -221,24 +204,6 @@ const Settings = () => {
           </div>
 
           <div>
-            <label htmlFor="darkMode">Activer le dark mode : </label>
-            <Toggle
-              id="darkMode"
-              checked={darkMode}
-              onChange={handleDarkModeToggle}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="sound">Activer le son : </label>
-            <Toggle
-              id="sound"
-              checked={soundEnabled}
-              onChange={handleSoundToggle}
-            />
-          </div>
-
-          <div>
             <label htmlFor="2fa">Activer l'authentification à deux facteurs : </label>
             <Toggle
               id="2fa"
@@ -246,8 +211,6 @@ const Settings = () => {
               onChange={doubleAuthhandleSoundToggle}
             />
           </div>
-
-
 
           <div>
             <label htmlFor="profilePhoto">Modifier sa photo de profil : </label>
