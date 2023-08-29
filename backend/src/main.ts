@@ -19,7 +19,7 @@ async function bootstrap() {
 		origin: ["http://" + process.env.REACT_APP_POSTURL + ":3000"],
 		credentials: true,
 		allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
-		methods: 'GET, POST, PUT, DELETE, OPTIONS, PATCH',
+		methods: 'GET, POST, PUT, DELETE, OPTIONS, PATCH'
 	});
 
 	await app.listen(5000);
