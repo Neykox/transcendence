@@ -533,14 +533,16 @@ export class SocketService {
 
 	@SubscribeMessage("send_invite")
 	send_invite(@MessageBody() {challenger, time, gametype, challenged}: DuelDto, @ConnectedSocket() client: Socket) {
-
-				this.server.to(connected[challenged].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gametype});
+		// if (!connected[challenged])
+		// 	return ;
+		this.server.to(connected[challenged].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gametype});
 	}
 	
 	@SubscribeMessage("send_answer")
 	send_answer(@MessageBody() {challenger, time, answer, gametype} : DuelDto, @ConnectedSocket() client: Socket) {
-
-				this.server.to(connected[challenger].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "challenger": challenger, "time": time, "gametype": gametype});
+		// if (!connected[challenger])
+		// 	return;
+		this.server.to(connected[challenger].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "challenger": challenger, "time": time, "gametype": gametype});
 	}
 	
 	// TAG FRIEND LIST
