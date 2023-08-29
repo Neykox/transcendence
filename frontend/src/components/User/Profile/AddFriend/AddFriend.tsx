@@ -52,7 +52,7 @@ export default function FriendList({ friends }: AddFriendProps) {
 		<div className="friend-list">
 			{users.map((user) => (
 				<div className="friend" key={user.id}>
-					<div className="friend-avatar"><img src={userImg} /></div>
+					<div className="friend-avatar"><img src={userImg} alt="userImg" /></div>
 					<div className="friend-pseudo">{user.pseudo}</div>
 					<img className="add-button" src={addButton} alt="add" onClick={() => sendFriend(user.login)} />
 				</div>

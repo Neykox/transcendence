@@ -1,5 +1,5 @@
 import './UserOptions.scss';
-import { useState } from 'react';
+// import { useState } from 'react';
 import {socket} from '../../../Socket/socketInit'
 
 interface OptionsProps {
@@ -8,7 +8,7 @@ interface OptionsProps {
 
 export default function UserOptions({profile} : OptionsProps) {
 
-	const [isblocked, blocked] = useState(false);
+	// const [isblocked, blocked] = useState(false);
 
 
 	const blockUser = async () => {

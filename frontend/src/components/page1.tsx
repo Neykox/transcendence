@@ -45,19 +45,10 @@ export default function Page1() {
 
 
 
-	const get_user_info = async () => {
-		// const requestOptions = {
-		// 	method: "GET",
-		// 	headers: { Authorization: `Bearer ${access_token}` },
-		// };
-		// const response = await fetch(
-		// 	"https://api.intra.42.fr/v2/me",
-		// 	requestOptions
-		// );
-		// return response.json();
-		const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/auth/${code}`)
-		return await response.json();
-	};
+	// const get_user_info = async () => {
+	// 	const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/auth/${code}`)
+	// 	return await response.json();
+	// };
 
 
 
@@ -105,6 +96,11 @@ export default function Page1() {
 
 
 	useEffect(() => {
+		const get_user_info = async () => {
+			const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/auth/${code}`)
+			return await response.json();
+		};
+
 		const test = async () => {
 			if (code) {
 				// const access_token = await get_access_token();
@@ -143,7 +139,7 @@ export default function Page1() {
 			}
 		};
 		test();
-	}, []);
+	}, [code, navigate, userContext]);
 
 	useEffect(() => {
 		if (redirect) {
