@@ -11,7 +11,7 @@ interface PlayerInfoProps {
 	profile: any;
 }
 
-function PlayerInfo({ wins, loses, profile}: PlayerInfoProps) {
+function PlayerInfo({ wins, loses, profile }: PlayerInfoProps) {
 	const winBarRef = useRef<HTMLDivElement>(null);
 	const lossBarRef = useRef<HTMLDivElement>(null);
 	const user = JSON.parse(localStorage.getItem('user'));
@@ -30,19 +30,18 @@ function PlayerInfo({ wins, loses, profile}: PlayerInfoProps) {
 
 			lossBar.style.width = `calc((100% / ${wins + loses}) * ${loses})`;
 			lossBar.style.left = winBar.style.width;
+			// lossBar.style.float = "left";
 			lossBar.querySelector('.label')!.textContent = `${loses}`;
-
-			if (lossBar.offsetWidth === 0) {
+			if (wins >= 1 && loses === 0) {
 				lossBar.style.display = "none";
 				winBar.style.borderRadius = '10px';
-			} else if (lossBar.offsetWidth >= 100) {
+			} else if (wins === 0 && loses >= 1) {
 				winBar.style.display = "none";
 				lossBar.style.borderRadius = '10px';
-			} else if (lossBar.offsetWidth !== 100 && lossBar.offsetWidth !== 0) {
+			} else if (wins >= 1 && loses >= 1) {
 				winBar.style.borderRadius = '10px 0 0 10px';
 				lossBar.style.borderRadius = '0 10px 10px 0';
 			}
-
 			if (wins === 0 && loses === 0) {
 				winBar.style.borderRadius = '10px 0 0 10px';
 				winBar.style.display = "flex";
@@ -58,10 +57,10 @@ function PlayerInfo({ wins, loses, profile}: PlayerInfoProps) {
 	return (
 		<div className="header">
 			<div className="left">
-				<img {...{ src: (profile !== undefined ? profile.image : user.image), alt: 'Avatar' }} />	
+				<img {...{ src: (profile !== undefined ? profile.image : user.image), alt: 'Avatar' }} />
 				<div className="name">
 					<h1>{!profile ? user.pseudo : (profile.username ? profile.username : profile.login)}</h1>
-					{ profile !== undefined ? <div className={`${profile.status}`}></div> : ''}
+					{profile !== undefined ? <div className={`${profile.status}`}></div> : ''}
 				</div>
 			</div>
 			<div className="right">

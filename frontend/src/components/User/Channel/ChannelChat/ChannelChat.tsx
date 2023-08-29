@@ -318,10 +318,10 @@ export default function Chat() {
         }
     }
 
-    const toggleMenu = () => {
-        const hamburger = document.querySelector(".hamburger");
+    const toggleMenu = (hamburgerName, className) => {
+        const hamburger = document.querySelector(hamburgerName);
         hamburger?.classList.toggle("is-active");
-        const friendList = document.querySelector(".buttonChannel");
+        const friendList = document.querySelector(className);
         friendList?.classList.toggle("is-disabled");
     };
 
@@ -332,7 +332,7 @@ export default function Chat() {
                     <h2>{channel.name}</h2>
                     {// ici pas besoin de rajouter si public et protected car les privé ne sont pas visible mais plus securisé ? 
                     }
-                    <button className="hamburger" onClick={toggleMenu}>
+                    <button className="hamburger hamburger1" onClick={() => { toggleMenu(".hamburger1", ".buttonChannel") }}>
                         <span className="hamburger-box">
                             <span className="hamburger-inner"></span>
                         </span>
@@ -387,7 +387,7 @@ export default function Chat() {
                         {channelMembers.map((user, index) => (
                             <li key={index}>
                                 <div className="user-name">{user.login}</div>
-                                <div className="button-container">
+                                <div className="button-container is-disabled">
                                     <button onClick={() => handleBan(user)}>ban</button>
                                     <button onClick={() => handleKick(user)}>kick</button>
                                     <button onClick={() => handleMute(user)}>mute</button>
@@ -399,8 +399,8 @@ export default function Chat() {
                             </li>
 
                         ))}
-                        <button onClick={closeModal}>Close</button>
                     </ul>
+                    <button className="close" onClick={closeModal}>Close</button>
                 </div>
             )}
             {showBannedModal && (
@@ -422,27 +422,29 @@ export default function Chat() {
             )}
             {showChannelOptionModal && (
                 <div className="modal">
-                    <h3>Channel Options</h3>
-                    <input
-                        type="text"
-                        placeholder="Nom du canal"
-                        value={newChannelName}
-                        onChange={(e) => setNewChannelName(e.target.value)}
-                    />
-                    <select value={newChannelType} onChange={(e) => setNewChannelType(e.target.value)}>
-                        <option value="public">public</option>
-                        <option value="protected">protégé</option>
-                    </select>
-                    {newChannelType === "protected" ? (
+                    <div className="modalUpdate">
+                        <h3>Channel Options</h3>
                         <input
-                            type="password"
-                            placeholder="Mot de passe du canal"
-                            value={newChannelPassword}
-                            onChange={(e) => setNewChannelPassword(e.target.value)}
+                            type="text"
+                            placeholder="Nom du canal"
+                            value={newChannelName}
+                            onChange={(e) => setNewChannelName(e.target.value)}
                         />
-                    ) : null}
-                    <button onClick={handleModalSubmit}>Mettre a jour</button>
-                    <button onClick={() => { setShowChannelOptionModal(false) }}>Annuler</button>
+                        <select value={newChannelType} onChange={(e) => setNewChannelType(e.target.value)}>
+                            <option value="public">public</option>
+                            <option value="protected">protégé</option>
+                        </select>
+                        {newChannelType === "protected" ? (
+                            <input
+                                type="password"
+                                placeholder="Mot de passe du canal"
+                                value={newChannelPassword}
+                                onChange={(e) => setNewChannelPassword(e.target.value)}
+                            />
+                        ) : null}
+                        <button onClick={handleModalSubmit}>Mettre a jour</button>
+                        <button onClick={() => { setShowChannelOptionModal(false) }}>Annuler</button>
+                    </div>
                 </div>
             )
             }
