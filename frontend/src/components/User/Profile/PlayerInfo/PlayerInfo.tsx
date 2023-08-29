@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useContext } from 'react';
+import React, { useRef, useEffect } from 'react';
 //import userImg from '../../../../asset/images/user.png';
 import './PlayerInfo.scss';
 //import {userInfo} from '../../../../model/userInfo'; 
-import UserContext from '../../../../model/userContext';
+// import UserContext from '../../../../model/userContext';
 // import { lookup } from 'dns';
 
 interface PlayerInfoProps {
