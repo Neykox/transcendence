@@ -191,3 +191,11 @@
         }
     }
 }
+
+@media (max-width: 900px) {
+	.channelList {
+    padding: 0;
+		margin: 0 10%;
+		width: calc(100% - 10%);
+	}
+}
