@@ -274,7 +274,8 @@ function Profile() {
 			<div className="profile">
 				<PlayerInfo wins={wins} loses={loses} profile={profile} />
 				<div className="grid">
-					<History matchs={matchs} />
+					<History matchs={matchs}
+					profile={profile} />
 					{profile === undefined ? <FriendList friends={friends} requests={requests} onClick={handleModalOpen} updateProfile={updateProfile } /> : <UserOptions profile={profile} />}
 				</div>
 				<div>

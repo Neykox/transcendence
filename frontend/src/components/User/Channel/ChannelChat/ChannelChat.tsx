@@ -46,8 +46,6 @@ export default function Chat() {
     useEffect(() => {
 
         //check for potential errors
-        if (location.state === null)
-            navigate(-1);
         const fetchChannel = async () => {
             const response = await fetch(`http://${process.env.REACT_APP_POSTURL}:5000/channels/${channel.id}`, { method: "GET" });
             if (response.status === 403)
@@ -63,7 +61,6 @@ export default function Chat() {
             if (user2 === null)
                 return;
             let data = JSON.parse(user2);
-            console.log(data.login)
             socket.emit("joinChannel", { channelId: channel.id, userId: data.id, userLogin: data.login });
         }
 
@@ -130,8 +127,6 @@ export default function Chat() {
     // }
 
     const myEventHandler2 = useCallback(data => {
-        console.log(blocked)
-        console.log(blocked.indexOf(data.author))
         if (data.origin === channel.id && blocked.indexOf(data.author) === -1) {
             data.who = (user.login === data.who ? 'me' : 'contact');
             const newMessage: ChatMessage = data;
@@ -251,9 +246,7 @@ export default function Chat() {
         const response3 = await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/blocked', { credentials: 'include', });
         if (!response3 || response3.status !== 200)
             return;
-        console.log("status", response3.status)
         const data3 = await response3.json();
-        console.log("data3", data3)
         setBlocked(data3);
     }, [channel.id]);
 
@@ -283,7 +276,6 @@ export default function Chat() {
     };
 
     const joinProtected = useCallback(async (data) => {
-        console.log("data.check = ", data.check);
         if (data.check === true) {
             toast.success('Mot de passe correct !');
             setShowPasswordModal(false);
@@ -353,7 +345,7 @@ export default function Chat() {
                     <button onClick={deleteChannel} >Delete</button>
                     <button onClick={openModal}>Membres</button>
                     <button onClick={openBannedModal}>Banned</button>
-                    <button onClick={() => { setShowChannelOptionModal(true) }}>Update channel</button>
+                    { channel.type === 'dm' ? <button disabled>Update channel</button> : <button onClick={() => { setShowChannelOptionModal(true) }}>Update channel</button>}
                 </div>
             </div>
             <div className="chatBox">

@@ -79,7 +79,7 @@ export default function Page1() {
 			"http://" + process.env.REACT_APP_POSTURL + ":5000/users/create",
 			requestOptions
 		);
-		return response.json();
+		return await response.json();
 	};
 
 
@@ -105,7 +105,9 @@ export default function Page1() {
 			if (code) {
 				// const access_token = await get_access_token();
 				const user_info = await get_user_info();
-				const user = await get_user(user_info.login);
+				if (user_info.status)
+					return
+				const user = await get_user(await user_info.login);
 
 
 				if (user === null) {

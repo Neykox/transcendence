@@ -33,7 +33,7 @@ function NavBar() {
 			await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/clear_cookie', requestOptions);
 		};
 		await clearCookie();
-		localStorage.removeItem("user");
+		await localStorage.removeItem("user");
 		localStorage.removeItem("42image");
 		navigate('/');
 	}

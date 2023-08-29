@@ -616,6 +616,8 @@ export class SocketService {
 	@SubscribeMessage("send_dm_invite")
 	async send_dm_invite(@MessageBody() {channel, user_login, target_login}, @ConnectedSocket() client: Socket) {
 		// if (not blocked)
+			if (!connected[target_login])
+				return ;
 			this.server.to(connected[target_login].id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
 		// this.server.to(client.id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
 	}
