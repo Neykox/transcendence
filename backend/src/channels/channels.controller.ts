@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
 import { ChannelsService } from './channels.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ClassicDto } from '../dto/classic.dto'
+import { Request } from 'express';
+import { JwtGuard } from 'src/guard/jwt.guard';
 
 @Controller('channels')
 export class ChannelsController {
@@ -29,8 +31,13 @@ export class ChannelsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateChannelDto: UpdateChannelDto) {
-    return this.channelsService.update(id, updateChannelDto);
+  @UseGuards(JwtGuard)
+  update(@Param('id') id: number, @Body() updateChannelDto: UpdateChannelDto, @Req() request: Request) {
+	let user = request.user;
+	if ( !user )
+		return;
+	console.log(user);
+    return this.channelsService.update(id, updateChannelDto, user['login']);
   }
 
   @Delete(':id')

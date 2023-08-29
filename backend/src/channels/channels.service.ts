@@ -95,15 +95,16 @@ export class ChannelsService {
     return chan;
   }
 
-  async update(id: number, updateChannelDto: UpdateChannelDto) {
+  async update(id: number, updateChannelDto: UpdateChannelDto, login: string) {
     try {
       const chan = await this.channelRepository.findOneBy({
         id,
       });
-
       if (!chan) {
         throw new ForbiddenException(`Channel with id #${id} doesn't exist`); // good but should be 404 error instead of 403
       } else {
+		if (login !== chan.owner)
+			return ;
         const update = {
           ...chan, ...updateChannelDto,
         }
