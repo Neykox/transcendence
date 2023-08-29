@@ -218,10 +218,12 @@
     }
   }
 
-  .duelGamemodes {
-    position: absolute;
-    transform: translateY(40px);
+  @media (min-width: 900px) {
+    .duelGamemodes {
+      transform: translateY(40px)!important;
+    }
   }
+
 
   @media (max-width: 900px) {
     .modalMembre {
@@ -233,6 +235,12 @@
       .close {
         width: 200px;
         margin: auto;
+      }
+
+      .duelGamemodes {
+        position: absolute;
+        transform: translateY(40px);
+        width: 90%;
       }
     }
 

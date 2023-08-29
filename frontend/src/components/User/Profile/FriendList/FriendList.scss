@@ -99,6 +99,16 @@
 	}
 }
 
+@media (min-width: 900px) {
+	.duelGamemodes {
+		position: absolute;
+		transform: translateY(80px) !important;
+		width: 25% !important;
+		z-index: 1;
+	}
+}
+
+
 @media (max-width: 900px) {
 	.friends {
 		width: 80%;
