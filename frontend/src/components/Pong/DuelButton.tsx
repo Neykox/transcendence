@@ -44,8 +44,8 @@ function DuelButton(login) {
 		toast(({ closeToast }) => <div>
 									<div >{challenger.current} challenged you to a {gametype.current === "1v1" ? "Classic" : "2 Balls"} duel!
 										<div >
-											<a onClick={() => {send_answer(true)}} ><img src={accept} alt="accept" className="friendAccept friendIcon"/></a>
-											<a onClick={() => {send_answer(false)}} ><img src={decline} alt="decline" className="friendRefuse friendIcon"/></a>
+											<a onClick={() => {send_answer(true)}}><img src={accept} alt="accept" className="friendAccept friendIcon"/></a>
+											<a onClick={() => {send_answer(false)}}><img src={decline} alt="decline" className="friendRefuse friendIcon"/></a>
 										</div>
 									</div>
 								</div>, { autoClose: false, toastId: 'dup', closeButton: false, closeOnClick: false,})
@@ -63,7 +63,7 @@ function DuelButton(login) {
 			navigate('/lobby', {state: { "private_room": data.challenger + data.time, "gametype": data.gametype }});
 		else
 			toast("Match was declined", {toastId: 'matchDeclined'});
-	}, [navigate, user.login]);
+	}, [navigate]);
 
 	useEffect(() => {
 	  socket.on('answer_received', myEventHandler);
@@ -74,7 +74,7 @@ function DuelButton(login) {
 		<>
 			<div className='svg'>
 				<a onClick={() => {setShow(!show)}}>
-					<img className="" src={duel}/></a></div>
+					<img className="" src={duel} alt="duel"/></a></div>
 			{show === true
 			? <>
 				{status === "setting-up"

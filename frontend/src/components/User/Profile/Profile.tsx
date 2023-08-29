@@ -11,7 +11,7 @@ import accept from '../../../asset/images/checkmark-circle.svg';
 import decline from '../../../asset/images/close-circle.svg';
 import Modal from 'react-modal';
 import AddFriend from './AddFriend/AddFriend';
-import { Navigate, Router, useParams, useNavigate } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 
 // import io from 'socket.io-client';
 
@@ -35,7 +35,7 @@ function Profile() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [profile, setProfile] = useState(undefined);
 	const { login } = useParams();
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const handleModalOpen = () => {
 		setIsModalOpen(true);
 	};
@@ -205,6 +205,7 @@ function Profile() {
 			fetchRequest();
 			fetchMatchs();
 		}
+		// eslint-disable-next-line
 	}, []);
 
 	const updateProfile = (login) => {
@@ -236,15 +237,15 @@ function Profile() {
 			fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/friends/decline/' + id, { credentials: 'include', method: 'DELETE' });
 	}
 
-	const Test = () => { socket.emit('testreq') }
+	// const Test = () => { socket.emit('testreq') }
 	socket.on('receiveFriend', (data) => toast.info(({ closeToast }) =>
 		<div>
 			<div>
 				{data.from} wants to be your friend !
 			</div>
 			<div>
-				<a onClick={() => { friendAccept(true, data.id) }}><img src={accept} className="friendAccept friendIcon" /></a>
-				<a onClick={() => { friendAccept(false, data.id) }}><img src={decline} className="friendRefuse friendIcon" /></a>
+				<a onClick={() => { friendAccept(true, data.id) }}><img src={accept} alt="accept" className="friendAccept friendIcon" /></a>
+				<a onClick={() => { friendAccept(false, data.id) }}><img src={decline} alt="decline" className="friendRefuse friendIcon" /></a>
 			</div>
 		</div>, { autoClose: 5000, toastId: "stopdupsuccess" }
 	)
@@ -273,8 +274,9 @@ function Profile() {
 			<div className="profile">
 				<PlayerInfo wins={wins} loses={loses} profile={profile} />
 				<div className="grid">
-					<History matchs={matchs} />
-					{profile == undefined ? <FriendList friends={friends} requests={requests} onClick={handleModalOpen} updateProfile={updateProfile } /> : <UserOptions profile={profile} />}
+					<History matchs={matchs}
+					profile={profile} />
+					{profile === undefined ? <FriendList friends={friends} requests={requests} onClick={handleModalOpen} updateProfile={updateProfile } /> : <UserOptions profile={profile} />}
 				</div>
 				<div>
 					<Modal isOpen={isModalOpen} >

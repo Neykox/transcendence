@@ -1,14 +1,14 @@
 import './NavBar.scss';
 import homePageImg from '../../asset/images/home-page.png';
-import messageImg from '../../asset/images/message.png';
-import userImg from '../../asset/images/user.png';
+// import messageImg from '../../asset/images/message.png';
+// import userImg from '../../asset/images/user.png';
 import crowdImg from '../../asset/images/crowd.png';
 import settings from '../../asset/images/settings_logo.png';
 //import paddle from '../../asset/images/pngwing.com.png';
 import pingPongImg from '../../asset/images/ping-pong_logo.png';
 import shutdown from '../../asset/images/shutdown_logo.png';
 
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 class active {
 	static setActive(name: string) {
 		active.active = name;
@@ -33,7 +33,7 @@ function NavBar() {
 			await fetch('http://' + process.env.REACT_APP_POSTURL + ':5000/auth/clear_cookie', requestOptions);
 		};
 		await clearCookie();
-		localStorage.removeItem("user");
+		await localStorage.removeItem("user");
 		localStorage.removeItem("42image");
 		navigate('/');
 	}

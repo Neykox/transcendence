@@ -533,14 +533,16 @@ export class SocketService {
 
 	@SubscribeMessage("send_invite")
 	send_invite(@MessageBody() {challenger, time, gametype, challenged}: DuelDto, @ConnectedSocket() client: Socket) {
-
-				this.server.to(connected[challenged].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gametype});
+		// if (!connected[challenged])
+		// 	return ;
+		this.server.to(connected[challenged].id).emit("invite_received", { "challenger": challenger, "time": time, "gamemode": gametype});
 	}
 	
 	@SubscribeMessage("send_answer")
 	send_answer(@MessageBody() {challenger, time, answer, gametype} : DuelDto, @ConnectedSocket() client: Socket) {
-
-				this.server.to(connected[challenger].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "challenger": challenger, "time": time, "gametype": gametype});
+		// if (!connected[challenger])
+		// 	return;
+		this.server.to(connected[challenger].id).emit("answer_received", { "answer": answer === true ? "accepted" : "declined", "challenger": challenger, "time": time, "gametype": gametype});
 	}
 	
 	// TAG FRIEND LIST
@@ -616,6 +618,8 @@ export class SocketService {
 	@SubscribeMessage("send_dm_invite")
 	async send_dm_invite(@MessageBody() {channel, user_login, target_login}, @ConnectedSocket() client: Socket) {
 		// if (not blocked)
+			if (!connected[target_login])
+				return ;
 			this.server.to(connected[target_login].id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
 		// this.server.to(client.id).emit("dm_invite", { "chan": channel, "user_login": user_login, "target_login": target_login });
 	}

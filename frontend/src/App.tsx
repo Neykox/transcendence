@@ -2,9 +2,7 @@ import './App.css';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import Login from './components/Login/Login';
 import Profile from './components/User/Profile/Profile';
-import Message from './components/User/Message/Message';
 import Settings from './components/User/Settings/Settings';
-import Chat from './components/User/Message/Chat/Chat';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Page1 from './components/page1';
@@ -15,12 +13,11 @@ import { useState, useEffect } from 'react';
 import Channel from './components/User/Channel/Channel';
 import ChannelChat from './components/User/Channel/ChannelChat/ChannelChat';
 import { socket } from './components/Socket/socketInit';
-import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+// import { useNavigate } from 'react-router-dom';
 function App() {
 	const [connected, setConnected] = useState(false);
 	const [storage, setStorage] = useState(localStorage.getItem("user"));
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 
 	const clearCookie = async () => {
 		const requestOptions = {
@@ -52,6 +49,7 @@ function App() {
 		return () => {
 			window.removeEventListener('storage', handleStorageChange);
 		};
+		// eslint-disable-next-line
 	}, []);
 
 

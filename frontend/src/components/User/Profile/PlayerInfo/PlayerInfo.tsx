@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useContext } from 'react';
+import React, { useRef, useEffect } from 'react';
 //import userImg from '../../../../asset/images/user.png';
 import './PlayerInfo.scss';
 //import {userInfo} from '../../../../model/userInfo'; 
-import UserContext from '../../../../model/userContext';
+// import UserContext from '../../../../model/userContext';
 // import { lookup } from 'dns';
 
 interface PlayerInfoProps {
@@ -14,8 +14,7 @@ interface PlayerInfoProps {
 function PlayerInfo({ wins, loses, profile }: PlayerInfoProps) {
 	const winBarRef = useRef<HTMLDivElement>(null);
 	const lossBarRef = useRef<HTMLDivElement>(null);
-	const { user } = (useContext(UserContext));
-
+	const user = JSON.parse(localStorage.getItem('user'));
 	//   Le useEffect est un Hook de React qui permet d'effectuer une action à 
 	// 	chaque fois que le composant auquel il est rattaché est affiché à l'écran ou mis à jour
 	useEffect(() => {

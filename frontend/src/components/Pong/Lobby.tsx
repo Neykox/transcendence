@@ -6,9 +6,6 @@ import UserContext from '../../model/userContext';
 import './Lobby.scss'
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import accept from '../../asset/images/checkmark-circle.svg';
-import decline from '../../asset/images/close-circle.svg';
-
 function Lobby() {
 	const navigate = useNavigate();
 	const location = useLocation()
@@ -70,40 +67,6 @@ function Lobby() {
 
 	const _1v1 = <Pong paddle1={paddle1} paddle2={paddle2} newBall={ball} max_score={maxScore} toLobby={toLobby}/>;
 	const _2balls = <DoubleBall paddle1={paddle1} paddle2={paddle2} newBall={ball} newBall2={ball2} max_score={maxScore} toLobby={toLobby}/>;
-
-
-
-	// interface Invite {
-	// 	id: number;
-	// 	challenger: string;
-	// 	time: string;
-	// 	gametype: string;
-	// }
-
-	// const invites: Invite[] = [
-	// 	{id: 1, challenger: "orca", gametype: "1v1"},
-	// 	{id: 2, challenger: "zelda", gametype: "1v1"},
-	// 	{id: 3, challenger: "link", gametype: "2balls"},
-	// 	{id: 4, challenger: "link", gametype: "2balls"},
-	// 	{id: 5, challenger: "link", gametype: "2balls"},
-	// ];
-
-	// const send_answer = async (answer: boolean, challenger: string, time: string, gametype: string) => {
-	// 	socket.emit("send_answer", { "challenger": challenger, "time": time, "answer": answer, "gametype": gametype });
-	// 	if (answer === true)
-	// 		navigate('/lobby', {state: { "private_room": challenger + time, "gametype": gametype }});
-	// 	else
-	// 		toast("Match was declined");
-	// }
-
-	// const listInvite = invites.map((invite) =>
-	// 	<div className="invite">
-	// 		<div >{invite.challenger} challenged you to a {invite.gametype === "1v1" ? "Classic" : "2 Balls"} duel!
-	// 		<a onClick={() => {send_answer(true, invite.challenger, invite.time, invite.gametype)}}><img src={accept} className="friendAccept friendIcon"/></a>
-	// 		<a onClick={() => {send_answer(false, invite.challenger, invite.time, invite.gametype)}}><img src={decline} className="friendRefuse friendIcon"/></a>
-	// 		</div>
-	// 	</div>
-	// );
 
 	return (
 		<>

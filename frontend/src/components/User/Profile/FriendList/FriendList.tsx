@@ -1,5 +1,5 @@
 import './FriendList.scss';
-import userImg from '../../../../asset/images/user.png';
+// import userImg from '../../../../asset/images/user.png';
 import { Link } from 'react-router-dom';
 import accept from '../../../../asset/images/checkmark-circle.svg';
 import decline from '../../../../asset/images/close-circle.svg';
@@ -36,7 +36,7 @@ export default function FriendList({ friends, requests, onClick, updateProfile }
 				}) => (
 					<div className="friendsList" key={friend.id}>
 						<div className='friendRemove'>
-							<a onClick={removefriend(friend.login)}><img src={decline} /></a>
+							<a onClick={removefriend(friend.login)}><img src={decline} alt="decline" /></a>
 						</div>
 						<h2>{friend.username.length > 10 ? `${friend.username.slice(0, 10)}.` : friend.username}</h2>
 						<div className={`${friend.status}`}></div>
@@ -59,8 +59,8 @@ export default function FriendList({ friends, requests, onClick, updateProfile }
 				}) => (<div className="request">
 					<p className="username">{request.fromUsername}</p>
 					<div className='requestButtons'>
-						<a onClick={() => { friendAccept(true, request.id) }}><img src={accept} className="friendAccept friendIcon" /></a>
-						<a onClick={() => { friendAccept(false, request.id) }}><img src={decline} className="friendRefuse friendIcon" /></a>
+						<a onClick={() => { friendAccept(true, request.id) }}><img src={accept} alt="accept" className="friendAccept friendIcon" /></a>
+						<a onClick={() => { friendAccept(false, request.id) }}><img src={decline} alt="decline" className="friendRefuse friendIcon" /></a>
 					</div>
 				</div>)) : <h2>No requests yet</h2>}
 			</div>
